@@ -1,0 +1,21 @@
+﻿using System;
+using System.Collections.Generic;
+using UniRx;
+
+namespace CodeBase.Gameplay.Common.Services.Cluster
+{
+    public interface IClusterService
+    {
+        IObservable<Unit> OnClusterPlaced { get; }
+        IObservable<Unit> OnClusterRemoved { get; }
+        IObservable<bool> OnValidationResult { get; }
+        void Init(string[] clusters);
+        void PlaceCluster(string cluster);
+        void RemoveCluster(string cluster);
+        bool ValidateClusters(string[] targetWords);
+        IReadOnlyList<string> GetAvailableClusters();
+        IReadOnlyList<string> GetPlacedClusters();
+        void Init(IEnumerable<string> clusters, IEnumerable<string> words);
+        IReadOnlyList<string> GetCurrentWords();
+    }
+}
