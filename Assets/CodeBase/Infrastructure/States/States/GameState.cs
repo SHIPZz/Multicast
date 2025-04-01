@@ -5,6 +5,7 @@ using CodeBase.Gameplay.Common.Services.Level;
 using CodeBase.Infrastructure.States.StateInfrastructure;
 using CodeBase.UI.Game;
 using CodeBase.UI.Services.Window;
+using Cysharp.Threading.Tasks;
 
 namespace CodeBase.Infrastructure.States.States
 {
@@ -27,7 +28,7 @@ namespace CodeBase.Infrastructure.States.States
             
             _windowService.OpenWindow<GameWindow>();
             
-            _levelService.LoadLevel(progressData.PlayerData.Level);
+            _levelService.LoadLevelAsync(progressData.PlayerData.Level).Forget();
         }
 
         public void Exit()

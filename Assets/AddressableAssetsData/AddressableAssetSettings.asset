@@ -15,7 +15,7 @@ MonoBehaviour:
   m_DefaultGroup: 7d3a3676c50d93743bac0f26cf5d7ae5
   m_currentHash:
     serializedVersion: 2
-    Hash: 00000000000000000000000000000000
+    Hash: e7571f329fca8faff485d2eb968cc80d
   m_OptimizeCatalogSize: 0
   m_BuildRemoteCatalog: 0
   m_BundleLocalCatalog: 0
@@ -67,21 +67,7 @@ MonoBehaviour:
       - m_Id: c526d425f947d944b8c35d605c5e5fdd
         m_Value: ServerData/[BuildTarget]
       - m_Id: 4f102a7d7374b35449ee525ce84495e9
-        m_Value: http://[PrivateIpAddress]:[HostingServicePort]
-    - m_InheritedParent: 
-      m_Id: d64f6ab06ac69e84ea676402ea311fc9
-      m_ProfileName: UnityCloud
-      m_Values:
-      - m_Id: 76843930ee1dd4f4e9881817d0d35b33
-        m_Value: '[UnityEditor.EditorUserBuildSettings.activeBuildTarget]'
-      - m_Id: e3c193d4728d9b4409697ee7091de727
-        m_Value: '[UnityEngine.AddressableAssets.Addressables.BuildPath]/[BuildTarget]'
-      - m_Id: d8d53967e946f8e4fa4722ce2ae767a1
-        m_Value: '{UnityEngine.AddressableAssets.Addressables.RuntimePath}/[BuildTarget]'
-      - m_Id: c526d425f947d944b8c35d605c5e5fdd
-        m_Value: ServerData/[BuildTarget]
-      - m_Id: 4f102a7d7374b35449ee525ce84495e9
-        m_Value: http://[PrivateIpAddress]:[HostingServicePort]
+        m_Value: https://storage.yandexcloud.net/multicasttest/Adressables/
     m_ProfileEntryNames:
     - m_Id: 76843930ee1dd4f4e9881817d0d35b33
       m_Name: BuildTarget
@@ -102,7 +88,7 @@ MonoBehaviour:
   m_LabelTable:
     m_LabelNames:
     - default
-    - Remote
+    - remote
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: aadfa979c609df54bae2ac70a0f5f569, type: 2}
@@ -116,7 +102,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0a71eee68caba404ea9dd7c9ce6b8c94, type: 2}
   - {fileID: 11400000, guid: 5bfcd162024ba964795b7087af4f6c15, type: 2}
   - {fileID: 11400000, guid: 128305f4923d7da41981351b50f34f24, type: 2}
-  m_ActiveProfileId: d64f6ab06ac69e84ea676402ea311fc9
+  m_ActiveProfileId: f2651ba1d899500488c01fcf982b044d
   m_HostingServicesManager:
     m_HostingServiceInfos: []
     m_Settings: {fileID: 11400000}

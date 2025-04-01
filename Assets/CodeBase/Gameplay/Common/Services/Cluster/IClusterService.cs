@@ -9,10 +9,10 @@ namespace CodeBase.Gameplay.Common.Services.Cluster
         IObservable<Unit> OnClusterPlaced { get; }
         IObservable<Unit> OnClusterRemoved { get; }
         IObservable<bool> OnValidationResult { get; }
-        void Init(string[] clusters);
+        int MaxLettersInWord { get; }
         void PlaceCluster(string cluster);
         void RemoveCluster(string cluster);
-        bool ValidateClusters(string[] targetWords);
+        bool ValidateClusters();
         IReadOnlyList<string> GetAvailableClusters();
         IReadOnlyList<string> GetPlacedClusters();
         void Init(IEnumerable<string> clusters, IEnumerable<string> words);

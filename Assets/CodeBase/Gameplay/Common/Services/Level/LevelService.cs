@@ -6,13 +6,17 @@ using CodeBase.Gameplay.SO.Level;
 using CodeBase.Infrastructure.States.States;
 using UniRx;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using Cysharp.Threading.Tasks;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace CodeBase.Gameplay.Common.Services.Level
 {
     public class LevelService : ILevelService
     {
-        private const int MaxLevelCount = 4;
-        
         private readonly IClusterService _clusterService;
         private readonly Subject<LevelData> _onLevelLoaded = new();
         private readonly Subject<Unit> _onLevelCompleted = new();
@@ -22,7 +26,7 @@ namespace CodeBase.Gameplay.Common.Services.Level
         public IObservable<Unit> OnLevelCompleted => _onLevelCompleted;
 
         private LevelData _currentLevel;
-        private int _currentLevelIndex;
+        private int _currentLevelIndex = 1;
 
         public LevelService(IClusterService clusterService, LevelDataSO levelDataSO)
         {
@@ -30,23 +34,52 @@ namespace CodeBase.Gameplay.Common.Services.Level
             _clusterService = clusterService;
         }
 
-        public void LoadLevel(int level)
+        public async UniTask LoadLevelAsync(int level, CancellationToken token = default)
         {
-            _currentLevel = _levelDataSo.GetLevelData(level);
-            
+            if (level > 1)
+                await LoadLevelFromAddressablesAsync(level, token);
+            else
+                _currentLevel = _levelDataSo.GetLevelData(level);
+
             _clusterService.Init(_currentLevel.Clusters.Shuffle(), _currentLevel.Words.Shuffle());
             
             _onLevelLoaded.OnNext(_currentLevel);
         }
 
+        private async UniTask LoadLevelFromAddressablesAsync(int level,CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                string address = _levelDataSo.GetLevelAddress(level);
+                    
+                if (string.IsNullOrEmpty(address))
+                    throw new Exception($"No address found for level {level}");
+
+                TextAsset textAsset = await Addressables.LoadAssetAsync<TextAsset>(address).Task.AsUniTask().AttachExternalCancellation(cancellationToken);
+                
+                _currentLevel = JsonConvert.DeserializeObject<LevelData>(textAsset.text);
+                    
+                if (_currentLevel == null)
+                    throw new Exception("Failed to deserialize level data");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Failed to load level {level} from Addressables: {e}");
+                
+                _currentLevel = _levelDataSo.GetLevelData(level);
+            }
+        }
+
         public void UpdateLevel()
         {
-            _currentLevelIndex += 1;
+            _currentLevelIndex++;
             
-            if(_currentLevelIndex >= MaxLevelCount)
+            if(_currentLevelIndex > _levelDataSo.MaxLevelCount)
                 _currentLevelIndex = 0;
             
-            LoadLevel(_currentLevelIndex);
+            Debug.Log($"level updated: {_currentLevelIndex}");
+            
+            LoadLevelAsync(_currentLevelIndex).Forget();
         }
 
         public void ValidateLevel()
@@ -54,12 +87,10 @@ namespace CodeBase.Gameplay.Common.Services.Level
             if (_currentLevel == null)
                 return;
 
-            bool isValid = _clusterService.ValidateClusters(_currentLevel.Words);
+            bool isValid = _clusterService.ValidateClusters();
             
-            if (isValid)
-            {
+            if (isValid) 
                 _onLevelCompleted.OnNext(Unit.Default);
-            }
         }
 
         public LevelData GetCurrentLevel() => _currentLevel;

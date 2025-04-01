@@ -1,42 +1,54 @@
 ﻿using System.Collections.Generic;
 using CodeBase.Data;
-using Unity.VisualScripting;
+using UnityEngine;
+using UnityEditor.AddressableAssets;
+using UnityEditor.AddressableAssets.Settings;
 
 namespace CodeBase.Gameplay.SO.Level
 {
-    using UnityEngine;
-
     [CreateAssetMenu(fileName = "LevelData", menuName = "Gameplay/Data/LevelData")]
     public class LevelDataSO : ScriptableObject
     {
         [SerializeField] private List<LevelData> _levels = new();
-        
+        [SerializeField] private List<LevelAddress> _levelAddresses;
+        [SerializeField] private string _addressablesGroupName = "Levels";
+
+        public int MaxLevelCount => _levels.Count + _levelAddresses.Count;
+
         public LevelData GetLevelData(int id) => _levels[Mathf.Clamp(id, 0, _levels.Count - 1)];
-        
+
         public IReadOnlyList<LevelData> Levels => _levels;
 
-        [ContextMenu("Add More Words To Level")]
-        public void AddMoreWordsToLevel3()
+        public string GetLevelAddress(int levelIndex) => _levelAddresses.Find(x => x.Level == levelIndex).Address;
+
+        [ContextMenu("Refresh Level Addresses")]
+        private void RefreshLevelAddresses()
         {
-            var level = _levels[0];
-            var newWords = new[] { "МОЛОКО", "ПОЛЕНО", "КОРОВА", "ДЕРЕВО" };
-            var newClusters = new[] { "МО", "ЛО", "КО", "ПО", "ЛЕ", "НО", "КО", "РО", "ВА", "ДЕ", "РЕ", "ВО" };
+            AddressableAssetSettings settings = AddressableAssetSettingsDefaultObject.Settings;
+            
+            _levelAddresses.Clear();
 
-            // Создаем новые массивы с увеличенным размером
-            var combinedWords = new string[level.Words.Length + newWords.Length];
-            var combinedClusters = new string[level.Clusters.Length + newClusters.Length];
+            AddressableAssetGroup targetGroup = settings.groups.Find(g => g.Name == _addressablesGroupName);
 
-            // Копируем существующие данные
-            level.Words.CopyTo(combinedWords, 0);
-            level.Clusters.CopyTo(combinedClusters, 0);
+            if (targetGroup == null)
+            {
+                Debug.LogError($"Group {_addressablesGroupName} not found in Addressables");
+                return;
+            }
 
-            // Добавляем новые данные
-            newWords.CopyTo(combinedWords, level.Words.Length);
-            newClusters.CopyTo(combinedClusters, level.Clusters.Length);
+            var sortedEntries = new List<AddressableAssetEntry>(targetGroup.entries);
+            sortedEntries.Sort((a, b) => string.Compare(a.address, b.address));
 
-            // Присваиваем новые массивы
-            level.Words = combinedWords;
-            level.Clusters = combinedClusters;
+            for (int i = 0; i < sortedEntries.Count; i++)
+            {
+                _levelAddresses.Add(new LevelAddress
+                {
+                    Level = i + 2,
+                    Address = sortedEntries[i].address
+                });
+            }
+            
+            Debug.Log($"Refreshed {_levelAddresses.Count} level addresses from group {_addressablesGroupName}");
         }
     }
 }

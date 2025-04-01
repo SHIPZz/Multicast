@@ -1,3 +1,4 @@
+using CodeBase.Common.Services.Sound;
 using CodeBase.UI.Controllers;
 using CodeBase.UI.Menu;
 using CodeBase.UI.Services.Window;
@@ -9,16 +10,21 @@ namespace CodeBase.UI.Settings
     public class SettingsWindowController : IController<SettingsWindow>
     {
         private readonly IWindowService _windowService;
-        private SettingsWindow _window;
+        private readonly ISoundService _soundService;
         private readonly CompositeDisposable _disposables = new();
+        
+        private SettingsWindow _window;
 
-        public SettingsWindowController(IWindowService windowService)
+        public SettingsWindowController(IWindowService windowService, ISoundService soundService)
         {
+            _soundService = soundService;
             _windowService = windowService;
         }
 
         public void Initialize()
         {
+            _window.SetSoundEnabled(_soundService.IsSoundEnabled);
+            
             _window.OnSoundToggled
                 .Subscribe(OnSoundToggled)
                 .AddTo(_disposables);
@@ -26,8 +32,6 @@ namespace CodeBase.UI.Settings
             _window.OnBackClicked
                 .Subscribe(_ => OnBackClicked())
                 .AddTo(_disposables);
-
-            _window.SetSoundEnabled(true);
         }
 
         public void BindView(SettingsWindow window)
@@ -37,12 +41,12 @@ namespace CodeBase.UI.Settings
 
         public void Dispose()
         {
-            _disposables.Dispose();
+            _disposables?.Dispose();
         }
 
         private void OnSoundToggled(bool enabled)
         {
-            Debug.Log($"Sound {(enabled ? "enabled" : "disabled")}");
+            _soundService.SetSoundEnabled(enabled);
         }
 
         private void OnBackClicked()

@@ -274,6 +274,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _wordSlotHolderParent: {fileID: 8938630467769818797}
+  _canvas: {fileID: 2943242028411400435}
   _clusterItemHolderParent: {fileID: 4268776761901635177}
   _validateButton: {fileID: 5208767781878702633}
 --- !u!1 &3583572708264441755

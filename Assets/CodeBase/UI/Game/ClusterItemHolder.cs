@@ -21,15 +21,6 @@ namespace CodeBase.UI.Game
         {
             _clusterUIFactory = clusterUIFactory;
         }
-        
-        public void CreateClusterItem(string clusterText, WordSlotHolder wordSlotHolder)
-        {
-            ClusterItem clusterItem = _clusterUIFactory.CreateClusterItem(_clusterItemLayout);
-            
-            clusterItem.Initialize(clusterText, wordSlotHolder);
-            
-            _clusterItems.Add(clusterItem);
-        }
 
         public void Clear()
         {
@@ -41,11 +32,15 @@ namespace CodeBase.UI.Game
             _clusterItems.Clear();
         }
 
-        public void CreateClusterItems(IEnumerable<string> clusters, WordSlotHolder wordSlotHolder)
+        public void CreateClusterItems(IEnumerable<string> clusters, WordSlotHolder wordSlotHolder, Canvas parentCanvas)
         {
             foreach (string cluster in clusters)
             {
-                CreateClusterItem(cluster, wordSlotHolder);
+                ClusterItem clusterItem = _clusterUIFactory.CreateClusterItem(_clusterItemLayout);
+            
+                clusterItem.Initialize(cluster, wordSlotHolder, _clusterItemLayout, parentCanvas);
+            
+                _clusterItems.Add(clusterItem);
             }
         }
     }

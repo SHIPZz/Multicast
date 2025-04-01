@@ -28,6 +28,7 @@ namespace CodeBase.Infrastructure.States.States
         public void Enter()
         {
             _windowService.CloseAll();
+            _windowService.CleanupBindings();
             
             BindWindows();
             

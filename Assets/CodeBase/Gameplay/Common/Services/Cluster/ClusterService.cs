@@ -1,12 +1,15 @@
 using System;
 using System.Collections.Generic;
-using CodeBase.Extensions;
+using System.Linq;
 using UniRx;
+using UnityEngine;
 
 namespace CodeBase.Gameplay.Common.Services.Cluster
 {
     public class ClusterService :  IClusterService
     {
+        private const int MaxWordCount = 4;
+        
         private readonly Subject<Unit> _onClusterPlaced = new();
         private readonly Subject<Unit> _onClusterRemoved = new();
         private readonly Subject<bool> _onValidationResult = new();
@@ -21,29 +24,50 @@ namespace CodeBase.Gameplay.Common.Services.Cluster
 
         public IReadOnlyList<string> GetPlacedClusters() => _placedClusters;
 
+        public IReadOnlyList<string> GetClustersForCurrentWords() => _clustersForCurrentWords;
+
+        public int MaxLettersInWord
+        {
+            get
+            {
+                int maxLength = 0;
+                foreach (var word in _currentWords)
+                {
+                    if (word.Length > maxLength)
+                        maxLength = word.Length;
+                }
+                return maxLength;
+            }
+        }
+
         private readonly List<string> _placedClusters = new();
         private readonly List<string> _availableClusters = new();
         private readonly List<string> _currentWords = new();
+        private readonly List<string> _clustersForCurrentWords = new();
 
         public void Init(IEnumerable<string> clusters, IEnumerable<string> words)
         {
             Cleanup();
 
             _availableClusters.AddRange(clusters);
+            
+            IEnumerable<string> shuffledWords = words.Take(MaxWordCount);
+            _currentWords.AddRange(shuffledWords);
 
-            foreach (string word in words)
-            {
-                string randomWord = words.PickRandom();
-                
-                _currentWords.Add(randomWord);
-            }
+            FilterClustersForCurrentWords();
         }
 
-        public void Init(string[] clusters)
+        private void FilterClustersForCurrentWords()
         {
-            _availableClusters.Clear();
-            _placedClusters.Clear();
-            _availableClusters.AddRange(clusters);
+            _clustersForCurrentWords.Clear();
+            
+            foreach (var word in _currentWords)
+            {
+                var clustersForWord = _availableClusters
+                    .Where(cluster => word.Contains(cluster));
+                
+                _clustersForCurrentWords.AddRange(clustersForWord);
+            }
         }
 
         public void PlaceCluster(string cluster)
@@ -66,14 +90,22 @@ namespace CodeBase.Gameplay.Common.Services.Cluster
             }
         }
 
-        public bool ValidateClusters(string[] targetWords)
+        public bool ValidateClusters()
         {
             string combinedClusters = string.Join("", _placedClusters);
             bool isValid = true;
 
-            foreach (string word in targetWords)
+            _currentWords.ForEach(x => Debug.Log($"word - {x}"));
+            
+            Debug.Log($"{combinedClusters}");
+            
+            _onValidationResult.OnNext(true);
+
+            return true;
+
+            foreach (string word in _currentWords)
             {
-                if (!combinedClusters.Contains(word))
+                if (!combinedClusters.Contains(word, StringComparison.OrdinalIgnoreCase))
                 {
                     isValid = false;
                     break;
@@ -89,6 +121,7 @@ namespace CodeBase.Gameplay.Common.Services.Cluster
             _availableClusters.Clear();
             _currentWords.Clear();
             _placedClusters.Clear();
+            _clustersForCurrentWords.Clear();
         }
     }
 } 

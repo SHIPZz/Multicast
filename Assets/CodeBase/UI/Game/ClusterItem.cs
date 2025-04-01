@@ -1,101 +1,76 @@
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+using CodeBase.UI.Common;
+using CodeBase.UI.Game.Services;
 using TMPro;
+using UnityEngine;
 using UnityEngine.EventSystems;
+using Zenject;
 
 namespace CodeBase.UI.Game
 {
-    //todo refactor by diving
-    public class ClusterItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+    public class ClusterItem : DraggableItem, IPointerClickHandler
     {
         [SerializeField] private TextMeshProUGUI _text;
-        [SerializeField] private CanvasGroup _canvasGroup;
 
         private string _clusterText;
-        private Vector3 _startPosition;
-        private Transform _startParent;
         private WordSlotHolder _wordSlotHolder;
-        private Canvas _canvas;
+        private IClusterPlacementService _placementService;
 
-        private void Awake()
+        [Inject]
+        private void Construct(IClusterPlacementService placementService)
         {
-            _canvas = GetComponentInParent<Canvas>();
+            _placementService = placementService;
         }
 
-        public void Initialize(string text, WordSlotHolder wordSlotHolder)
+        public void Initialize(string text, WordSlotHolder wordSlotHolder, Transform parent, Canvas parentCanvas)
         {
+            base.Initialize(parent, parentCanvas);
+            
             _clusterText = text;
             _text.text = text;
             _wordSlotHolder = wordSlotHolder;
         }
 
-        public void OnBeginDrag(PointerEventData eventData)
+        public override void OnEndDrag(PointerEventData eventData)
         {
-            _startPosition = transform.position;
-            _startParent = transform.parent;
+            GameObject raycastObject = eventData.pointerCurrentRaycast.gameObject;
+            var wordSlot = raycastObject?.GetComponent<WordSlot>();
             
-            _canvasGroup.blocksRaycasts = false;
-            
-            transform.SetParent(_canvas.transform);
-        }
-
-        public void OnDrag(PointerEventData eventData)
-        {
-            // todo refactor 
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                _canvas.transform as RectTransform,
-                eventData.position,
-                _canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : _canvas.worldCamera,
-                out Vector2 localPoint);
-
-            transform.localPosition = localPoint;
-        }
-
-        public void OnEndDrag(PointerEventData eventData)
-        {
-            if (eventData.pointerCurrentRaycast.gameObject == null)
+            if (wordSlot == null || wordSlot.IsOccupied)
             {
                 ReturnToStartPosition();
                 return;
             }
-
-            var wordSlot = eventData.pointerCurrentRaycast.gameObject.GetComponentInParent<WordSlot>();
             
-            if (wordSlot != null && !wordSlot.IsOccupied)
+            int startIndex = _wordSlotHolder.IndexOf(wordSlot);
+
+            if (_placementService.TryPlaceCluster(_clusterText, _wordSlotHolder, startIndex))
             {
-                var startIndex = _wordSlotHolder.IndexOf(wordSlot);
-                
-                if (startIndex != -1 && startIndex + _clusterText.Length <= _wordSlotHolder.WordSlots.Count)
-                {
-                    bool canPlace = true;
-                    for (int i = 0; i < _clusterText.Length; i++)
-                    {
-                        if (_wordSlotHolder.WordSlots[startIndex + i].IsOccupied)
-                        {
-                            canPlace = false;
-                            break;
-                        }
-                    }
-
-                    if (canPlace)
-                    {
-                        for (int i = 0; i < _clusterText.Length; i++)
-                        {
-                            _wordSlotHolder.WordSlots[startIndex + i].SetLetter(_clusterText[i].ToString());
-                        }
-                    }
-                }
+                MarkPlaced(startIndex);
+                return;
             }
+
+            ReturnToStartPosition();
         }
 
-        private void ReturnToStartPosition()
+        public void OnPointerClick(PointerEventData eventData)
         {
-            transform.SetParent(_startParent);
-            transform.position = _startPosition;
-            _canvasGroup.blocksRaycasts = true;
+            if (IsPlaced) 
+                OnReset();
         }
 
-        public string GetClusterText() => _clusterText;
+        protected override void OnReset()
+        {
+            base.OnReset();
+            _text.enabled = true;
+            _placementService.ResetCluster(_clusterText);
+        }
+
+        private void MarkPlaced(int startIndex)
+        {
+            IsPlaced = true;
+            _text.enabled = false;
+            MoveToCenter(_wordSlotHolder.WordSlots[startIndex].transform);
+            CanvasGroup.blocksRaycasts = true;
+        }
     }
-} 
+}

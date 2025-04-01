@@ -17,5 +17,6 @@ namespace CodeBase.UI.Services.Window
         TWindow OpenWindow<TWindow>() where TWindow : AbstractWindowBase;
         void Close<TWindow>() where TWindow : AbstractWindowBase;
         void CloseAll();
+        void CleanupBindings();
     }
 }

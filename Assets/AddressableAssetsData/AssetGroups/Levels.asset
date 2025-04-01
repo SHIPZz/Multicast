@@ -18,22 +18,22 @@ MonoBehaviour:
   m_GUID: 7d3a3676c50d93743bac0f26cf5d7ae5
   m_SerializeEntries:
   - m_GUID: 00d27ae7b215c294aa45b484c8d098c0
-    m_Address: Assets/ClusterData/secondLevel.json
+    m_Address: secondLevel
     m_ReadOnly: 0
     m_SerializedLabels:
-    - Remote
+    - remote
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e5c50aa1f8e063341aa96bda0b04fad9
-    m_Address: Assets/ClusterData/thirdLevel.json
+    m_Address: thirdLevel
     m_ReadOnly: 0
     m_SerializedLabels:
-    - Remote
+    - remote
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3840fb6624b663c4f8800bfae8412548
-    m_Address: Assets/ClusterData/fourthLevel.json
+    m_Address: fourthLevel
     m_ReadOnly: 0
     m_SerializedLabels:
-    - Remote
+    - remote
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 89d766e551783384790167de091c6fc0, type: 2}

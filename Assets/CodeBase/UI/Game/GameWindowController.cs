@@ -60,7 +60,7 @@ namespace CodeBase.UI.Game
             _window.ClearWordSlots();
             _window.ClearClusters();
             
-            _window.CreateWordSlotHolder(_clusterService.GetCurrentWords());
+            _window.CreateWordSlotHolder();
 
             _window.CreateClusterItemHolder(_clusterService.GetAvailableClusters());
         }
@@ -72,6 +72,7 @@ namespace CodeBase.UI.Game
 
         private void OnLevelCompleted()
         {
+            _window.HideClusters();
             _windowService.OpenWindow<VictoryWindow>();
         }
     }

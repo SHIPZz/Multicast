@@ -15,6 +15,7 @@ namespace CodeBase.UI.Game
     public class GameWindow : AbstractWindowBase
     {
         [SerializeField] private Transform _wordSlotHolderParent;
+        [SerializeField] private Canvas _canvas;
 
         [SerializeField] private Transform _clusterItemHolderParent;
         [SerializeField] private Button _validateButton;
@@ -41,21 +42,16 @@ namespace CodeBase.UI.Game
             _clusterUIFactory = clusterUIFactory;
         }
 
-        public void CreateWordSlotHolder(IReadOnlyList<string> words)
+        public void CreateWordSlotHolder()
         {
             _wordSlotHolder = _wordSlotUIFactory.CreateWordSlotHolder(_wordSlotHolderParent);
-            _wordSlotHolder.CreateWordSlots(words);
+            _wordSlotHolder.CreateWordSlots();
         }
 
         public void CreateClusterItemHolder(IEnumerable<string> clusters)
         {
             _clusterItemHolder = _clusterUIFactory.CreateClusterItemHolder(_clusterItemHolderParent);
-            _clusterItemHolder.CreateClusterItems(clusters,_wordSlotHolder);
-        }
-
-        public void CreateCluster(string clusterText)
-        {
-            _clusterItemHolder.CreateClusterItem(clusterText,_wordSlotHolder);
+            _clusterItemHolder.CreateClusterItems(clusters,_wordSlotHolder,_canvas);
         }
 
         public void ClearWordSlots()
@@ -66,6 +62,11 @@ namespace CodeBase.UI.Game
         public void ClearClusters()
         {
             _clusterItemHolder?.Clear();
+        }
+
+        public void HideClusters()
+        {
+            _clusterItemHolder.gameObject.SetActive(false);
         }
     }
 }

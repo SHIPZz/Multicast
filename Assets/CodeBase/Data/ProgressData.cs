@@ -6,5 +6,6 @@ namespace CodeBase.Data
     public class ProgressData
     {
         public PlayerData PlayerData = new();
+        public SettingsData SettingsData = new();
     }
 }

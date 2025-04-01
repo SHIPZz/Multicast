@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using CodeBase.Data;
 using CodeBase.Gameplay.Common.Services.Cluster;
+using CodeBase.Gameplay.Common.Services.Level;
 using CodeBase.StaticData;
 using CodeBase.UI.Services.WordSlots;
 using UnityEngine;
@@ -9,30 +11,31 @@ namespace CodeBase.UI.Game
 {
     public class WordSlotHolder : MonoBehaviour
     {
-        //todo: make it to config. count of words * count of letters
-        private const int TargetSlots = 24;
-
         [SerializeField] private Transform _slotsContainer;
 
         private readonly List<WordSlot> _wordSlots = new();
 
         private IWordSlotUIFactory _wordSlotUIFactory;
+        private IClusterService _clusterService;
 
         public IReadOnlyList<WordSlot> WordSlots => _wordSlots;
         
         public int IndexOf(WordSlot wordSlot) => _wordSlots.IndexOf(wordSlot);
 
         [Inject]
-        private void Construct(IWordSlotUIFactory wordSlotUIFactory)
+        private void Construct(IWordSlotUIFactory wordSlotUIFactory, IClusterService clusterService)
         {
+            _clusterService = clusterService;
             _wordSlotUIFactory = wordSlotUIFactory;
         }
 
-        public void CreateWordSlots(IReadOnlyList<string> words)
+        public void CreateWordSlots()
         {
             ClearSlots();
 
-            for (int i = 0; i < TargetSlots; i++)
+            int targetCount =  _clusterService.GetCurrentWords().Count * _clusterService.MaxLettersInWord;
+            
+            for (int i = 0; i < targetCount; i++)
             {
                 WordSlot slot = _wordSlotUIFactory.CreateWordSlotPrefab(_slotsContainer);
 

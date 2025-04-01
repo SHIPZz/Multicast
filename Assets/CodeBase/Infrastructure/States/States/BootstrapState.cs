@@ -18,10 +18,10 @@ namespace CodeBase.Infrastructure.States.States
 
         public async void Enter()
         {
-            // await _assetDownloadService.InitializeDownloadDataAsync();
-            //
-            // if (_assetDownloadService.GetDownloadSizeMb() > 0)
-            //     await _assetDownloadService.UpdateContentAsync();
+            await _assetDownloadService.InitializeDownloadDataAsync();
+            
+            if (_assetDownloadService.GetDownloadSizeMb() > 0)
+                await _assetDownloadService.UpdateContentAsync();
 
             _stateMachine.Enter<LoadingMenuState>();
         }

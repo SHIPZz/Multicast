@@ -113,6 +113,11 @@ namespace CodeBase.UI.Services.Window
             _activeWindows.Clear();
         }
 
+        public void CleanupBindings()
+        {
+            _windowBindings.Clear();
+        }
+
         private void BindModelIfHas(WindowBindingInfo bindingInfo, IController controller)
         {
             if (bindingInfo.ModelType != null)
