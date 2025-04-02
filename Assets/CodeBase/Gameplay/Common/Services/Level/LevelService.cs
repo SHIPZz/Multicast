@@ -1,7 +1,6 @@
 ﻿using System;
 using CodeBase.Data;
 using CodeBase.Extensions;
-using CodeBase.Gameplay.Common.Services.Cluster;
 using CodeBase.Gameplay.SO.Level;
 using CodeBase.Infrastructure.States.States;
 using UniRx;
@@ -11,6 +10,7 @@ using Cysharp.Threading.Tasks;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using CodeBase.Gameplay.Cluster;
 using Newtonsoft.Json;
 
 namespace CodeBase.Gameplay.Common.Services.Level

@@ -1,7 +1,8 @@
 ﻿using CodeBase.Common.Services.SaveLoad;
 using CodeBase.Common.Services.Sound;
-using CodeBase.Gameplay.Common.Services.Cluster;
+using CodeBase.Gameplay.Cluster;
 using CodeBase.Gameplay.Common.Services.Level;
+using CodeBase.Gameplay.Hint;
 using CodeBase.Infrastructure.AssetManagement;
 using CodeBase.Infrastructure.Loading;
 using CodeBase.Infrastructure.States.Factory;
@@ -12,7 +13,6 @@ using CodeBase.UI.Services;
 using CodeBase.UI.Services.Cluster;
 using CodeBase.UI.Services.Window;
 using CodeBase.UI.Services.WordSlots;
-using CodeBase.UI.Game.Services;
 using Zenject;
 
 namespace CodeBase.Infrastructure.Installers
@@ -29,13 +29,19 @@ namespace CodeBase.Infrastructure.Installers
             BindLevelService();
             BindClusterService();
             BindClusterPlacementService();
+            BindHintService();
 
             Container.BindInterfacesAndSelfTo<StateMachine>().AsSingle();
         }
 
+        private void BindHintService()
+        {
+            Container.BindInterfacesTo<HintService>().AsSingle();
+        }
+
         private void BindClusterPlacementService()
         {
-            Container.Bind<IClusterPlacementService>().To<ClusterPlacementService>().AsSingle();
+            Container.Bind<IClusterPlacementService>().To<ClusterUIPlacementService>().AsSingle();
         }
 
         private void BindClusterService()

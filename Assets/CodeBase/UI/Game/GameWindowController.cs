@@ -1,10 +1,8 @@
-using System.Collections.Generic;
-using System.Linq;
 using CodeBase.Data;
-using CodeBase.Extensions;
-using CodeBase.Gameplay.Common.Services.Cluster;
+using CodeBase.Gameplay.Cluster;
 using CodeBase.Gameplay.Common.Services.Level;
 using CodeBase.UI.Controllers;
+using CodeBase.UI.Hint;
 using CodeBase.UI.Services.Window;
 using CodeBase.UI.Victory;
 using UniRx;
@@ -43,17 +41,15 @@ namespace CodeBase.UI.Game
             _window.OnValidateClicked
                 .Subscribe(_ => OnValidateClicked())
                 .AddTo(_disposables);
+
+            _window.OnHintClicked
+                .Subscribe(_ => OnHintClicked())
+                .AddTo(_disposables);
         }
 
-        public void BindView(GameWindow window)
-        {
-            _window = window;
-        }
+        public void BindView(GameWindow window) => _window = window;
 
-        public void Dispose()
-        {
-            _disposables.Dispose();
-        }
+        public void Dispose() => _disposables?.Dispose();
 
         private void OnLevelLoaded(LevelData levelData)
         {
@@ -65,10 +61,9 @@ namespace CodeBase.UI.Game
             _window.CreateClusterItemHolder(_clusterService.GetAvailableClusters());
         }
 
-        private void OnValidateClicked()
-        {
-            _levelService.ValidateLevel();
-        }
+        private void OnValidateClicked() => _levelService.ValidateLevel();
+
+        private void OnHintClicked() => _windowService.OpenWindow<HintWindow>(true);
 
         private void OnLevelCompleted()
         {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UniRx;
 
-namespace CodeBase.Gameplay.Common.Services.Cluster
+namespace CodeBase.Gameplay.Cluster
 {
     public interface IClusterService
     {

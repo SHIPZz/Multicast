@@ -55,6 +55,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CanvasGroup: {fileID: 4652410724073490493}
   _text: {fileID: 8275536297019028410}
+  _outlineIcon: {fileID: 3541052598747583390}
 --- !u!222 &1965066899758548982
 CanvasRenderer:
   m_ObjectHideFlags: 0

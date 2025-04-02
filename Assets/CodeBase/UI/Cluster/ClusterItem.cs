@@ -1,15 +1,18 @@
 using CodeBase.UI.Common;
-using CodeBase.UI.Game.Services;
+using CodeBase.UI.Services.Cluster;
+using CodeBase.UI.WordSlots;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 using Zenject;
 
-namespace CodeBase.UI.Game
+namespace CodeBase.UI.Cluster
 {
     public class ClusterItem : DraggableItem, IPointerClickHandler
     {
         [SerializeField] private TextMeshProUGUI _text;
+        [SerializeField] private Image _outlineIcon;
 
         private string _clusterText;
         private WordSlotHolder _wordSlotHolder;
@@ -28,6 +31,7 @@ namespace CodeBase.UI.Game
             _clusterText = text;
             _text.text = text;
             _wordSlotHolder = wordSlotHolder;
+            _outlineIcon.enabled = true;
         }
 
         public override void OnEndDrag(PointerEventData eventData)
@@ -62,6 +66,7 @@ namespace CodeBase.UI.Game
         {
             base.OnReset();
             _text.enabled = true;
+            ShowOutlineIcon();
             _placementService.ResetCluster(_clusterText);
         }
 
@@ -71,6 +76,16 @@ namespace CodeBase.UI.Game
             _text.enabled = false;
             MoveToCenter(_wordSlotHolder.WordSlots[startIndex].transform);
             CanvasGroup.blocksRaycasts = true;
+        }
+
+        public void HideOutlineIcon()
+        {
+            _outlineIcon.enabled = false;
+        }
+
+        public void ShowOutlineIcon()
+        {
+            _outlineIcon.enabled = true;
         }
     }
 }

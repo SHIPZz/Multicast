@@ -3,6 +3,7 @@ using CodeBase.Infrastructure.Loading;
 using CodeBase.Infrastructure.States.StateInfrastructure;
 using CodeBase.Infrastructure.States.StateMachine;
 using CodeBase.UI.Game;
+using CodeBase.UI.Hint;
 using CodeBase.UI.Menu;
 using CodeBase.UI.Services.Window;
 using CodeBase.UI.Settings;
@@ -41,6 +42,7 @@ namespace CodeBase.Infrastructure.States.States
             _windowService.Bind<MenuWindow,MenuWindowController>();
             _windowService.Bind<SettingsWindow,SettingsWindowController>();
             _windowService.Bind<VictoryWindow,VictoryWindowController>();
+            _windowService.Bind<HintWindow,HintWindowController>();
         }
 
         public void Exit()

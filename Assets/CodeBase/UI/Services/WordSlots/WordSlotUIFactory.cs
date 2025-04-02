@@ -1,5 +1,6 @@
 using CodeBase.StaticData;
 using CodeBase.UI.Game;
+using CodeBase.UI.WordSlots;
 using UnityEngine;
 using Zenject;
 

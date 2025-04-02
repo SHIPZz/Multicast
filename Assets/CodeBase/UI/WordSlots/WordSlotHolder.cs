@@ -1,13 +1,10 @@
 using System.Collections.Generic;
-using CodeBase.Data;
-using CodeBase.Gameplay.Common.Services.Cluster;
-using CodeBase.Gameplay.Common.Services.Level;
-using CodeBase.StaticData;
+using CodeBase.Gameplay.Cluster;
 using CodeBase.UI.Services.WordSlots;
 using UnityEngine;
 using Zenject;
 
-namespace CodeBase.UI.Game
+namespace CodeBase.UI.WordSlots
 {
     public class WordSlotHolder : MonoBehaviour
     {

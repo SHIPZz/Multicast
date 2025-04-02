@@ -1,17 +1,27 @@
 using System.Collections.Generic;
-using CodeBase.Gameplay.Common.Services.Cluster;
-using UnityEngine;
+using CodeBase.Gameplay.Cluster;
+using CodeBase.UI.Cluster;
+using CodeBase.UI.WordSlots;
+using UniRx;
 
-namespace CodeBase.UI.Game.Services
+namespace CodeBase.UI.Services.Cluster
 {
-    public class ClusterPlacementService : IClusterPlacementService
+    public class ClusterUIPlacementService : IClusterPlacementService
     {
         private readonly IClusterService _clusterService;
         private readonly Dictionary<string, List<WordSlot>> _clustersOccupiedSlots = new();
+        private readonly Dictionary<string, ClusterItem> _clusterItems = new();
+        private readonly Dictionary<string, int> _clusterStartIndices = new();
+        private readonly CompositeDisposable _disposables = new();
 
-        public ClusterPlacementService(IClusterService clusterService)
+        public ClusterUIPlacementService(IClusterService clusterService)
         {
             _clusterService = clusterService;
+        }
+
+        public void RegisterClusterItem(string clusterText, ClusterItem clusterItem)
+        {
+            _clusterItems[clusterText] = clusterItem;
         }
 
         public bool TryPlaceCluster(string clusterText, WordSlotHolder wordSlotHolder, int startIndex)
@@ -25,14 +35,16 @@ namespace CodeBase.UI.Game.Services
 
         public void ResetCluster(string clusterText)
         {
-            if (_clustersOccupiedSlots.TryGetValue(clusterText, out var slots))
+            if (_clustersOccupiedSlots.TryGetValue(clusterText, out List<WordSlot> slots))
             {
                 foreach (var slot in slots)
                 {
                     slot.Clear();
                 }
-                
+
                 _clustersOccupiedSlots.Remove(clusterText);
+                _clusterStartIndices.Remove(clusterText);
+                _clusterService.RemoveCluster(clusterText);
             }
         }
 
@@ -52,17 +64,19 @@ namespace CodeBase.UI.Game.Services
 
         private void PlaceCluster(string clusterText, WordSlotHolder wordSlotHolder, int startIndex)
         {
-            var occupiedSlots = new List<WordSlot>();
+            List<WordSlot> occupiedSlots = new List<WordSlot>();
+            _clusterStartIndices[clusterText] = startIndex;
 
             for (int i = 0; i < clusterText.Length; i++)
             {
-                WordSlot slot = wordSlotHolder.WordSlots[startIndex + i];
+                int targetIndex = startIndex + i;
+                WordSlot slot = wordSlotHolder.WordSlots[targetIndex];
                 slot.SetLetter(clusterText[i].ToString());
                 occupiedSlots.Add(slot);
             }
-            
+
             _clustersOccupiedSlots[clusterText] = occupiedSlots;
             _clusterService.PlaceCluster(clusterText);
         }
     }
-} 
+}

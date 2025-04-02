@@ -14,7 +14,7 @@ namespace CodeBase.UI.Services.Window
             where TModel : AbstractWindowModel
             where TController : IModelBindable;
 
-        TWindow OpenWindow<TWindow>() where TWindow : AbstractWindowBase;
+        TWindow OpenWindow<TWindow>(bool onTop = false) where TWindow : AbstractWindowBase;
         void Close<TWindow>() where TWindow : AbstractWindowBase;
         void CloseAll();
         void CleanupBindings();

@@ -4,7 +4,7 @@ using System.Linq;
 using UniRx;
 using UnityEngine;
 
-namespace CodeBase.Gameplay.Common.Services.Cluster
+namespace CodeBase.Gameplay.Cluster
 {
     public class ClusterService :  IClusterService
     {
@@ -101,18 +101,6 @@ namespace CodeBase.Gameplay.Common.Services.Cluster
             
             _onValidationResult.OnNext(true);
 
-            return true;
-
-            foreach (string word in _currentWords)
-            {
-                if (!combinedClusters.Contains(word, StringComparison.OrdinalIgnoreCase))
-                {
-                    isValid = false;
-                    break;
-                }
-            }
-
-            _onValidationResult.OnNext(isValid);
             return isValid;
         }
 

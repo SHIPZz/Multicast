@@ -1,5 +1,7 @@
 ﻿using CodeBase.UI.AbstractWindow;
+using CodeBase.UI.Cluster;
 using CodeBase.UI.Game;
+using CodeBase.UI.WordSlots;
 
 namespace CodeBase.StaticData
 {

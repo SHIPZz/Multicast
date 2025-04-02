@@ -3,18 +3,23 @@ using System.Collections.Generic;
 using CodeBase.StaticData;
 using CodeBase.UI.AbstractWindow;
 using CodeBase.UI.Controllers;
+using UnityEngine;
 using Zenject;
 
 namespace CodeBase.UI.Services.Window
 {
     public class WindowService : IWindowService
     {
+        private const int BaseSortingOrder = 100;
+        private const int TopSortingOrder = 1000;
+        
         private readonly IInstantiator _instantiator;
         private readonly IUIStaticDataService _uiStaticDataService;
         private readonly IUIProvider _uiProvider;
 
         private readonly Dictionary<Type, WindowBindingInfo> _windowBindings = new();
         private readonly Dictionary<Type, (AbstractWindowBase Window, IController Controller)> _activeWindows = new();
+        private int _currentSortingOrder = BaseSortingOrder;
 
         public WindowService(IInstantiator instantiator,
             IUIStaticDataService uiStaticDataService,
@@ -62,7 +67,7 @@ namespace CodeBase.UI.Services.Window
             };
         }
 
-        public TWindow OpenWindow<TWindow>() where TWindow : AbstractWindowBase
+        public TWindow OpenWindow<TWindow>(bool onTop = false) where TWindow : AbstractWindowBase
         {
             Type windowType = typeof(TWindow);
 
@@ -70,19 +75,33 @@ namespace CodeBase.UI.Services.Window
                 throw new InvalidOperationException($"No binding found for window type {windowType.Name}");
 
             if (_activeWindows.ContainsKey(typeof(TWindow)))
-                return (TWindow)_activeWindows[windowType].Window;
+            {
+                var window = (TWindow)_activeWindows[windowType].Window;
+                SetWindowSortingOrder(window, onTop);
+                return window;
+            }
 
-            TWindow window = _instantiator.InstantiatePrefabForComponent<TWindow>(bindingInfo.Prefab, _uiProvider.MainUI);
+            TWindow createdWindow = _instantiator.InstantiatePrefabForComponent<TWindow>(bindingInfo.Prefab, _uiProvider.MainUI);
 
             IController<TWindow> controller = (IController<TWindow>)_instantiator.Instantiate(bindingInfo.ControllerType);
 
             BindModelIfHas(bindingInfo, controller);
 
-            InitWindow(controller, window);
+            InitWindow(controller, createdWindow);
 
-            _activeWindows[windowType] = (window, (controller));
+            _activeWindows[windowType] = (createdWindow, (controller));
 
-            return window;
+            SetWindowSortingOrder(createdWindow, onTop);
+
+            return createdWindow;
+        }
+
+        private void SetWindowSortingOrder(AbstractWindowBase window, bool onTop)
+        {
+            if (window.TryGetComponent<Canvas>(out var canvas))
+            {
+                canvas.sortingOrder = onTop ? TopSortingOrder : _currentSortingOrder++;
+            }
         }
 
         public void Close<TWindow>() where TWindow : AbstractWindowBase
@@ -111,6 +130,7 @@ namespace CodeBase.UI.Services.Window
             }
             
             _activeWindows.Clear();
+            _currentSortingOrder = BaseSortingOrder;
         }
 
         public void CleanupBindings()

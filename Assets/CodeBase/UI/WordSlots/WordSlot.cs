@@ -1,7 +1,8 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
-namespace CodeBase.UI.Game
+namespace CodeBase.UI.WordSlots
 {
     public class WordSlot : MonoBehaviour
     {
@@ -12,6 +13,7 @@ namespace CodeBase.UI.Game
         private string _currentLetter;
 
         public bool IsOccupied => _isOccupied;
+        public string CurrentLetter => _currentLetter;
 
         public void SetLetter(string letter)
         {

@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using CodeBase.UI.Services.Cluster;
+using CodeBase.UI.WordSlots;
 using UnityEngine;
 using Zenject;
 
-namespace CodeBase.UI.Game
+namespace CodeBase.UI.Cluster
 {
     public class ClusterItemHolder : MonoBehaviour
     {
@@ -13,13 +14,15 @@ namespace CodeBase.UI.Game
         
         private IClusterUIFactory _clusterUIFactory;
         private WordSlotHolder _wordSlotHolder;
+        private IClusterPlacementService _placementService;
 
         public IReadOnlyList<ClusterItem> ClusterItems => _clusterItems;
 
         [Inject] 
-        private void Construct(IClusterUIFactory clusterUIFactory)
+        private void Construct(IClusterUIFactory clusterUIFactory, IClusterPlacementService placementService)
         {
             _clusterUIFactory = clusterUIFactory;
+            _placementService = placementService;
         }
 
         public void Clear()
@@ -39,6 +42,7 @@ namespace CodeBase.UI.Game
                 ClusterItem clusterItem = _clusterUIFactory.CreateClusterItem(_clusterItemLayout);
             
                 clusterItem.Initialize(cluster, wordSlotHolder, _clusterItemLayout, parentCanvas);
+                _placementService.RegisterClusterItem(cluster, clusterItem);
             
                 _clusterItems.Add(clusterItem);
             }
