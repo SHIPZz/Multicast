@@ -10,7 +10,8 @@ namespace CodeBase.UI.Common
         protected Canvas ParentCanvas;
         protected Vector3 StartPosition;
         protected Transform ParentTransform;
-        protected bool IsPlaced;
+        
+        public bool IsPlaced { get; protected set; }
 
         public virtual void Initialize(Transform parent, Canvas parentCanvas)
         {

@@ -17,6 +17,8 @@ namespace CodeBase.UI.Cluster
         private string _clusterText;
         private WordSlotHolder _wordSlotHolder;
         private IClusterPlacementService _placementService;
+        
+        public string Text => _clusterText;
 
         [Inject]
         private void Construct(IClusterPlacementService placementService)

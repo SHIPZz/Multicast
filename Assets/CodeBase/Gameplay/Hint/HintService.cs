@@ -1,18 +1,21 @@
 using System;
 using System.Linq;
 using CodeBase.Gameplay.Cluster;
+using CodeBase.Gameplay.Common.Services.Level;
 using UniRx;
 using Zenject;
 
 namespace CodeBase.Gameplay.Hint
 {
-    public class HintService : IHintService, IInitializable
+    public class HintService : IHintService, IInitializable, IDisposable
     {
         private const int MaxHintsPerLevel = 3;
         
         private readonly IClusterService _clusterService;
         private readonly Subject<string> _onHintShown = new();
         private readonly Subject<int> _onHintsCountChanged = new();
+        private readonly ILevelService _levelService;
+        private readonly CompositeDisposable _disposables = new();
         
         private int _remainingHints;
 
@@ -21,20 +24,32 @@ namespace CodeBase.Gameplay.Hint
         
         public int RemainingHints => _remainingHints;
 
-        public HintService(IClusterService clusterService)
+        public HintService(IClusterService clusterService, ILevelService levelService)
         {
+            _levelService = levelService;
             _clusterService = clusterService;
         }
 
         public void Initialize()
         {
-            _remainingHints = MaxHintsPerLevel;
-            _onHintsCountChanged.OnNext(_remainingHints);
+            SetRemainingHints(MaxHintsPerLevel);
+            
+            _levelService
+                .OnLevelCompleted
+                .Subscribe(_ => SetRemainingHints(MaxHintsPerLevel))
+                .AddTo(_disposables);
+        }
+
+        private void SetRemainingHints(int maxHintsPerLevel)
+        {
+            _remainingHints = maxHintsPerLevel;
+            _onHintsCountChanged?.OnNext(_remainingHints);
         }
 
         public void ShowHint()
         {
-            if (!CanShowHint()) return;
+            if (!CanShowHint())
+                return;
 
             var words = _clusterService.GetCurrentWords();
             
@@ -56,6 +71,13 @@ namespace CodeBase.Gameplay.Hint
         {
             _remainingHints--;
             _onHintsCountChanged.OnNext(_remainingHints);
+        }
+
+        public void Dispose()
+        {
+            _onHintShown?.Dispose();
+            _onHintsCountChanged?.Dispose();
+            _disposables?.Dispose();
         }
     }
 } 

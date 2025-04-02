@@ -10,6 +10,7 @@ namespace CodeBase.Gameplay.Cluster
         IObservable<Unit> OnClusterRemoved { get; }
         IObservable<bool> OnValidationResult { get; }
         int MaxLettersInWord { get; }
+        IReadOnlyList<string> FormedWordsClusters { get; }
         void PlaceCluster(string cluster);
         void RemoveCluster(string cluster);
         bool ValidateClusters();
@@ -17,5 +18,8 @@ namespace CodeBase.Gameplay.Cluster
         IReadOnlyList<string> GetPlacedClusters();
         void Init(IEnumerable<string> clusters, IEnumerable<string> words);
         IReadOnlyList<string> GetCurrentWords();
+        void ClearFormedWordsClusters();
+        void RemovePlacedCluster(string cluster);
+        bool IsClusterUsedInWordFormation(string clusterText);
     }
 }

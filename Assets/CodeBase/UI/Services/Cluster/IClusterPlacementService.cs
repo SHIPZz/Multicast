@@ -8,5 +8,6 @@ namespace CodeBase.UI.Services.Cluster
         bool TryPlaceCluster(string clusterText, WordSlotHolder wordSlotHolder, int startIndex);
         void ResetCluster(string clusterText);
         void RegisterClusterItem(string cluster, ClusterItem clusterItem);
+        void HideClusterInSlot(WordSlot slot);
     }
 }

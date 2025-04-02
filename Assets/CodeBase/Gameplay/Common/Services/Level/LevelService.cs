@@ -15,7 +15,7 @@ using Newtonsoft.Json;
 
 namespace CodeBase.Gameplay.Common.Services.Level
 {
-    public class LevelService : ILevelService
+    public class LevelService : ILevelService, IDisposable
     {
         private readonly IClusterService _clusterService;
         private readonly Subject<LevelData> _onLevelLoaded = new();
@@ -32,6 +32,12 @@ namespace CodeBase.Gameplay.Common.Services.Level
         {
             _levelDataSo = levelDataSO;
             _clusterService = clusterService;
+        }
+
+        public void Dispose()
+        {
+            _onLevelLoaded?.Dispose();
+            _onLevelCompleted?.Dispose();
         }
 
         public async UniTask LoadLevelAsync(int level, CancellationToken token = default)

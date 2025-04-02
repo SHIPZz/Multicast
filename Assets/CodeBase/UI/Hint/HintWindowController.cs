@@ -12,7 +12,7 @@ namespace CodeBase.UI.Hint
         private readonly IHintService _hintService;
         private readonly IWindowService _windowService;
         private readonly CompositeDisposable _disposables = new();
-        
+
         private HintWindow _window;
 
         public HintWindowController(
@@ -32,9 +32,9 @@ namespace CodeBase.UI.Hint
                 .AddTo(_disposables);
 
             _window.SetRemainingHints(_hintService.RemainingHints);
-            
+
             _window.OnShowWordLengthClicked
-                .Subscribe(_ => _hintService.ShowHint())
+                .Subscribe(_ => OnShowClicked())
                 .AddTo(_disposables);
 
             _hintService.OnHintShown
@@ -42,12 +42,22 @@ namespace CodeBase.UI.Hint
                 .AddTo(_disposables);
 
             _hintService.OnHintsCountChanged
-                .Subscribe(count => 
-                {
-                    _window.SetRemainingHints(count);
-                    _window.SetButtonsInteractable(count > 0);
-                })
+                .Subscribe(OnHintCountChanged)
                 .AddTo(_disposables);
+        }
+
+        private void OnHintCountChanged(int count)
+        {
+            _window.SetRemainingHints(count);
+
+            if (count <= 0)
+                _window.SetButtonsInteractable(false);
+        }
+
+        private void OnShowClicked()
+        {
+            _window.SetButtonsInteractable(false);
+            _hintService.ShowHint();
         }
 
         public void BindView(HintWindow window)
@@ -60,4 +70,4 @@ namespace CodeBase.UI.Hint
             _disposables.Dispose();
         }
     }
-} 
+}

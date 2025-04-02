@@ -57,6 +57,23 @@ namespace CodeBase.UI.Game
 
         public void ClearClusters() => _clusterItemHolder?.Clear();
 
-        public void HideClusters() => _clusterItemHolder.gameObject.SetActive(false);
+        public void Cleanup()
+        {
+            ClearWordSlots();
+            ClearClusters();
+        }
+
+        public void SetInteractableItemsActive(bool isActive)
+        {
+            SetClustersActive(isActive);
+            SetValidateButtonActive(isActive);
+            SetHintButtonActive(isActive);
+        }
+
+        public void SetClustersActive(bool isActive) => _clusterItemHolder?.gameObject.SetActive(isActive);
+
+        public void SetValidateButtonActive(bool isActive) => _validateButton?.gameObject.SetActive(isActive);
+
+        public void SetHintButtonActive(bool isActive) => _hintButton?.gameObject.SetActive(isActive);
     }
 }

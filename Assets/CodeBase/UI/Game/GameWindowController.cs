@@ -1,6 +1,7 @@
 using CodeBase.Data;
 using CodeBase.Gameplay.Cluster;
 using CodeBase.Gameplay.Common.Services.Level;
+using CodeBase.Gameplay.Hint;
 using CodeBase.UI.Controllers;
 using CodeBase.UI.Hint;
 using CodeBase.UI.Services.Window;
@@ -15,14 +16,17 @@ namespace CodeBase.UI.Game
         private readonly IWindowService _windowService;
         private readonly IClusterService _clusterService;
         private readonly CompositeDisposable _disposables = new();
+        private readonly IHintService _hintService;
         
         private GameWindow _window;
 
         public GameWindowController(
             ILevelService levelService,
             IClusterService clusterService,
+            IHintService hintService,
             IWindowService windowService)
         {
+            _hintService = hintService;
             _clusterService = clusterService;
             _levelService = levelService;
             _windowService = windowService;
@@ -36,6 +40,11 @@ namespace CodeBase.UI.Game
 
             _levelService.OnLevelCompleted
                 .Subscribe(_ => OnLevelCompleted())
+                .AddTo(_disposables);
+            
+            _hintService
+                .OnHintsCountChanged
+                .Subscribe(hintCount => _window.SetHintButtonActive(hintCount > 0))
                 .AddTo(_disposables);
 
             _window.OnValidateClicked
@@ -53,8 +62,9 @@ namespace CodeBase.UI.Game
 
         private void OnLevelLoaded(LevelData levelData)
         {
-            _window.ClearWordSlots();
-            _window.ClearClusters();
+            _window.Cleanup();
+            
+            _window.SetInteractableItemsActive(true);
             
             _window.CreateWordSlotHolder();
 
@@ -67,7 +77,8 @@ namespace CodeBase.UI.Game
 
         private void OnLevelCompleted()
         {
-            _window.HideClusters();
+            _window.SetInteractableItemsActive(false);
+            
             _windowService.OpenWindow<VictoryWindow>();
         }
     }

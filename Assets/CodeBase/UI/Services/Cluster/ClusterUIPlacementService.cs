@@ -3,6 +3,7 @@ using CodeBase.Gameplay.Cluster;
 using CodeBase.UI.Cluster;
 using CodeBase.UI.WordSlots;
 using UniRx;
+using UnityEngine;
 
 namespace CodeBase.UI.Services.Cluster
 {
@@ -11,7 +12,6 @@ namespace CodeBase.UI.Services.Cluster
         private readonly IClusterService _clusterService;
         private readonly Dictionary<string, List<WordSlot>> _clustersOccupiedSlots = new();
         private readonly Dictionary<string, ClusterItem> _clusterItems = new();
-        private readonly Dictionary<string, int> _clusterStartIndices = new();
         private readonly CompositeDisposable _disposables = new();
 
         public ClusterUIPlacementService(IClusterService clusterService)
@@ -30,6 +30,8 @@ namespace CodeBase.UI.Services.Cluster
                 return false;
 
             PlaceCluster(clusterText, wordSlotHolder, startIndex);
+
+
             return true;
         }
 
@@ -43,7 +45,6 @@ namespace CodeBase.UI.Services.Cluster
                 }
 
                 _clustersOccupiedSlots.Remove(clusterText);
-                _clusterStartIndices.Remove(clusterText);
                 _clusterService.RemoveCluster(clusterText);
             }
         }
@@ -65,18 +66,58 @@ namespace CodeBase.UI.Services.Cluster
         private void PlaceCluster(string clusterText, WordSlotHolder wordSlotHolder, int startIndex)
         {
             List<WordSlot> occupiedSlots = new List<WordSlot>();
-            _clusterStartIndices[clusterText] = startIndex;
 
             for (int i = 0; i < clusterText.Length; i++)
             {
                 int targetIndex = startIndex + i;
                 WordSlot slot = wordSlotHolder.WordSlots[targetIndex];
                 slot.SetLetter(clusterText[i].ToString());
+                slot.ClusterItem = _clusterItems[clusterText];
                 occupiedSlots.Add(slot);
             }
 
             _clustersOccupiedSlots[clusterText] = occupiedSlots;
             _clusterService.PlaceCluster(clusterText);
+        }
+
+        public void HideClusterInSlot(WordSlot slot)
+        {
+            string targetText = slot.CurrentLetter.ToLower();
+
+            foreach (ClusterItem clusterItem in _clusterItems.Values)
+            {
+                if (!clusterItem.IsPlaced)
+                    continue;
+
+                string text = clusterItem.Text.ToLower();
+
+                Debug.Log($"cluster - {text}");
+                Debug.Log($"target  - {targetText}");
+
+                foreach (char letter in targetText)
+                {
+                    if (text.Contains(letter))
+                    {
+                        clusterItem.HideOutlineIcon();
+                    }
+                }
+            }
+        }
+
+        private bool HasAllLetters(string sourceWord, string targetWord)
+        {
+            var remainingLetters = new List<char>(targetWord);
+
+            foreach (char letter in sourceWord)
+            {
+                int index = remainingLetters.IndexOf(letter);
+                if (index == -1)
+                    return false;
+
+                remainingLetters.RemoveAt(index);
+            }
+
+            return true;
         }
     }
 }
