@@ -1,9 +1,13 @@
+using CodeBase.Common.Services.Sound;
 using CodeBase.Data;
 using CodeBase.Gameplay.Cluster;
 using CodeBase.Gameplay.Common.Services.Level;
 using CodeBase.Gameplay.Hint;
+using CodeBase.Gameplay.Sound;
+using CodeBase.Gameplay.WordSlots;
 using CodeBase.UI.Controllers;
 using CodeBase.UI.Hint;
+using CodeBase.UI.Services.Cluster;
 using CodeBase.UI.Services.Window;
 using CodeBase.UI.Victory;
 using UniRx;
@@ -17,15 +21,24 @@ namespace CodeBase.UI.Game
         private readonly IClusterService _clusterService;
         private readonly CompositeDisposable _disposables = new();
         private readonly IHintService _hintService;
+        private readonly IClusterUIPlacementService _clusterUIPlacementService;
+        private readonly IWordSlotService _wordSlotService;
+        private readonly ISoundService _soundService;
         
         private GameWindow _window;
 
         public GameWindowController(
             ILevelService levelService,
             IClusterService clusterService,
+            IClusterUIPlacementService clusterUIPlacementService,
+            IWordSlotService wordSlotService,
+            ISoundService soundService,
             IHintService hintService,
             IWindowService windowService)
         {
+            _soundService = soundService;
+            _wordSlotService = wordSlotService;
+            _clusterUIPlacementService = clusterUIPlacementService;
             _hintService = hintService;
             _clusterService = clusterService;
             _levelService = levelService;
@@ -71,7 +84,15 @@ namespace CodeBase.UI.Game
             _window.CreateClusterItemHolder(_clusterService.GetAvailableClusters());
         }
 
-        private void OnValidateClicked() => _levelService.ValidateLevel();
+        private void OnValidateClicked()
+        {
+            _clusterUIPlacementService.CheckAndHideFilledClusters();
+            
+            if(_wordSlotService.NewWordFormed)
+                _soundService.Play(SoundTypeId.WordFormedFound);
+            
+            _levelService.ValidateLevel();
+        }
 
         private void OnHintClicked() => _windowService.OpenWindow<HintWindow>(true);
 
@@ -79,7 +100,7 @@ namespace CodeBase.UI.Game
         {
             _window.SetInteractableItemsActive(false);
             
-            _windowService.OpenWindow<VictoryWindow>();
+            _windowService.OpenWindow<VictoryWindow>(onTop: true);
         }
     }
 } 

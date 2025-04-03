@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using CodeBase.StaticData;
 using CodeBase.UI.AbstractWindow;
 using CodeBase.UI.Cluster;
-using CodeBase.UI.Services;
 using CodeBase.UI.Services.Cluster;
 using CodeBase.UI.Services.WordSlots;
 using CodeBase.UI.WordSlots;
@@ -43,14 +42,18 @@ namespace CodeBase.UI.Game
 
         public void CreateWordSlotHolder()
         {
-            _wordSlotHolder = _wordSlotUIFactory.CreateWordSlotHolder(_wordSlotHolderParent);
+            if (_wordSlotHolder == null)
+                _wordSlotHolder = _wordSlotUIFactory.CreateWordSlotHolder(_wordSlotHolderParent);
+            
             _wordSlotHolder.CreateWordSlots();
         }
 
         public void CreateClusterItemHolder(IEnumerable<string> clusters)
         {
-            _clusterItemHolder = _clusterUIFactory.CreateClusterItemHolder(_clusterItemHolderParent);
-            _clusterItemHolder.CreateClusterItems(clusters,_wordSlotHolder,_canvas);
+            if (_clusterItemHolder == null)
+                _clusterItemHolder = _clusterUIFactory.CreateClusterItemHolder(_clusterItemHolderParent);
+
+            _clusterItemHolder.CreateClusterItems(clusters, _canvas);
         }
 
         public void ClearWordSlots() => _wordSlotHolder?.ClearSlots();

@@ -1,25 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using UniRx;
 
 namespace CodeBase.Gameplay.Cluster
 {
     public interface IClusterService
     {
-        IObservable<Unit> OnClusterPlaced { get; }
-        IObservable<Unit> OnClusterRemoved { get; }
         IObservable<bool> OnValidationResult { get; }
-        int MaxLettersInWord { get; }
-        IReadOnlyList<string> FormedWordsClusters { get; }
         void PlaceCluster(string cluster);
         void RemoveCluster(string cluster);
-        bool ValidateClusters();
+        bool ValidateClusters(IEnumerable<string> formedWords, IEnumerable<string> wordsToFind);
         IReadOnlyList<string> GetAvailableClusters();
-        IReadOnlyList<string> GetPlacedClusters();
-        void Init(IEnumerable<string> clusters, IEnumerable<string> words);
-        IReadOnlyList<string> GetCurrentWords();
-        void ClearFormedWordsClusters();
-        void RemovePlacedCluster(string cluster);
-        bool IsClusterUsedInWordFormation(string clusterText);
+        void Init(IEnumerable<string> clusters);
     }
 }

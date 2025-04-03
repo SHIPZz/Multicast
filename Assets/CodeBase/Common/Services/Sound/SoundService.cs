@@ -1,57 +1,67 @@
-﻿using CodeBase.Common.Services.SaveLoad;
+﻿using System;
+using System.Collections.Generic;
+using CodeBase.Common.Services.Persistent;
 using CodeBase.Data;
+using CodeBase.Gameplay.Sound;
 using UnityEngine;
 using Zenject;
 
 namespace CodeBase.Common.Services.Sound
 {
-    public class SoundService : ISoundService, IInitializable
+    public class SoundService : ISoundService, IProgressWatcher, IInitializable, IDisposable
     {
-        private readonly ISaveLoadSystem _saveLoadSystem;
+        private readonly IPersistentService _persistentService;
+        private readonly ISoundFactory _soundFactory;
+
+        private readonly Dictionary<SoundTypeId, SoundPlayerView> _soundPlayers =
+            new Dictionary<SoundTypeId, SoundPlayerView>();
+
         private bool _isSoundEnabled;
 
         public bool IsSoundEnabled => _isSoundEnabled;
 
-        public SoundService(ISaveLoadSystem saveLoadSystem)
+        public SoundService(IPersistentService persistentService, ISoundFactory soundFactory)
         {
-            _saveLoadSystem = saveLoadSystem;
-            LoadSettings();
+            _soundFactory = soundFactory;
+            _persistentService = persistentService;
         }
 
-        public void Initialize()
+        public void Initialize() => _persistentService.RegisterProgressWatcher(this);
+
+        public void Load(ProgressData progressData)
         {
-            LoadSettings();
+            _isSoundEnabled = progressData.SettingsData.IsSoundEnabled;
+
+            ApplySoundState();
         }
 
-        public void ToggleSound()
+        public void Play(SoundTypeId soundTypeId)
         {
-            SetSoundEnabled(!_isSoundEnabled);
+            SoundPlayerView soundPlayerView = null;
+
+            if (!_soundPlayers.TryGetValue(soundTypeId, out SoundPlayerView soundPlayer))
+            {
+                soundPlayerView = _soundFactory.Create(null, soundTypeId);
+                _soundPlayers[soundTypeId] = soundPlayerView;
+            }
+            else
+            {
+                soundPlayerView = soundPlayer;
+            }
+
+            soundPlayerView.Play();
         }
+
+        public void Save(ProgressData progressData) => progressData.SettingsData.IsSoundEnabled = _isSoundEnabled;
 
         public void SetSoundEnabled(bool enabled)
         {
             _isSoundEnabled = enabled;
-            SaveSettings();
             ApplySoundState();
         }
 
-        private void LoadSettings()
-        {
-            ProgressData progressData = _saveLoadSystem.Load();
-            _isSoundEnabled = progressData.SettingsData.IsSoundEnabled;
-            ApplySoundState();
-        }
+        public void Dispose() => _persistentService.UnregisterProgressWatcher(this);
 
-        private void SaveSettings()
-        {
-            ProgressData progressData = _saveLoadSystem.Load();
-            progressData.SettingsData.IsSoundEnabled = _isSoundEnabled;
-            _saveLoadSystem.Save(progressData);
-        }
-
-        private void ApplySoundState()
-        {
-            AudioListener.volume = _isSoundEnabled ? 1f : 0f;
-        }
+        private void ApplySoundState() => AudioListener.volume = _isSoundEnabled ? 1f : 0f;
     }
 }

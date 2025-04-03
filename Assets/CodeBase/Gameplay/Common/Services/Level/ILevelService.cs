@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Threading;
 using CodeBase.Data;
-using Cysharp.Threading.Tasks;
 using UniRx;
 
 namespace CodeBase.Gameplay.Common.Services.Level
@@ -10,9 +8,10 @@ namespace CodeBase.Gameplay.Common.Services.Level
     {
         IObservable<LevelData> OnLevelLoaded { get; }
         IObservable<Unit> OnLevelCompleted { get; }
-        UniTask LoadLevelAsync(int level,CancellationToken token = default);
         void ValidateLevel();
         LevelData GetCurrentLevel();
-        void UpdateLevel();
+        void MarkLevelLoaded(int level);
+        void Initialize();
+        LevelData GetTargetLevelData(int level);
     }
 }

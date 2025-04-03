@@ -1,8 +1,11 @@
-﻿using CodeBase.Common.Services.SaveLoad;
+﻿using CodeBase.Common.Services.Persistent;
+using CodeBase.Common.Services.SaveLoad;
 using CodeBase.Common.Services.Sound;
+using CodeBase.Common.Services.Unity;
 using CodeBase.Gameplay.Cluster;
 using CodeBase.Gameplay.Common.Services.Level;
 using CodeBase.Gameplay.Hint;
+using CodeBase.Gameplay.WordSlots;
 using CodeBase.Infrastructure.AssetManagement;
 using CodeBase.Infrastructure.Loading;
 using CodeBase.Infrastructure.States.Factory;
@@ -13,6 +16,8 @@ using CodeBase.UI.Services;
 using CodeBase.UI.Services.Cluster;
 using CodeBase.UI.Services.Window;
 using CodeBase.UI.Services.WordSlots;
+using Unity.Services.RemoteConfig;
+using UnityEngine;
 using Zenject;
 
 namespace CodeBase.Infrastructure.Installers
@@ -30,8 +35,22 @@ namespace CodeBase.Infrastructure.Installers
             BindClusterService();
             BindClusterPlacementService();
             BindHintService();
+            BindUnityRemoteConfigService();
+            SetupDevice();
 
             Container.BindInterfacesAndSelfTo<StateMachine>().AsSingle();
+        }
+
+        private void SetupDevice()
+        {
+            Application.targetFrameRate = 90;
+            Screen.orientation = ScreenOrientation.LandscapeLeft;
+        }
+
+        private void BindUnityRemoteConfigService()
+        {
+            Container.BindInstance(RemoteConfigService.Instance).AsSingle();
+            Container.BindInterfacesTo<UnityRemoteConfigService>().AsSingle();
         }
 
         private void BindHintService()
@@ -41,7 +60,7 @@ namespace CodeBase.Infrastructure.Installers
 
         private void BindClusterPlacementService()
         {
-            Container.Bind<IClusterPlacementService>().To<ClusterUIPlacementService>().AsSingle();
+            Container.Bind<IClusterUIPlacementService>().To<ClusterUIPlacementService>().AsSingle();
         }
 
         private void BindClusterService()
@@ -60,6 +79,7 @@ namespace CodeBase.Infrastructure.Installers
             Container.Bind<IUIProvider>().To<UIProvider>().AsSingle();
             Container.Bind<IUIStaticDataService>().To<UIStaticDataService>().AsSingle();
             Container.Bind<IWordSlotUIFactory>().To<WordSlotUIFactory>().AsSingle();
+            Container.Bind<IWordSlotService>().To<WordSlotService>().AsSingle();
             Container.Bind<IClusterUIFactory>().To<ClusterUIFactory>().AsSingle();
         }
         
@@ -88,8 +108,11 @@ namespace CodeBase.Infrastructure.Installers
         private void BindCommonServices()
         {
             Container.Bind<ISceneLoader>().To<SceneLoader>().AsSingle();
+            Container.Bind<IPersistentService>().To<PersistentService>().AsSingle();
             Container.Bind<ISaveLoadSystem>().To<PlayerPrefsSaveLoadSystem>().AsSingle();
             Container.BindInterfacesTo<SoundService>().AsSingle();
+            Container.BindInterfacesTo<SoundFactory>().AsSingle();
+            Container.BindInterfacesTo<SaveOnApplicationPauseSystem>().AsSingle();
         }
 
         public void Initialize()

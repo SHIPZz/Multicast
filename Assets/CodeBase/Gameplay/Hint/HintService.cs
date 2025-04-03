@@ -1,43 +1,48 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using CodeBase.Gameplay.Cluster;
 using CodeBase.Gameplay.Common.Services.Level;
+using CodeBase.Gameplay.WordSlots;
 using UniRx;
-using Zenject;
 
 namespace CodeBase.Gameplay.Hint
 {
-    public class HintService : IHintService, IInitializable, IDisposable
+    public class HintService : IHintService, IDisposable
     {
         private const int MaxHintsPerLevel = 3;
-        
-        private readonly IClusterService _clusterService;
+
         private readonly Subject<string> _onHintShown = new();
         private readonly Subject<int> _onHintsCountChanged = new();
         private readonly ILevelService _levelService;
+        private readonly IWordSlotService _wordSlotService;
         private readonly CompositeDisposable _disposables = new();
-        
+
         private int _remainingHints;
+        private string _hint;
 
         public IObservable<string> OnHintShown => _onHintShown;
         public IObservable<int> OnHintsCountChanged => _onHintsCountChanged;
-        
+
         public int RemainingHints => _remainingHints;
 
-        public HintService(IClusterService clusterService, ILevelService levelService)
+        public HintService(IWordSlotService wordSlotService, ILevelService levelService)
         {
+            _wordSlotService = wordSlotService;
             _levelService = levelService;
-            _clusterService = clusterService;
         }
 
         public void Initialize()
         {
             SetRemainingHints(MaxHintsPerLevel);
-            
+
             _levelService
                 .OnLevelCompleted
                 .Subscribe(_ => SetRemainingHints(MaxHintsPerLevel))
                 .AddTo(_disposables);
+
+
+            IEnumerable<string> firstTwoLettersOfWords = _wordSlotService.WordsToFind.Select(w => w.Length >= 2 ? w.Substring(0, 2).ToUpper() : w.ToUpper());
+            _hint = $"Подсказка: {string.Join(", ", firstTwoLettersOfWords)}";
         }
 
         private void SetRemainingHints(int maxHintsPerLevel)
@@ -51,15 +56,9 @@ namespace CodeBase.Gameplay.Hint
             if (!CanShowHint())
                 return;
 
-            var words = _clusterService.GetCurrentWords();
+            _onHintShown.OnNext(_hint);
             
-            if (words.Any())
-            {
-                var firstLetters = words.Select(w => w.Length >= 2 ? w.Substring(0, 2).ToUpper() : w.ToUpper());
-                string hint = $"Подсказка: {string.Join(", ", firstLetters)}";
-                _onHintShown.OnNext(hint);
-                UseHint();
-            }
+            UseHint();
         }
 
         public bool CanShowHint()
@@ -80,4 +79,4 @@ namespace CodeBase.Gameplay.Hint
             _disposables?.Dispose();
         }
     }
-} 
+}

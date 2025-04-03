@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using CodeBase.UI.Services.Cluster;
 using CodeBase.UI.WordSlots;
@@ -14,15 +15,20 @@ namespace CodeBase.UI.Cluster
         
         private IClusterUIFactory _clusterUIFactory;
         private WordSlotHolder _wordSlotHolder;
-        private IClusterPlacementService _placementService;
+        private IClusterUIPlacementService _clusterUIPlacementService;
 
         public IReadOnlyList<ClusterItem> ClusterItems => _clusterItems;
 
         [Inject] 
-        private void Construct(IClusterUIFactory clusterUIFactory, IClusterPlacementService placementService)
+        private void Construct(IClusterUIFactory clusterUIFactory, IClusterUIPlacementService uiPlacementService)
         {
             _clusterUIFactory = clusterUIFactory;
-            _placementService = placementService;
+            _clusterUIPlacementService = uiPlacementService;
+        }
+
+        private void Start()
+        {
+            _clusterUIPlacementService.SetClusterItemHolder(this);
         }
 
         public void Clear()
@@ -35,15 +41,14 @@ namespace CodeBase.UI.Cluster
             _clusterItems.Clear();
         }
 
-        public void CreateClusterItems(IEnumerable<string> clusters, WordSlotHolder wordSlotHolder, Canvas parentCanvas)
+        public void CreateClusterItems(IEnumerable<string> clusters, Canvas parentCanvas)
         {
             foreach (string cluster in clusters)
             {
                 ClusterItem clusterItem = _clusterUIFactory.CreateClusterItem(_clusterItemLayout);
             
-                clusterItem.Initialize(cluster, wordSlotHolder, _clusterItemLayout, parentCanvas);
-                _placementService.RegisterClusterItem(cluster, clusterItem);
-            
+                clusterItem.Initialize(cluster, _clusterItemLayout, parentCanvas);
+                
                 _clusterItems.Add(clusterItem);
             }
         }

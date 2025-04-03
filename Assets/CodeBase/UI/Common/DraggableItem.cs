@@ -11,7 +11,7 @@ namespace CodeBase.UI.Common
         protected Vector3 StartPosition;
         protected Transform ParentTransform;
         
-        public bool IsPlaced { get; protected set; }
+       [field: SerializeField] public bool IsPlaced { get; protected set; }
 
         public virtual void Initialize(Transform parent, Canvas parentCanvas)
         {

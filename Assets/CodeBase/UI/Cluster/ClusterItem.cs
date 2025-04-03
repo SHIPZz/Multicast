@@ -1,3 +1,4 @@
+using CodeBase.Gameplay.WordSlots;
 using CodeBase.UI.Common;
 using CodeBase.UI.Services.Cluster;
 using CodeBase.UI.WordSlots;
@@ -15,25 +16,32 @@ namespace CodeBase.UI.Cluster
         [SerializeField] private Image _outlineIcon;
 
         private string _clusterText;
-        private WordSlotHolder _wordSlotHolder;
-        private IClusterPlacementService _placementService;
-        
+        private IClusterUIPlacementService _clusterUIPlacementService;
+        private IWordSlotService _wordSlotService;
+
         public string Text => _clusterText;
 
         [Inject]
-        private void Construct(IClusterPlacementService placementService)
+        private void Construct(IClusterUIPlacementService uiPlacementService, IWordSlotService wordSlotService)
         {
-            _placementService = placementService;
+            _wordSlotService = wordSlotService;
+            _clusterUIPlacementService = uiPlacementService;
         }
 
-        public void Initialize(string text, WordSlotHolder wordSlotHolder, Transform parent, Canvas parentCanvas)
+        public void Initialize(string text, Transform parent, Canvas parentCanvas)
         {
             base.Initialize(parent, parentCanvas);
             
             _clusterText = text;
             _text.text = text;
-            _wordSlotHolder = wordSlotHolder;
             _outlineIcon.enabled = true;
+        }
+
+        public override void OnBeginDrag(PointerEventData eventData)
+        {
+            base.OnBeginDrag(eventData);
+
+            _clusterUIPlacementService.OnClusterSelected(this);
         }
 
         public override void OnEndDrag(PointerEventData eventData)
@@ -47,9 +55,9 @@ namespace CodeBase.UI.Cluster
                 return;
             }
             
-            int startIndex = _wordSlotHolder.IndexOf(wordSlot);
+            int startIndex = _wordSlotService.IndexOf(wordSlot);
 
-            if (_placementService.TryPlaceCluster(_clusterText, _wordSlotHolder, startIndex))
+            if (_clusterUIPlacementService.TryPlaceCluster(_clusterText, startIndex))
             {
                 MarkPlaced(startIndex);
                 return;
@@ -69,20 +77,25 @@ namespace CodeBase.UI.Cluster
             base.OnReset();
             _text.enabled = true;
             ShowOutlineIcon();
-            _placementService.ResetCluster(_clusterText);
+            _clusterUIPlacementService.ResetCluster(_clusterText);
         }
 
         private void MarkPlaced(int startIndex)
         {
             IsPlaced = true;
             _text.enabled = false;
-            MoveToCenter(_wordSlotHolder.WordSlots[startIndex].transform);
+            MoveToCenter(_wordSlotService.GetTargetSlot(startIndex).transform);
             CanvasGroup.blocksRaycasts = true;
         }
 
         public void HideOutlineIcon()
         {
             _outlineIcon.enabled = false;
+        }
+        
+        public void SetBlocksRaycasts(bool value)
+        {
+            CanvasGroup.blocksRaycasts = value;
         }
 
         public void ShowOutlineIcon()

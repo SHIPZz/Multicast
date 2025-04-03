@@ -1,7 +1,5 @@
-using CodeBase.UI.Cluster;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace CodeBase.UI.WordSlots
 {
@@ -15,9 +13,6 @@ namespace CodeBase.UI.WordSlots
 
         public bool IsOccupied => _isOccupied;
         public string CurrentLetter => _currentLetter;
-        
-        //todo refactor remove
-        public ClusterItem ClusterItem { get; set; }
 
         public void SetLetter(string letter)
         {

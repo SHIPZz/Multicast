@@ -1,0 +1,115 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 469c24fdb3bd6431b92cc1465bd9166b, type: 3}
+  m_Name: RemoteConfigDataStoreAsset
+  m_EditorClassIdentifier: 
+  _rsKeyList: "[\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"ecf74732-3f53-4b0b-8284-f8a724780506\"\r\n   
+    },\r\n    \"rs\": {\r\n      \"key\": \"level_2\",\r\n      \"type\": \"json\",\r\n     
+    \"schemaId\": null,\r\n      \"value\": {\r\n        \"levelId\": 2,\r\n       
+    \"words\": [\r\n          \"\u041C\u041E\u041B\u041E\u041A\u041E\",\r\n         
+    \"\u041F\u041E\u041B\u0415\u041D\u041E\",\r\n          \"\u041A\u041E\u0420\u041E\u0412\u0410\",\r\n         
+    \"\u0414\u0415\u0420\u0415\u0412\u041E\",\r\n          \"\u0421\u041E\u041B\u041D\u0426\u0415\",\r\n         
+    \"\u042F\u0411\u041B\u041E\u041A\u041E\",\r\n          \"\u041F\u0418\u0421\u042C\u041C\u041E\",\r\n         
+    \"\u0421\u0415\u0421\u0422\u0420\u0410\"\r\n        ],\r\n        \"clusters\":
+    [\r\n          \"\u041C\u041E\",\r\n          \"\u041B\u041E\",\r\n         
+    \"\u041A\u041E\",\r\n          \"\u041F\u041E\",\r\n          \"\u041B\u0415\",\r\n         
+    \"\u041D\u041E\",\r\n          \"\u041A\u041E\",\r\n          \"\u0420\u041E\",\r\n         
+    \"\u0412\u0410\",\r\n          \"\u0414\u0415\",\r\n          \"\u0420\u0415\",\r\n         
+    \"\u0412\u041E\",\r\n          \"\u0421\u041E\u041B\",\r\n          \"\u041D\u0426\u0415\",\r\n         
+    \"\u042F\u0411\",\r\n          \"\u041B\u041E\",\r\n          \"\u041A\u041E\",\r\n         
+    \"\u041F\u0418\",\r\n          \"\u0421\u042C\",\r\n          \"\u041C\u041E\",\r\n         
+    \"\u0421\u0415\",\r\n          \"\u0421\u0422\",\r\n          \"\u0420\u0410\"\r\n       
+    ]\r\n      }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\":
+    \"2bad8adc-d055-4cdf-a64e-438edb73bdca\"\r\n    },\r\n    \"rs\": {\r\n     
+    \"key\": \"level_3\",\r\n      \"type\": \"json\",\r\n      \"schemaId\": null,\r\n     
+    \"value\": {\r\n        \"levelId\": 3,\r\n        \"words\": [\r\n         
+    \"\u041F\u041E\u0413\u041E\u0414\u0410\",\r\n          \"\u041C\u0415\u0422\u0415\u041B\u042C\",\r\n         
+    \"\u041B\u0418\u0421\u0422\u0412\u0410\",\r\n          \"\u0417\u0412\u0415\u0417\u0414\u0410\",\r\n         
+    \"\u0411\u0415\u0420\u0415\u0417\u0410\",\r\n          \"\u041A\u0410\u041C\u0415\u041D\u042C\",\r\n         
+    \"\u0421\u0415\u0421\u0422\u0420\u0410\",\r\n          \"\u041B\u0410\u041C\u041F\u0410\u0414\"\r\n       
+    ],\r\n        \"clusters\": [\r\n          \"\u041F\u041E\",\r\n          \"\u0413\u041E\",\r\n         
+    \"\u0414\u0410\",\r\n          \"\u041C\u0415\",\r\n          \"\u0422\u0415\u041B\u042C\",\r\n         
+    \"\u041B\u0418\",\r\n          \"\u0421\u0422\",\r\n          \"\u0412\u0410\",\r\n         
+    \"\u0417\u0412\u0415\",\r\n          \"\u0417\u0414\u0410\",\r\n          \"\u0411\u0415\",\r\n         
+    \"\u0420\u0415\",\r\n          \"\u0417\u0410\",\r\n          \"\u041A\u0410\",\r\n         
+    \"\u041C\u0415\u041D\u042C\",\r\n          \"\u0421\u0415\",\r\n          \"\u0421\u0422\",\r\n         
+    \"\u0420\u0410\",\r\n          \"\u041B\u0410\u041C\",\r\n          \"\u041F\u0410\u0414\"\r\n       
+    ]\r\n      }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\":
+    \"39ae12a0-0798-4a74-a87c-a47d9af41cda\"\r\n    },\r\n    \"rs\": {\r\n     
+    \"key\": \"level_4\",\r\n      \"type\": \"json\",\r\n      \"schemaId\": null,\r\n     
+    \"value\": {\r\n        \"levelId\": 4,\r\n        \"words\": [\r\n         
+    \"\u0420\u0410\u0411\u041E\u0422\u0410\",\r\n          \"\u041C\u0423\u0417\u042B\u041A\u0410\",\r\n         
+    \"\u041F\u041E\u0411\u0415\u0414\u0410\",\r\n          \"\u0420\u0410\u0414\u0423\u0413\u0410\",\r\n         
+    \"\u0421\u0415\u0420\u0414\u0426\u0415\",\r\n          \"\u041F\u0420\u0410\u0412\u0414\u0410\",\r\n         
+    \"\u041C\u0415\u0427\u0422\u0410\",\r\n          \"\u0414\u0420\u0423\u0416\u0411\u0410\"\r\n       
+    ],\r\n        \"clusters\": [\r\n          \"\u0420\u0410\",\r\n          \"\u0411\u041E\",\r\n         
+    \"\u0422\u0410\",\r\n          \"\u041C\u0423\",\r\n          \"\u0417\u042B\",\r\n         
+    \"\u041A\u0410\",\r\n          \"\u041F\u041E\",\r\n          \"\u0411\u0415\",\r\n         
+    \"\u0414\u0410\",\r\n          \"\u0420\u0410\",\r\n          \"\u0414\u0423\",\r\n         
+    \"\u0413\u0410\",\r\n          \"\u0421\u0415\u0420\",\r\n          \"\u0414\u0426\u0415\",\r\n         
+    \"\u041F\u0420\u0410\",\r\n          \"\u0412\u0414\u0410\",\r\n          \"\u041C\u0415\u0427\",\r\n         
+    \"\u0422\u0410\",\r\n          \"\u0414\u0420\u0423\",\r\n          \"\u0416\u0411\u0410\"\r\n       
+    ]\r\n      }\r\n    }\r\n  }\r\n]"
+  _rsLastCachedKeyList: "[\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"ecf74732-3f53-4b0b-8284-f8a724780506\"\r\n   
+    },\r\n    \"rs\": {\r\n      \"key\": \"level_2\",\r\n      \"type\": \"json\",\r\n     
+    \"schemaId\": null,\r\n      \"value\": {\r\n        \"levelId\": 2,\r\n       
+    \"words\": [\r\n          \"\u041C\u041E\u041B\u041E\u041A\u041E\",\r\n         
+    \"\u041F\u041E\u041B\u0415\u041D\u041E\",\r\n          \"\u041A\u041E\u0420\u041E\u0412\u0410\",\r\n         
+    \"\u0414\u0415\u0420\u0415\u0412\u041E\",\r\n          \"\u0421\u041E\u041B\u041D\u0426\u0415\",\r\n         
+    \"\u042F\u0411\u041B\u041E\u041A\u041E\",\r\n          \"\u041F\u0418\u0421\u042C\u041C\u041E\",\r\n         
+    \"\u0421\u0415\u0421\u0422\u0420\u0410\"\r\n        ],\r\n        \"clusters\":
+    [\r\n          \"\u041C\u041E\",\r\n          \"\u041B\u041E\",\r\n         
+    \"\u041A\u041E\",\r\n          \"\u041F\u041E\",\r\n          \"\u041B\u0415\",\r\n         
+    \"\u041D\u041E\",\r\n          \"\u041A\u041E\",\r\n          \"\u0420\u041E\",\r\n         
+    \"\u0412\u0410\",\r\n          \"\u0414\u0415\",\r\n          \"\u0420\u0415\",\r\n         
+    \"\u0412\u041E\",\r\n          \"\u0421\u041E\u041B\",\r\n          \"\u041D\u0426\u0415\",\r\n         
+    \"\u042F\u0411\",\r\n          \"\u041B\u041E\",\r\n          \"\u041A\u041E\",\r\n         
+    \"\u041F\u0418\",\r\n          \"\u0421\u042C\",\r\n          \"\u041C\u041E\",\r\n         
+    \"\u0421\u0415\",\r\n          \"\u0421\u0422\",\r\n          \"\u0420\u0410\"\r\n       
+    ]\r\n      }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\":
+    \"2bad8adc-d055-4cdf-a64e-438edb73bdca\"\r\n    },\r\n    \"rs\": {\r\n     
+    \"key\": \"level_3\",\r\n      \"type\": \"json\",\r\n      \"schemaId\": null,\r\n     
+    \"value\": {\r\n        \"levelId\": 3,\r\n        \"words\": [\r\n         
+    \"\u041F\u041E\u0413\u041E\u0414\u0410\",\r\n          \"\u041C\u0415\u0422\u0415\u041B\u042C\",\r\n         
+    \"\u041B\u0418\u0421\u0422\u0412\u0410\",\r\n          \"\u0417\u0412\u0415\u0417\u0414\u0410\",\r\n         
+    \"\u0411\u0415\u0420\u0415\u0417\u0410\",\r\n          \"\u041A\u0410\u041C\u0415\u041D\u042C\",\r\n         
+    \"\u0421\u0415\u0421\u0422\u0420\u0410\",\r\n          \"\u041B\u0410\u041C\u041F\u0410\u0414\"\r\n       
+    ],\r\n        \"clusters\": [\r\n          \"\u041F\u041E\",\r\n          \"\u0413\u041E\",\r\n         
+    \"\u0414\u0410\",\r\n          \"\u041C\u0415\",\r\n          \"\u0422\u0415\u041B\u042C\",\r\n         
+    \"\u041B\u0418\",\r\n          \"\u0421\u0422\",\r\n          \"\u0412\u0410\",\r\n         
+    \"\u0417\u0412\u0415\",\r\n          \"\u0417\u0414\u0410\",\r\n          \"\u0411\u0415\",\r\n         
+    \"\u0420\u0415\",\r\n          \"\u0417\u0410\",\r\n          \"\u041A\u0410\",\r\n         
+    \"\u041C\u0415\u041D\u042C\",\r\n          \"\u0421\u0415\",\r\n          \"\u0421\u0422\",\r\n         
+    \"\u0420\u0410\",\r\n          \"\u041B\u0410\u041C\",\r\n          \"\u041F\u0410\u0414\"\r\n       
+    ]\r\n      }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\":
+    \"39ae12a0-0798-4a74-a87c-a47d9af41cda\"\r\n    },\r\n    \"rs\": {\r\n     
+    \"key\": \"level_4\",\r\n      \"type\": \"json\",\r\n      \"schemaId\": null,\r\n     
+    \"value\": {\r\n        \"levelId\": 4,\r\n        \"words\": [\r\n         
+    \"\u0420\u0410\u0411\u041E\u0422\u0410\",\r\n          \"\u041C\u0423\u0417\u042B\u041A\u0410\",\r\n         
+    \"\u041F\u041E\u0411\u0415\u0414\u0410\",\r\n          \"\u0420\u0410\u0414\u0423\u0413\u0410\",\r\n         
+    \"\u0421\u0415\u0420\u0414\u0426\u0415\",\r\n          \"\u041F\u0420\u0410\u0412\u0414\u0410\",\r\n         
+    \"\u041C\u0415\u0427\u0422\u0410\",\r\n          \"\u0414\u0420\u0423\u0416\u0411\u0410\"\r\n       
+    ],\r\n        \"clusters\": [\r\n          \"\u0420\u0410\",\r\n          \"\u0411\u041E\",\r\n         
+    \"\u0422\u0410\",\r\n          \"\u041C\u0423\",\r\n          \"\u0417\u042B\",\r\n         
+    \"\u041A\u0410\",\r\n          \"\u041F\u041E\",\r\n          \"\u0411\u0415\",\r\n         
+    \"\u0414\u0410\",\r\n          \"\u0420\u0410\",\r\n          \"\u0414\u0423\",\r\n         
+    \"\u0413\u0410\",\r\n          \"\u0421\u0415\u0420\",\r\n          \"\u0414\u0426\u0415\",\r\n         
+    \"\u041F\u0420\u0410\",\r\n          \"\u0412\u0414\u0410\",\r\n          \"\u041C\u0415\u0427\",\r\n         
+    \"\u0422\u0410\",\r\n          \"\u0414\u0420\u0423\",\r\n          \"\u0416\u0411\u0410\"\r\n       
+    ]\r\n      }\r\n    }\r\n  }\r\n]"
+  _environments: "[\r\n  {\r\n    \"projectId\": \"0670d359-b01e-45bc-8b4b-657a9aa8ebf7\",\r\n   
+    \"name\": \"production\",\r\n    \"id\": \"3fc2523e-1870-4260-9715-cbcf9c02fad0\",\r\n   
+    \"isDefault\": true,\r\n    \"createdAt\": \"2025-04-01T16:06:34Z\",\r\n    \"updatedAt\":
+    \"2025-04-01T16:06:34Z\"\r\n  },\r\n  {\r\n    \"projectId\": \"0670d359-b01e-45bc-8b4b-657a9aa8ebf7\",\r\n   
+    \"name\": \"test\",\r\n    \"id\": \"233e3304-3cbf-4dae-89a5-a2655418ba64\",\r\n   
+    \"isDefault\": false,\r\n    \"createdAt\": \"2025-04-01T16:26:08Z\",\r\n   
+    \"updatedAt\": \"2025-04-01T16:26:08Z\"\r\n  }\r\n]"

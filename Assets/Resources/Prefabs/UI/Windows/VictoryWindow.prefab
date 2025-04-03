@@ -399,6 +399,7 @@ GameObject:
   - component: {fileID: 3714778420672207329}
   - component: {fileID: 8324214337044703987}
   - component: {fileID: 6830665799949604723}
+  - component: {fileID: 8117171115514823110}
   m_Layer: 5
   m_Name: MainMenu
   m_TagString: Untagged
@@ -508,6 +509,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &8117171115514823110
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6166018639132647843}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f71531f1b904f56be96f1523abcac00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _button: {fileID: 6830665799949604723}
+  _soundTypeId: 1
 --- !u!1 &6838064126045832738
 GameObject:
   m_ObjectHideFlags: 0
@@ -520,6 +535,7 @@ GameObject:
   - component: {fileID: 4840363507594481255}
   - component: {fileID: 855293060001355908}
   - component: {fileID: 889278583690829874}
+  - component: {fileID: 2495908879254192042}
   m_Layer: 5
   m_Name: NextLevel
   m_TagString: Untagged
@@ -629,6 +645,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &2495908879254192042
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6838064126045832738}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f71531f1b904f56be96f1523abcac00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _button: {fileID: 889278583690829874}
+  _soundTypeId: 1
 --- !u!1 &7077893809505322038
 GameObject:
   m_ObjectHideFlags: 0

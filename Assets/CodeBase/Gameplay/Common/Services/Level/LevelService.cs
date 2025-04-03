@@ -1,91 +1,101 @@
 ﻿using System;
+using System.Linq;
+using CodeBase.Common.Services.Persistent;
+using CodeBase.Common.Services.Unity;
 using CodeBase.Data;
-using CodeBase.Extensions;
+using CodeBase.Gameplay.Cluster;
 using CodeBase.Gameplay.SO.Level;
-using CodeBase.Infrastructure.States.States;
+using CodeBase.Gameplay.WordSlots;
+using Newtonsoft.Json;
 using UniRx;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-using Cysharp.Threading.Tasks;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using CodeBase.Gameplay.Cluster;
-using Newtonsoft.Json;
+using Zenject;
 
 namespace CodeBase.Gameplay.Common.Services.Level
 {
-    public class LevelService : ILevelService, IDisposable
+    public class LevelService : ILevelService, 
+        IProgressWatcher,
+        IInitializable
+        , IDisposable
     {
         private readonly IClusterService _clusterService;
         private readonly Subject<LevelData> _onLevelLoaded = new();
         private readonly Subject<Unit> _onLevelCompleted = new();
         private readonly LevelDataSO _levelDataSo;
+        private readonly IUnityRemoteConfigService _unityRemoteConfigService;
+        private readonly IWordSlotService _wordSlotService;
+        private readonly IPersistentService _persistentService;
 
         public IObservable<LevelData> OnLevelLoaded => _onLevelLoaded;
         public IObservable<Unit> OnLevelCompleted => _onLevelCompleted;
 
         private LevelData _currentLevel;
         private int _currentLevelIndex = 1;
+        private int _totalLevelCount;
 
-        public LevelService(IClusterService clusterService, LevelDataSO levelDataSO)
+        public LevelService(IClusterService clusterService,
+            LevelDataSO levelDataSO,
+            IWordSlotService wordSlotService,
+            IPersistentService persistentService,
+            IUnityRemoteConfigService unityRemoteConfigService
+            )
         {
+            _persistentService = persistentService;
+            _wordSlotService = wordSlotService;
             _levelDataSo = levelDataSO;
+            _unityRemoteConfigService = unityRemoteConfigService;
             _clusterService = clusterService;
+        }
+
+        public void Initialize()
+        {
+            _totalLevelCount = _unityRemoteConfigService.GetKeys().Count(x => x.Contains("level_")) + _levelDataSo.Levels.Count;
+            _persistentService.RegisterProgressWatcher(this);
+            Debug.Log($"{_totalLevelCount} total levels");
         }
 
         public void Dispose()
         {
             _onLevelLoaded?.Dispose();
             _onLevelCompleted?.Dispose();
+            _persistentService.UnregisterProgressWatcher(this);
         }
 
-        public async UniTask LoadLevelAsync(int level, CancellationToken token = default)
-        {
-            if (level > 1)
-                await LoadLevelFromAddressablesAsync(level, token);
-            else
-                _currentLevel = _levelDataSo.GetLevelData(level);
+        public void Load(ProgressData progressData) => _currentLevel = GetTargetLevelData(progressData.PlayerData.Level);
 
-            _clusterService.Init(_currentLevel.Clusters.Shuffle(), _currentLevel.Words.Shuffle());
+        public void Save(ProgressData progressData)
+        {
+            progressData.PlayerData.Level = _currentLevelIndex;
+            _currentLevel = GetTargetLevelData(_currentLevelIndex);
+        }
+
+        public void MarkLevelLoaded(int level)
+        {
+            Debug.Log($"load level - {level}");
             
+            _currentLevel = GetTargetLevelData(level);
+
             _onLevelLoaded.OnNext(_currentLevel);
         }
 
-        private async UniTask LoadLevelFromAddressablesAsync(int level,CancellationToken cancellationToken = default)
+        public LevelData GetTargetLevelData(int level)
         {
-            try
-            {
-                string address = _levelDataSo.GetLevelAddress(level);
-                    
-                if (string.IsNullOrEmpty(address))
-                    throw new Exception($"No address found for level {level}");
-
-                TextAsset textAsset = await Addressables.LoadAssetAsync<TextAsset>(address).Task.AsUniTask().AttachExternalCancellation(cancellationToken);
-                
-                _currentLevel = JsonConvert.DeserializeObject<LevelData>(textAsset.text);
-                    
-                if (_currentLevel == null)
-                    throw new Exception("Failed to deserialize level data");
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"Failed to load level {level} from Addressables: {e}");
-                
-                _currentLevel = _levelDataSo.GetLevelData(level);
-            }
+            return level > _levelDataSo.Levels.Count ? GetLevelFromUnityConfig(level) : _levelDataSo.GetLevelData(level);
         }
 
-        public void UpdateLevel()
+        private LevelData GetLevelFromUnityConfig(int level)
         {
-            _currentLevelIndex++;
-            
-            if(_currentLevelIndex > _levelDataSo.MaxLevelCount)
-                _currentLevelIndex = 0;
-            
-            Debug.Log($"level updated: {_currentLevelIndex}");
-            
-            LoadLevelAsync(_currentLevelIndex).Forget();
+            string jsonFromConfig = _unityRemoteConfigService.GetJsonSetting($"level_{level}");
+
+            if (string.IsNullOrEmpty(jsonFromConfig))
+                throw new Exception($"No json found in unity config for level {level}");
+
+            LevelData targetLevel = JsonConvert.DeserializeObject<LevelData>(jsonFromConfig);
+
+            if (targetLevel == null)
+                throw new Exception("Failed to deserialize level data");
+
+            return targetLevel;
         }
 
         public void ValidateLevel()
@@ -93,12 +103,31 @@ namespace CodeBase.Gameplay.Common.Services.Level
             if (_currentLevel == null)
                 return;
 
-            bool isValid = _clusterService.ValidateClusters();
-            
-            if (isValid) 
+            bool isValid = _clusterService.ValidateClusters(_wordSlotService.GetFormedWordsFromRows().Values, _wordSlotService.WordsToFind);
+
+            if (isValid)
+            {
+                UpdateIndex();
+                
+                _persistentService.Save();
+                
                 _onLevelCompleted.OnNext(Unit.Default);
+            }
         }
 
         public LevelData GetCurrentLevel() => _currentLevel;
+
+        private void UpdateIndex()
+        {
+            _currentLevelIndex++;
+
+            SetFirstLevelOnMaxLevelReached();
+        }
+
+        private void SetFirstLevelOnMaxLevelReached()
+        {
+            if (_currentLevelIndex > _totalLevelCount)
+                _currentLevelIndex = 1;
+        }
     }
 }

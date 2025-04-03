@@ -1,5 +1,5 @@
-using CodeBase.Common.Services.SaveLoad;
-using CodeBase.Gameplay.Common.Services.Level;
+using CodeBase.Common.Services.Sound;
+using CodeBase.Gameplay.Sound;
 using CodeBase.Infrastructure.States.StateMachine;
 using CodeBase.Infrastructure.States.States;
 using CodeBase.UI.Controllers;
@@ -11,20 +11,25 @@ namespace CodeBase.UI.Victory
     public class VictoryWindowController : IController<VictoryWindow>
     {
         private readonly IWindowService _windowService;
-        private readonly ILevelService _levelService;
         private readonly IStateMachine _stateMachine;
         private readonly CompositeDisposable _disposables = new();
+        private readonly ISoundService _soundService;
+
         private VictoryWindow _window;
 
-        public VictoryWindowController(IWindowService windowService, ILevelService levelService, IStateMachine stateMachine)
+        public VictoryWindowController(IWindowService windowService,
+            ISoundService soundService, 
+            IStateMachine stateMachine)
         {
+            _soundService = soundService;
             _stateMachine = stateMachine;
-            _levelService = levelService;
             _windowService = windowService;
         }
 
         public void Initialize()
         {
+            _soundService.Play(SoundTypeId.Victory);
+            
             _window.OnNextLevelClicked
                 .Subscribe(_ => OnNextLevelClicked())
                 .AddTo(_disposables);
@@ -48,7 +53,7 @@ namespace CodeBase.UI.Victory
         {
             _windowService.Close<VictoryWindow>();
             
-            _levelService.UpdateLevel();
+            _stateMachine.Enter<LoadGameState>();
         }
 
         private void OnMainMenuClicked()
