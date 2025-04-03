@@ -20,7 +20,8 @@ namespace CodeBase.UI.Services.Cluster
         private readonly ISoundService _soundService;
         private ClusterItemHolder _clusterItemHolder;
 
-        public ClusterUIPlacementService(IClusterService clusterService, IWordSlotService wordSlotService, ISoundService soundService)
+        public ClusterUIPlacementService(IClusterService clusterService, IWordSlotService wordSlotService,
+            ISoundService soundService)
         {
             _soundService = soundService;
             _wordSlotService = wordSlotService;
@@ -33,9 +34,9 @@ namespace CodeBase.UI.Services.Cluster
                 return false;
 
             PlaceCluster(clusterText, startIndex);
-            
+
             _soundService.Play(SoundTypeId.ClusterPlaced);
-            
+
             return true;
         }
 
@@ -95,51 +96,48 @@ namespace CodeBase.UI.Services.Cluster
             foreach (KeyValuePair<int, string> keyValuePair in _wordSlotService.GetFormedWordsFromRows())
             {
                 string formedWord = keyValuePair.Value;
-                
-                if(!_wordSlotService.WordsToFind.Contains(formedWord))
-                    continue;
 
                 if (string.IsNullOrEmpty(formedWord))
-                    continue;
-
-                Debug.Log($"formedWord - {formedWord}");
-
-                if (NoSuchTargetWordBy(formedWord))
                 {
-                    Debug.Log($"no target word like - {formedWord}");
+                    Debug.Log($"Row {keyValuePair.Key} is empty");
                     continue;
                 }
 
-                int row = keyValuePair.Key;
+                if (!_wordSlotService.WordsToFind.Contains(formedWord, StringComparer.OrdinalIgnoreCase))
+                {
+                    Debug.Log($"Row {keyValuePair.Key} - {keyValuePair.Value} is not found");
+                    continue;
+                }
 
-                HideAllClustersOutlineIconInRow(row);
+                Debug.Log($"Found word: {formedWord} in row {keyValuePair.Key}");
+                HideAllClustersOutlineIconInRow(keyValuePair.Key, formedWord);
             }
         }
 
-        private bool NoSuchTargetWordBy(string formedWord)
-        {
-            return !_wordSlotService
-                .WordsToFind
-                .Any(targetWord => targetWord.Equals(formedWord, StringComparison.OrdinalIgnoreCase));
-        }
-
-        private void HideAllClustersOutlineIconInRow(int row)
+        private void HideAllClustersOutlineIconInRow(int row, string formedWord)
         {
             foreach (ClusterItem cluster in _clusterItemHolder.ClusterItems)
             {
                 if (!cluster.IsPlaced)
                     continue;
-                
-                foreach (WordSlot slot in _wordSlotService.GetWordSlotsByRow(row))
+
+                bool allLettersInWord = true;
+
+                foreach (char letter in cluster.Text)
                 {
-                    Debug.Log($"@@@: {cluster.Text} - {slot.CurrentLetter} - {cluster.Text.Contains(slot.CurrentLetter)}");
-                    
-                    if (slot.IsOccupied && slot.CurrentLetter != "" && cluster.Text.Contains(slot.CurrentLetter))
+                    if (formedWord.All(c => char.ToUpperInvariant(c) != char.ToUpperInvariant(letter)))
                     {
-                        cluster.HideOutlineIcon();
-                        cluster.SetBlocksRaycasts(false);
+                        allLettersInWord = false;
+                        break;
                     }
                 }
+
+                if (!allLettersInWord)
+                    continue;
+                
+                Debug.Log($"Hiding cluster: {cluster.Text} for word: {formedWord}");
+                cluster.HideOutlineIcon();
+                cluster.SetBlocksRaycasts(false);
             }
         }
     }
