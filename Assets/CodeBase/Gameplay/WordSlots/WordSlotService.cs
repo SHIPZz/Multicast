@@ -2,34 +2,29 @@
 using System.Collections.Generic;
 using System.Linq;
 using CodeBase.Common.Services.Persistent;
-using CodeBase.Data;
 using CodeBase.UI.WordSlots;
 using UniRx;
-using UnityEngine;
 using Zenject;
 
 namespace CodeBase.Gameplay.WordSlots
 {
-    //todo refactor: optimize, improve
-    public class WordSlotService : IWordSlotService, IInitializable, IDisposable, IProgressWatcher
+    public class WordSlotService : IWordSlotService, IInitializable, IDisposable
     {
-        private const int MaxWordCount = 4;
-
-        private readonly List<string> _targetWordsToFind = new();
         private readonly Subject<bool> _onValidationResult = new();
+        private readonly IWordSlotRepository _repository;
         private readonly IPersistentService _persistentService;
-        private Dictionary<int, Dictionary<int, WordSlot>> _wordsByColumnAndRow = new();
-
+        
         private WordSlotHolder _wordSlotHolder;
 
         public WordSlotService(IPersistentService persistentService)
         {
             _persistentService = persistentService;
+            _repository = new WordSlotRepository();
         }
 
         public int LastFormedWordCount { get; private set; }
 
-        public int SlotCount => _wordSlotHolder.WordSlots.Count;
+        public int SlotCount => _repository.SlotCount;
 
         public IObservable<bool> OnValidationResult => _onValidationResult;
 
@@ -44,30 +39,35 @@ namespace CodeBase.Gameplay.WordSlots
             get
             {
                 int maxLength = 0;
-
-                foreach (var word in _targetWordsToFind)
+                
+                foreach (var word in _repository.GetTargetWords())
                 {
                     if (word.Length > maxLength)
                         maxLength = word.Length;
                 }
-
+                
                 return maxLength;
             }
         }
 
-        public IReadOnlyList<string> WordsToFind => _targetWordsToFind;
+        public IReadOnlyList<string> WordsToFind => _repository.GetTargetWords();
 
         public void Initialize()
         {
-            _persistentService.RegisterProgressWatcher(this);
+            _persistentService.RegisterProgressWatcher(_repository);
         }
 
         public void Dispose()
         {
-            _persistentService.UnregisterProgressWatcher(this);
+            _persistentService.UnregisterProgressWatcher(_repository);
+            _onValidationResult.Dispose();
         }
 
-        public void SetCurrentWordSlotHolder(WordSlotHolder wordSlotHolder) => _wordSlotHolder = wordSlotHolder;
+        public void SetCurrentWordSlotHolder(WordSlotHolder wordSlotHolder)
+        {
+            _wordSlotHolder = wordSlotHolder;
+            _repository.SetWordSlotHolder(wordSlotHolder);
+        }
 
         public IEnumerable<WordSlot> GetWordSlotsByRow(int row)
         {
@@ -81,7 +81,7 @@ namespace CodeBase.Gameplay.WordSlots
                 if (row.Value.ContainsValue(slot))
                     return row.Key;
             }
-
+            
             return -1;
         }
 
@@ -101,136 +101,61 @@ namespace CodeBase.Gameplay.WordSlots
 
         public void SetTargetWordsToFind(IEnumerable<string> words)
         {
-            foreach (string word in words)
-            {
-                if (_targetWordsToFind.Count >= MaxWordCount)
-                    break;
-
-                Debug.Log($"Target word: {word}");
-
-                _targetWordsToFind.Add(word);
-            }
+            _repository.SetTargetWords(words);
         }
 
         public void Cleanup()
         {
-            _targetWordsToFind.Clear();
-            _wordsByColumnAndRow.Clear();
+            _repository.Clear();
+            
             LastFormedWordCount = 0;
         }
 
         public bool ValidateFormedWords()
         {
-            var formedWords = GetFormedWords();
+            IReadOnlyDictionary<int, string> formedWords = GetFormedWords();
             IReadOnlyList<string> wordsToFind = WordsToFind;
 
-            if (formedWords.Count != WordsToFind.Count)
-            {
-                _onValidationResult.OnNext(false);
+            if (FormedWordCountLessTargetWordCount(formedWords, wordsToFind)) 
                 return false;
-            }
 
-            foreach (var word in formedWords.Values)
-            {
-                if (!wordsToFind.Contains(word, StringComparer.OrdinalIgnoreCase))
-                {
-                    _onValidationResult.OnNext(false);
-                    return false;
-                }
-            }
+            if (TargetWordNotFound(formedWords, wordsToFind)) 
+                return false;
 
             _onValidationResult.OnNext(true);
             return true;
         }
 
+        private bool FormedWordCountLessTargetWordCount(IReadOnlyDictionary<int, string> formedWords, IReadOnlyList<string> wordsToFind)
+        {
+            if (formedWords.Count != wordsToFind.Count)
+            {
+                _onValidationResult.OnNext(false);
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool TargetWordNotFound(IReadOnlyDictionary<int, string> formedWords, IReadOnlyList<string> wordsToFind)
+        {
+            foreach (var word in formedWords.Values)
+            {
+                if (!wordsToFind.Contains(word, StringComparer.OrdinalIgnoreCase))
+                {
+                    _onValidationResult.OnNext(false);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public IReadOnlyDictionary<int, string> GetFormedWords()
         {
-            var formedWords = new Dictionary<int, string>();
-            
-            if (_wordSlotHolder == null)
-                return formedWords;
-            
-            foreach (KeyValuePair<int, Dictionary<int, WordSlot>> row in _wordSlotHolder.GetSlotsByRowAndColumn())
-            {
-                string word = "";
-
-                foreach (var slot in row.Value.Values)
-                {
-                    if (slot.IsOccupied)
-                        word += slot.CurrentLetter;
-                }
-
-                if (!string.IsNullOrEmpty(word))
-                    formedWords[row.Key] = word;
-            }
-
+            IReadOnlyDictionary<int, string> formedWords = _repository.GetFormedWords();
             LastFormedWordCount = formedWords.Count;
-
             return formedWords;
-        }
-
-        public void Save(ProgressData progressData)
-        {
-            PlayerData playerData = progressData.PlayerData;
-            playerData.WordsToFind.Clear();
-            playerData.WordSlotsByRowAndColumns.Clear();
-
-            FillFormedWordsFromHolder();
-
-            IReadOnlyDictionary<int, string> formedWords = GetFormedWords();
-
-            playerData.WordsToFind.AddRange(_targetWordsToFind);
-
-            foreach (KeyValuePair<int, string> word in formedWords)
-            {
-                Debug.Log($"{word.Value} - saved word");
-            }
-        }
-
-        public void Load(ProgressData progressData)
-        {
-            SetTargetWordsFromData(progressData);
-            SetFormedWordsFromData(progressData);
-        }
-
-        private void SetTargetWordsFromData(ProgressData progressData)
-        {
-            _targetWordsToFind.AddRange(progressData.PlayerData.WordsToFind);
-        }
-
-        private void SetFormedWordsFromData(ProgressData progressData)
-        {
-            if (_wordSlotHolder == null)
-                return;
-
-            foreach (var rowData in progressData.PlayerData.WordSlotsByRowAndColumns)
-            {
-                int row = rowData.Key;
-                foreach (var columnData in rowData.Value)
-                {
-                    int column = columnData.Key;
-                    string letter = columnData.Value;
-
-                    if (!string.IsNullOrEmpty(letter))
-                    {
-                        WordSlot slot = _wordSlotHolder.GetSlotByRowAndColumn(row, column);
-
-                        if (slot != null)
-                        {
-                            slot.SetLetter(letter[0]);
-                        }
-                    }
-                }
-            }
-        }
-
-        private void FillFormedWordsFromHolder()
-        {
-            if (_wordSlotHolder == null)
-                return;
-
-            IReadOnlyDictionary<int, Dictionary<int, WordSlot>> slotsByRowAndColumn = _wordSlotHolder.GetSlotsByRowAndColumn();
-            _wordsByColumnAndRow = new Dictionary<int, Dictionary<int, WordSlot>>(slotsByRowAndColumn);
         }
     }
 }

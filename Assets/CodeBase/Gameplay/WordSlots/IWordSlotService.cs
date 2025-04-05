@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using CodeBase.UI.WordSlots;
 
 namespace CodeBase.Gameplay.WordSlots
@@ -13,6 +14,7 @@ namespace CodeBase.Gameplay.WordSlots
         int MaxLettersInWord { get; }
         IReadOnlyList<string> WordsToFind { get; }
         bool NewWordFormed { get; }
+        IObservable<bool> OnValidationResult { get; }
         void SetTargetWordsToFind(IEnumerable<string> words);
         int GetRowBySlot(WordSlot slot);
         int GetColumnBySlot(WordSlot slot);
