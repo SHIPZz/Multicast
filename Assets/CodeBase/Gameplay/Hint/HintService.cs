@@ -4,10 +4,11 @@ using System.Linq;
 using CodeBase.Gameplay.Common.Services.Level;
 using CodeBase.Gameplay.WordSlots;
 using UniRx;
+using Zenject;
 
 namespace CodeBase.Gameplay.Hint
 {
-    public class HintService : IHintService, IDisposable
+    public class HintService : IHintService, IInitializable, IDisposable
     {
         private const int MaxHintsPerLevel = 3;
 
@@ -31,18 +32,23 @@ namespace CodeBase.Gameplay.Hint
             _levelService = levelService;
         }
 
-        public void Initialize()
+        public void Init()
         {
             SetRemainingHints(MaxHintsPerLevel);
 
+            IEnumerable<string> firstTwoLettersOfWords = _wordSlotService
+                .WordsToFind
+                .Select(w => w.Length >= 2 ? w.Substring(0, 2).ToUpper() : w.ToUpper());
+            
+            _hint = $"Подсказка(первые 2 буквы в нужных словах): {string.Join(", ", firstTwoLettersOfWords)}";
+        }
+
+        public void Initialize()
+        {
             _levelService
                 .OnLevelCompleted
                 .Subscribe(_ => SetRemainingHints(MaxHintsPerLevel))
                 .AddTo(_disposables);
-
-
-            IEnumerable<string> firstTwoLettersOfWords = _wordSlotService.WordsToFind.Select(w => w.Length >= 2 ? w.Substring(0, 2).ToUpper() : w.ToUpper());
-            _hint = $"Подсказка: {string.Join(", ", firstTwoLettersOfWords)}";
         }
 
         private void SetRemainingHints(int maxHintsPerLevel)

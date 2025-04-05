@@ -15,20 +15,13 @@ namespace CodeBase.UI.Cluster
         
         private IClusterUIFactory _clusterUIFactory;
         private WordSlotHolder _wordSlotHolder;
-        private IClusterUIPlacementService _clusterUIPlacementService;
-
-        public IReadOnlyList<ClusterItem> ClusterItems => _clusterItems;
+        private IClusterService _clusterService;
 
         [Inject] 
-        private void Construct(IClusterUIFactory clusterUIFactory, IClusterUIPlacementService uiPlacementService)
+        private void Construct(IClusterUIFactory clusterUIFactory, IClusterService clusterService)
         {
+            _clusterService = clusterService;
             _clusterUIFactory = clusterUIFactory;
-            _clusterUIPlacementService = uiPlacementService;
-        }
-
-        private void Start()
-        {
-            _clusterUIPlacementService.SetClusterItemHolder(this);
         }
 
         public void Clear()
@@ -48,9 +41,9 @@ namespace CodeBase.UI.Cluster
                 ClusterItem clusterItem = _clusterUIFactory.CreateClusterItem(_clusterItemLayout);
             
                 clusterItem.Initialize(cluster, _clusterItemLayout, parentCanvas);
-                
+                _clusterService.RegisterCreatedCluster(clusterItem);
                 _clusterItems.Add(clusterItem);
             }
         }
     }
-} 
+}

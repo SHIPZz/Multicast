@@ -37,7 +37,10 @@ namespace CodeBase.UI.Services.Window
             var windowType = typeof(TWindow);
 
             if (_windowBindings.ContainsKey(windowType))
-                throw new InvalidOperationException($"Window type {windowType.Name} is already bound.");
+            {
+                Debug.LogWarning($"Window type {windowType.Name} is already bound.");
+                return;
+            }
 
             _windowBindings[windowType] = new WindowBindingInfo
             {

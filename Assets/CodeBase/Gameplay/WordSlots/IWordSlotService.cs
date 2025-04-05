@@ -6,17 +6,19 @@ namespace CodeBase.Gameplay.WordSlots
     public interface IWordSlotService
     {
         void SetCurrentWordSlotHolder(WordSlotHolder wordSlotHolder);
-        IReadOnlyDictionary<int,string> GetFormedWordsFromRows();
-        List<WordSlot> GetWordSlotsByRow(int row);
+        IEnumerable<WordSlot> GetWordSlotsByRow(int row);
         WordSlot GetTargetSlot(int index);
         int IndexOf(WordSlot wordSlot);
         int SlotCount { get; }
         int MaxLettersInWord { get; }
         IReadOnlyList<string> WordsToFind { get; }
-        bool HasFormedWords { get; }
-        int FormedWordCount { get; }
-        int LastFormedWordCount { get; }
         bool NewWordFormed { get; }
-        void Init(IEnumerable<string> words);
+        void SetTargetWordsToFind(IEnumerable<string> words);
+        int GetRowBySlot(WordSlot slot);
+        int GetColumnBySlot(WordSlot slot);
+        WordSlot GetWordSlotByRowAndColumn(int row, int column);
+        bool ValidateFormedWords();
+        void Cleanup();
+        IReadOnlyDictionary<int, string> GetFormedWords();
     }
 }

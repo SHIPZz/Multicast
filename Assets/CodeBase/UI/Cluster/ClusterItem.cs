@@ -16,16 +16,16 @@ namespace CodeBase.UI.Cluster
         [SerializeField] private Image _outlineIcon;
 
         private string _clusterText;
-        private IClusterUIPlacementService _clusterUIPlacementService;
+        private IClusterService _clusterService;
         private IWordSlotService _wordSlotService;
 
         public string Text => _clusterText;
 
         [Inject]
-        private void Construct(IClusterUIPlacementService uiPlacementService, IWordSlotService wordSlotService)
+        private void Construct(IClusterService service, IWordSlotService wordSlotService)
         {
             _wordSlotService = wordSlotService;
-            _clusterUIPlacementService = uiPlacementService;
+            _clusterService = service;
         }
 
         public void Initialize(string text, Transform parent, Canvas parentCanvas)
@@ -41,7 +41,7 @@ namespace CodeBase.UI.Cluster
         {
             base.OnBeginDrag(eventData);
 
-            _clusterUIPlacementService.OnClusterSelected(this);
+            _clusterService.OnClusterSelected(this);
         }
 
         public override void OnEndDrag(PointerEventData eventData)
@@ -49,17 +49,20 @@ namespace CodeBase.UI.Cluster
             GameObject raycastObject = eventData.pointerCurrentRaycast.gameObject;
             var wordSlot = raycastObject?.GetComponent<WordSlot>();
             
+            PlaceToSlot(wordSlot);
+        }
+
+        public void PlaceToSlot(WordSlot wordSlot)
+        {
             if (wordSlot == null || wordSlot.IsOccupied)
             {
                 ReturnToStartPosition();
                 return;
             }
             
-            int startIndex = _wordSlotService.IndexOf(wordSlot);
-
-            if (_clusterUIPlacementService.TryPlaceCluster(_clusterText, startIndex))
+            if (_clusterService.TryPlaceCluster(this, wordSlot))
             {
-                MarkPlaced(startIndex);
+                MarkPlacedTo(wordSlot);
                 return;
             }
 
@@ -77,14 +80,14 @@ namespace CodeBase.UI.Cluster
             base.OnReset();
             _text.enabled = true;
             ShowOutlineIcon();
-            _clusterUIPlacementService.ResetCluster(_clusterText);
+            _clusterService.ResetCluster(this);
         }
 
-        private void MarkPlaced(int startIndex)
+        public void MarkPlacedTo(WordSlot wordSlot)
         {
             IsPlaced = true;
             _text.enabled = false;
-            MoveToCenter(_wordSlotService.GetTargetSlot(startIndex).transform);
+            MoveToCenter(wordSlot.transform);
             CanvasGroup.blocksRaycasts = true;
         }
 

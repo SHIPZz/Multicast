@@ -1,4 +1,5 @@
 ﻿using System;
+using CodeBase.Common.Services.InternetConnection;
 using CodeBase.Infrastructure.Loading;
 using CodeBase.Infrastructure.States.StateInfrastructure;
 using CodeBase.Infrastructure.States.StateMachine;
@@ -11,9 +12,14 @@ namespace CodeBase.Infrastructure.States.States
         private readonly IWindowService _windowService;
         private readonly ISceneLoader _sceneLoader;
         private readonly IStateMachine _stateMachine;
+        private readonly IInternetConnectionService _internetConnectionService;
 
-        public LoadGameState(IWindowService windowService, ISceneLoader sceneLoader, IStateMachine stateMachine)
+        public LoadGameState(IWindowService windowService,
+            IInternetConnectionService internetConnectionService,
+            ISceneLoader sceneLoader,
+            IStateMachine stateMachine)
         {
+            _internetConnectionService = internetConnectionService;
             _stateMachine = stateMachine;
             _sceneLoader = sceneLoader;
             _windowService = windowService ?? throw new ArgumentNullException(nameof(windowService));
@@ -21,6 +27,9 @@ namespace CodeBase.Infrastructure.States.States
 
         public void Enter()
         {
+            if(!_internetConnectionService.CheckConnection())
+                return;
+            
             _windowService.CloseAll();
             
             _sceneLoader.LoadScene(Scenes.Game, () =>_stateMachine.Enter<GameState>());

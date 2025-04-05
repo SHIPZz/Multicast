@@ -4,7 +4,9 @@ using CodeBase.Infrastructure.States.StateInfrastructure;
 using CodeBase.Infrastructure.States.StateMachine;
 using CodeBase.UI.Game;
 using CodeBase.UI.Hint;
+using CodeBase.UI.LoadingWindow;
 using CodeBase.UI.Menu;
+using CodeBase.UI.NoInternet;
 using CodeBase.UI.Services.Window;
 using CodeBase.UI.Settings;
 using CodeBase.UI.Victory;
@@ -29,20 +31,8 @@ namespace CodeBase.Infrastructure.States.States
         public void Enter()
         {
             _windowService.CloseAll();
-            _windowService.CleanupBindings();
-            
-            BindWindows();
             
             _sceneLoader.LoadScene(Scenes.Menu, () => _stateMachine.Enter<MenuState>());
-        }
-
-        private void BindWindows()
-        {
-            _windowService.Bind<GameWindow,GameWindowController>();
-            _windowService.Bind<MenuWindow,MenuWindowController>();
-            _windowService.Bind<SettingsWindow,SettingsWindowController>();
-            _windowService.Bind<VictoryWindow,VictoryWindowController>();
-            _windowService.Bind<HintWindow,HintWindowController>();
         }
 
         public void Exit()

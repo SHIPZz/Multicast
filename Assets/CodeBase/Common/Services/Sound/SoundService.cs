@@ -13,8 +13,7 @@ namespace CodeBase.Common.Services.Sound
         private readonly IPersistentService _persistentService;
         private readonly ISoundFactory _soundFactory;
 
-        private readonly Dictionary<SoundTypeId, SoundPlayerView> _soundPlayers =
-            new Dictionary<SoundTypeId, SoundPlayerView>();
+        private readonly Dictionary<SoundTypeId, SoundPlayerView> _soundPlayers = new();
 
         private bool _isSoundEnabled;
 

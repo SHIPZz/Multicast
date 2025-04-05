@@ -53,7 +53,7 @@ namespace CodeBase.UI.Victory
         {
             _windowService.Close<VictoryWindow>();
             
-            _stateMachine.Enter<LoadGameState>();
+            _stateMachine.Enter<CleanupBeforeLoadingGameState>();
         }
 
         private void OnMainMenuClicked()

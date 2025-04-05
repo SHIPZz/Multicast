@@ -8,7 +8,7 @@ namespace CodeBase.Gameplay.Hint
         IObservable<int> OnHintsCountChanged { get; }
         
         int RemainingHints { get; }
-        void Initialize();
+        void Init();
         void ShowHint();
         bool CanShowHint();
     }

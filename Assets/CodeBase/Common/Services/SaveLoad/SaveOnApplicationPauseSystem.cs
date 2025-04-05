@@ -1,15 +1,12 @@
 ﻿using System;
 using CodeBase.Common.Services.Persistent;
-using CodeBase.Data;
 using UnityEngine;
-using Zenject;
 
 namespace CodeBase.Common.Services.SaveLoad
 {
-    public class SaveOnApplicationPauseSystem : ISaveOnApplicationPauseSystem, IInitializable, IDisposable
+    public class SaveOnApplicationPauseSystem : ISaveOnApplicationPauseSystem, IDisposable
     {
-        private ProgressData _currentData;
-        private IPersistentService _persistentService;
+        private readonly IPersistentService _persistentService;
 
         public SaveOnApplicationPauseSystem(IPersistentService persistentService)
         {
@@ -24,8 +21,6 @@ namespace CodeBase.Common.Services.SaveLoad
         public void Dispose()
         {
             Application.focusChanged -= OnApplicationFocusChanged;
-            
-            Save();
         }
 
         private void OnApplicationFocusChanged(bool hasFocus)
@@ -39,11 +34,6 @@ namespace CodeBase.Common.Services.SaveLoad
         private void Save()
         {
             _persistentService.Save();
-        }
-
-        public void UpdateData(ProgressData newData)
-        {
-            _currentData = newData;
         }
     }
 }

@@ -10,7 +10,9 @@ namespace CodeBase.Common.Services.Persistent
 
         private readonly ISaveLoadSystem _saveLoadSystem;
         
-        private ProgressData _progressData;
+        private ProgressData _currentProgress;
+        
+        public ProgressData CurrentProgress => _currentProgress;
 
         public PersistentService(ISaveLoadSystem saveLoadSystem)
         {
@@ -19,11 +21,9 @@ namespace CodeBase.Common.Services.Persistent
 
         public void RegisterProgressWatcher(IProgressWatcher progressWatcher)
         {
-            if(_progressData == null)
+            if(_currentProgress == null)
                 Load();
             
-            progressWatcher.Load(_progressData);
-
             if (!_progressWatchers.Contains(progressWatcher))
             {
                 _progressWatchers.Add(progressWatcher);
@@ -32,16 +32,16 @@ namespace CodeBase.Common.Services.Persistent
 
         public void Load()
         {
-            _progressData = _saveLoadSystem.Load();
+            _currentProgress = _saveLoadSystem.Load();
         }
 
         public void LoadAll()
         {
-            _progressData = _saveLoadSystem.Load();
+            Load();
 
             foreach (IProgressWatcher progressWatcher in _progressWatchers)
             {
-                progressWatcher.Load(_progressData);
+                progressWatcher.Load(_currentProgress);
             }
         }
         
@@ -49,10 +49,10 @@ namespace CodeBase.Common.Services.Persistent
         {
             foreach (IProgressWatcher progressWatcher in _progressWatchers)
             {
-                progressWatcher.Save(_progressData);
+                progressWatcher.Save(_currentProgress);
             }
 
-            _saveLoadSystem.Save(_progressData);
+            _saveLoadSystem.Save(_currentProgress);
         }
 
         public void UnregisterProgressWatcher(IProgressWatcher progressWatcher)

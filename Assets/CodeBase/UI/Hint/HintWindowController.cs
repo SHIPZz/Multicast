@@ -1,4 +1,3 @@
-using CodeBase.Gameplay.Cluster;
 using CodeBase.Gameplay.Hint;
 using CodeBase.UI.Controllers;
 using CodeBase.UI.Services.Window;
@@ -8,19 +7,14 @@ namespace CodeBase.UI.Hint
 {
     public class HintWindowController : IController<HintWindow>
     {
-        private readonly IClusterService _clusterService;
         private readonly IHintService _hintService;
         private readonly IWindowService _windowService;
         private readonly CompositeDisposable _disposables = new();
 
         private HintWindow _window;
 
-        public HintWindowController(
-            IClusterService clusterService,
-            IHintService hintService,
-            IWindowService windowService)
+        public HintWindowController(IHintService hintService, IWindowService windowService)
         {
-            _clusterService = clusterService;
             _hintService = hintService;
             _windowService = windowService;
         }

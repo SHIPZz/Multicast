@@ -3,7 +3,6 @@ using System.Linq;
 using CodeBase.Common.Services.Persistent;
 using CodeBase.Common.Services.Unity;
 using CodeBase.Data;
-using CodeBase.Gameplay.Cluster;
 using CodeBase.Gameplay.SO.Level;
 using CodeBase.Gameplay.WordSlots;
 using Newtonsoft.Json;
@@ -18,9 +17,10 @@ namespace CodeBase.Gameplay.Common.Services.Level
         IInitializable
         , IDisposable
     {
-        private readonly IClusterService _clusterService;
         private readonly Subject<LevelData> _onLevelLoaded = new();
         private readonly Subject<Unit> _onLevelCompleted = new();
+        private readonly CompositeDisposable _disposables = new();
+        
         private readonly LevelDataSO _levelDataSo;
         private readonly IUnityRemoteConfigService _unityRemoteConfigService;
         private readonly IWordSlotService _wordSlotService;
@@ -33,7 +33,7 @@ namespace CodeBase.Gameplay.Common.Services.Level
         private int _currentLevelIndex = 1;
         private int _totalLevelCount;
 
-        public LevelService(IClusterService clusterService,
+        public LevelService(
             LevelDataSO levelDataSO,
             IWordSlotService wordSlotService,
             IPersistentService persistentService,
@@ -44,12 +44,15 @@ namespace CodeBase.Gameplay.Common.Services.Level
             _wordSlotService = wordSlotService;
             _levelDataSo = levelDataSO;
             _unityRemoteConfigService = unityRemoteConfigService;
-            _clusterService = clusterService;
         }
 
         public void Initialize()
         {
-            _totalLevelCount = _unityRemoteConfigService.GetKeys().Count(x => x.Contains("level_")) + _levelDataSo.Levels.Count;
+            _unityRemoteConfigService
+                .OnNewDataLoaded
+                .Subscribe(_ =>_totalLevelCount = _unityRemoteConfigService.GetKeys().Count(x => x.Contains("level_")) + _levelDataSo.Levels.Count)
+                .AddTo(_disposables);
+            
             _persistentService.RegisterProgressWatcher(this);
             Debug.Log($"{_totalLevelCount} total levels");
         }
@@ -59,6 +62,7 @@ namespace CodeBase.Gameplay.Common.Services.Level
             _onLevelLoaded?.Dispose();
             _onLevelCompleted?.Dispose();
             _persistentService.UnregisterProgressWatcher(this);
+            _disposables?.Dispose();
         }
 
         public void Load(ProgressData progressData) => _currentLevel = GetTargetLevelData(progressData.PlayerData.Level);
@@ -103,7 +107,7 @@ namespace CodeBase.Gameplay.Common.Services.Level
             if (_currentLevel == null)
                 return;
 
-            bool isValid = _clusterService.ValidateClusters(_wordSlotService.GetFormedWordsFromRows().Values, _wordSlotService.WordsToFind);
+            bool isValid = _wordSlotService.ValidateFormedWords();
 
             if (isValid)
             {

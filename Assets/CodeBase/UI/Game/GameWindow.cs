@@ -18,6 +18,7 @@ namespace CodeBase.UI.Game
         [SerializeField] private Transform _wordSlotHolderParent;
         [SerializeField] private Canvas _canvas;
         [SerializeField] private Button _hintButton;
+        [SerializeField] private Button _restartButton;
 
         [SerializeField] private Transform _clusterItemHolderParent;
         [SerializeField] private Button _validateButton;
@@ -29,6 +30,8 @@ namespace CodeBase.UI.Game
 
         public IObservable<Unit> OnValidateClicked => _validateButton.OnClickAsObservable();
         public IObservable<Unit> OnHintClicked => _hintButton.OnClickAsObservable();
+        
+        public IObservable<Unit> OnRestartClicked => _restartButton.OnClickAsObservable();
 
         [Inject]
         private void Construct(
@@ -40,6 +43,16 @@ namespace CodeBase.UI.Game
             _clusterUIFactory = clusterUIFactory;
         }
 
+        public void FillWordSlots(int row, string text)
+        {
+            _wordSlotHolder.FillWordSlots(row, text);
+        }
+        
+        public void FillWordSlotsWithPositions(int row, Dictionary<int, char> slotPositions)
+        {
+            _wordSlotHolder.FillWordSlotsWithPositions(row, slotPositions);
+        }
+
         public void CreateWordSlotHolder()
         {
             if (_wordSlotHolder == null)
@@ -48,11 +61,15 @@ namespace CodeBase.UI.Game
             _wordSlotHolder.CreateWordSlots();
         }
 
-        public void CreateClusterItemHolder(IEnumerable<string> clusters)
+        public void CreateClusterItemHolder()
         {
             if (_clusterItemHolder == null)
                 _clusterItemHolder = _clusterUIFactory.CreateClusterItemHolder(_clusterItemHolderParent);
 
+        }
+
+        public void CreateClusterItems(IEnumerable<string> clusters)
+        {
             _clusterItemHolder.CreateClusterItems(clusters, _canvas);
         }
 

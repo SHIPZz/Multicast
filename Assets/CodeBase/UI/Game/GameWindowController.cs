@@ -1,16 +1,20 @@
+using System.Collections.Generic;
+using System.Linq;
 using CodeBase.Common.Services.Sound;
 using CodeBase.Data;
-using CodeBase.Gameplay.Cluster;
 using CodeBase.Gameplay.Common.Services.Level;
 using CodeBase.Gameplay.Hint;
 using CodeBase.Gameplay.Sound;
 using CodeBase.Gameplay.WordSlots;
+using CodeBase.Infrastructure.States.StateMachine;
+using CodeBase.Infrastructure.States.States;
 using CodeBase.UI.Controllers;
 using CodeBase.UI.Hint;
 using CodeBase.UI.Services.Cluster;
 using CodeBase.UI.Services.Window;
 using CodeBase.UI.Victory;
 using UniRx;
+using UnityEngine;
 
 namespace CodeBase.UI.Game
 {
@@ -21,31 +25,44 @@ namespace CodeBase.UI.Game
         private readonly IClusterService _clusterService;
         private readonly CompositeDisposable _disposables = new();
         private readonly IHintService _hintService;
-        private readonly IClusterUIPlacementService _clusterUIPlacementService;
         private readonly IWordSlotService _wordSlotService;
         private readonly ISoundService _soundService;
-        
+        private readonly IStateMachine _stateMachine;
+
         private GameWindow _window;
 
         public GameWindowController(
             ILevelService levelService,
             IClusterService clusterService,
-            IClusterUIPlacementService clusterUIPlacementService,
             IWordSlotService wordSlotService,
             ISoundService soundService,
             IHintService hintService,
-            IWindowService windowService)
+            IWindowService windowService,
+            IStateMachine stateMachine)
         {
             _soundService = soundService;
             _wordSlotService = wordSlotService;
-            _clusterUIPlacementService = clusterUIPlacementService;
             _hintService = hintService;
             _clusterService = clusterService;
             _levelService = levelService;
             _windowService = windowService;
+            _stateMachine = stateMachine;
         }
 
         public void Initialize()
+        {
+            ProcessLevelServiceEvents();
+
+            ProcessHintServiceEvent();
+
+            ProcessWindowButtonsClicks();
+        }
+
+        public void BindView(GameWindow window) => _window = window;
+
+        public void Dispose() => _disposables?.Dispose();
+
+        private void ProcessLevelServiceEvents()
         {
             _levelService.OnLevelLoaded
                 .Subscribe(OnLevelLoaded)
@@ -54,12 +71,18 @@ namespace CodeBase.UI.Game
             _levelService.OnLevelCompleted
                 .Subscribe(_ => OnLevelCompleted())
                 .AddTo(_disposables);
-            
+        }
+
+        private void ProcessHintServiceEvent()
+        {
             _hintService
                 .OnHintsCountChanged
                 .Subscribe(hintCount => _window.SetHintButtonActive(hintCount > 0))
                 .AddTo(_disposables);
+        }
 
+        private void ProcessWindowButtonsClicks()
+        {
             _window.OnValidateClicked
                 .Subscribe(_ => OnValidateClicked())
                 .AddTo(_disposables);
@@ -67,30 +90,40 @@ namespace CodeBase.UI.Game
             _window.OnHintClicked
                 .Subscribe(_ => OnHintClicked())
                 .AddTo(_disposables);
+
+            _window
+                .OnRestartClicked
+                .Subscribe(_ => _stateMachine.Enter<CleanupBeforeLoadingGameState>())
+                .AddTo(_disposables);
         }
-
-        public void BindView(GameWindow window) => _window = window;
-
-        public void Dispose() => _disposables?.Dispose();
 
         private void OnLevelLoaded(LevelData levelData)
         {
             _window.Cleanup();
-            
+
             _window.SetInteractableItemsActive(true);
-            
+
             _window.CreateWordSlotHolder();
 
-            _window.CreateClusterItemHolder(_clusterService.GetAvailableClusters());
+            _window.CreateClusterItemHolder();
+            
+            IEnumerable<string> placedClusters = _clusterService.GetPlacedClustersFromData();
+            IEnumerable<string> availableClusters = _clusterService.GetAvailableClusters();
+
+            IEnumerable<string> targetClusters = placedClusters.Union(availableClusters);
+
+            _window.CreateClusterItems(targetClusters);
+            
+            _clusterService.RestorePlacedClusters();
         }
 
         private void OnValidateClicked()
         {
-            _clusterUIPlacementService.CheckAndHideFilledClusters();
-            
-            if(_wordSlotService.NewWordFormed)
+            _clusterService.CheckAndHideFilledClusters();
+
+            if (_wordSlotService.NewWordFormed)
                 _soundService.Play(SoundTypeId.WordFormedFound);
-            
+
             _levelService.ValidateLevel();
         }
 
@@ -99,8 +132,8 @@ namespace CodeBase.UI.Game
         private void OnLevelCompleted()
         {
             _window.SetInteractableItemsActive(false);
-            
+
             _windowService.OpenWindow<VictoryWindow>(onTop: true);
         }
     }
-} 
+}

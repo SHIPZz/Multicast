@@ -7,26 +7,28 @@ namespace CodeBase.UI.WordSlots
     {
         [SerializeField] private Transform _placeHolder;
         [SerializeField] private TextMeshProUGUI _letterText;
-        
-        private bool _isOccupied;
-        private string _currentLetter;
+
+        [field: SerializeField] private bool _isOccupied;
+
+        private char _currentLetter;
 
         public bool IsOccupied => _isOccupied;
-        public string CurrentLetter => _currentLetter;
+        public char CurrentLetter => _currentLetter;
 
-        public void SetLetter(string letter)
+        public void SetLetter(char letter)
         {
             _currentLetter = letter;
-            _letterText.text = letter;
-            _isOccupied = true;
+            _letterText.text = letter.ToString();
+
+            if (_currentLetter != '\0')
+                _isOccupied = true;
         }
 
         public void Clear()
         {
-            _currentLetter = string.Empty;
+            _currentLetter = '\0';
             _letterText.text = string.Empty;
             _isOccupied = false;
         }
     }
-} 
-    
+}

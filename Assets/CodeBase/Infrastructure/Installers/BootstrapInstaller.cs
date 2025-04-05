@@ -1,8 +1,8 @@
-﻿using CodeBase.Common.Services.Persistent;
+﻿using CodeBase.Common.Services.InternetConnection;
+using CodeBase.Common.Services.Persistent;
 using CodeBase.Common.Services.SaveLoad;
 using CodeBase.Common.Services.Sound;
 using CodeBase.Common.Services.Unity;
-using CodeBase.Gameplay.Cluster;
 using CodeBase.Gameplay.Common.Services.Level;
 using CodeBase.Gameplay.Hint;
 using CodeBase.Gameplay.WordSlots;
@@ -33,12 +33,17 @@ namespace CodeBase.Infrastructure.Installers
             BindStates();
             BindLevelService();
             BindClusterService();
-            BindClusterPlacementService();
             BindHintService();
             BindUnityRemoteConfigService();
             SetupDevice();
+            BindInternetConnectionService();
 
             Container.BindInterfacesAndSelfTo<StateMachine>().AsSingle();
+        }
+
+        private void BindInternetConnectionService()
+        {
+            Container.BindInterfacesTo<InternetConnectionService>().AsSingle();
         }
 
         private void SetupDevice()
@@ -58,19 +63,14 @@ namespace CodeBase.Infrastructure.Installers
             Container.BindInterfacesTo<HintService>().AsSingle();
         }
 
-        private void BindClusterPlacementService()
-        {
-            Container.Bind<IClusterUIPlacementService>().To<ClusterUIPlacementService>().AsSingle();
-        }
-
         private void BindClusterService()
         {
-            Container.Bind<IClusterService>().To<ClusterService>().AsSingle();
+            Container.BindInterfacesTo<ClusterService>().AsSingle();
         }
 
         private void BindLevelService()
         {
-            Container.Bind<ILevelService>().To<LevelService>().AsSingle();
+            Container.BindInterfacesTo<LevelService>().AsSingle();
         }
 
         private void BindUIServices()
@@ -79,7 +79,7 @@ namespace CodeBase.Infrastructure.Installers
             Container.Bind<IUIProvider>().To<UIProvider>().AsSingle();
             Container.Bind<IUIStaticDataService>().To<UIStaticDataService>().AsSingle();
             Container.Bind<IWordSlotUIFactory>().To<WordSlotUIFactory>().AsSingle();
-            Container.Bind<IWordSlotService>().To<WordSlotService>().AsSingle();
+            Container.BindInterfacesTo<WordSlotService>().AsSingle();
             Container.Bind<IClusterUIFactory>().To<ClusterUIFactory>().AsSingle();
         }
         
@@ -88,6 +88,7 @@ namespace CodeBase.Infrastructure.Installers
             Container.BindInterfacesAndSelfTo<BootstrapState>().AsSingle();
             Container.BindInterfacesAndSelfTo<LoadingMenuState>().AsSingle();
             Container.BindInterfacesAndSelfTo<MenuState>().AsSingle();
+            Container.BindInterfacesAndSelfTo<CleanupBeforeLoadingGameState>().AsSingle();
             Container.BindInterfacesAndSelfTo<LoadGameState>().AsSingle();
             Container.BindInterfacesAndSelfTo<GameState>().AsSingle();
         }
