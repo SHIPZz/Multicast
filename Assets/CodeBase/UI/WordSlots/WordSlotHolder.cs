@@ -12,14 +12,13 @@ namespace CodeBase.UI.WordSlots
 
         private readonly List<WordSlot> _wordSlots = new();
         private readonly Dictionary<int, List<WordSlot>> _rowSlots = new();
-        private readonly Dictionary<int, WordSlot> _columnSlots = new();
         private readonly Dictionary<int, Dictionary<int, WordSlot>> _slotsByRowAndColumn = new();
 
         private IWordSlotUIFactory _wordSlotUIFactory;
         private IWordSlotService _wordSlotService;
 
         public IReadOnlyList<WordSlot> WordSlots => _wordSlots;
-        public IReadOnlyDictionary<int, List<WordSlot>> GetRowSlots() => _rowSlots;
+
         public IReadOnlyDictionary<int, Dictionary<int, WordSlot>> GetSlotsByRowAndColumn() => _slotsByRowAndColumn;
 
         [Inject]
@@ -84,7 +83,6 @@ namespace CodeBase.UI.WordSlots
 
             _wordSlots.Clear();
             _rowSlots.Clear();
-            _columnSlots.Clear();
             _slotsByRowAndColumn.Clear();
         }
 
@@ -99,7 +97,6 @@ namespace CodeBase.UI.WordSlots
 
                 _wordSlots.Add(slot);
                 _rowSlots[row].Add(slot);
-                _columnSlots[column] = slot;
                 _slotsByRowAndColumn[row][column] = slot;
             }
         }

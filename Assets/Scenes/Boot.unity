@@ -465,6 +465,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4487217588879193071, guid: 9cc01d2336083cb44adea2f778bc3591, type: 3}
+      propertyPath: m_SortingOrder
+      value: 123
+      objectReference: {fileID: 0}
+    - target: {fileID: 4487217588879193071, guid: 9cc01d2336083cb44adea2f778bc3591, type: 3}
+      propertyPath: m_AdditionalShaderChannelsFlag
+      value: 25
+      objectReference: {fileID: 0}
     - target: {fileID: 5385843516378989114, guid: 9cc01d2336083cb44adea2f778bc3591, type: 3}
       propertyPath: m_Name
       value: UIParent

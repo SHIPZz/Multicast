@@ -78,11 +78,141 @@ namespace CodeBase.UI.Services.Cluster
             if (_clustersOccupiedSlots.TryGetValue(cluster.Text, out List<WordSlot> slots))
             {
                 foreach (WordSlot slot in slots)
+                {
+                    int rowIndex = _wordSlotService.GetRowBySlot(slot);
+                    int columnIndex = _wordSlotService.GetColumnBySlot(slot);
+                    
+                    FindAndClearByRowAndColumn(rowIndex, columnIndex);
+                    
                     slot.Clear();
+                }
 
                 _placedClusters.Remove(cluster.Text);
                 _clustersOccupiedSlots.Remove(cluster.Text);
                 _availableClusters.Add(cluster.Text);
+            }
+        }
+
+        public void CheckAndHideFilledClusters()
+        {
+            foreach (KeyValuePair<int, string> keyValuePair in _wordSlotService.GetFormedWords())
+            {
+                string formedWord = keyValuePair.Value;
+
+                int rowIndex = keyValuePair.Key;
+
+                if (SkipIfNullOrEmpty(formedWord, rowIndex))
+                    continue;
+
+                if (SkipIfFormedWordInAppropriate(formedWord, rowIndex, keyValuePair)) 
+                    continue;
+
+                Debug.Log($"Found word: {formedWord} in row {rowIndex}");
+                HideAllClustersOutlineIconInRow(rowIndex);
+            }
+        }
+
+        public void Cleanup()
+        {
+            _availableClusters.Clear();
+            _clustersByRow.Clear();
+            _placedClusters.Clear();
+            _clustersByRowAndColumns.Clear();
+            _clustersOccupiedSlots.Clear();
+        }
+
+        public void RestorePlacedClusters()
+        {
+            if (_placedClusters.Count == 0)
+                return;
+
+            var placedClustersCopy = new List<string>(_placedClusters);
+
+            foreach (string placedCluster in placedClustersCopy)
+            {
+                if (!_createdClusters.TryGetValue(placedCluster, out ClusterItem clusterItem))
+                {
+                    Debug.LogWarning($"Could not find created cluster item for text: {placedCluster}");
+                    continue;
+                }
+
+                RestoreClusterToSavedSlot(placedCluster, clusterItem);
+            }
+
+            CheckAndHideFilledClusters();
+        }
+
+        public void Save(ProgressData progressData)
+        {
+            PlayerData playerData = progressData.PlayerData;
+
+            CleanupCollections(playerData,playerData.ClustersByRows);
+
+            playerData.AvailableClusters.AddRange(_availableClusters);
+            
+            playerData.PlacedClusters.AddRange(_placedClusters);
+
+            foreach (KeyValuePair<int, List<ClusterItem>> keyValue in _clustersByRow)
+            foreach (ClusterItem clusterItem in keyValue.Value)
+            {
+                playerData.ClustersByRows[keyValue.Key] = clusterItem.Text;
+            }
+
+            playerData.PlacedClustersByRowAndColumns = _clustersByRowAndColumns;
+        }
+
+        public void Load(ProgressData progressData)
+        {
+            _availableClusters.AddRange(progressData.PlayerData.AvailableClusters);
+
+            _placedClusters.AddRange(progressData.PlayerData.PlacedClusters);
+
+            _clustersByRowAndColumns = new Dictionary<int, Dictionary<int, string>>(progressData.PlayerData.PlacedClustersByRowAndColumns);
+        }
+
+        private void RestoreClusterToSavedSlot(string placedCluster, ClusterItem clusterItem)
+        {
+            var clustersByRowAndColumnsCopy = new Dictionary<int, Dictionary<int, string>>(_clustersByRowAndColumns);
+
+            foreach (KeyValuePair<int, Dictionary<int, string>> rowCluster in clustersByRowAndColumnsCopy)
+            {
+                var columnClustersCopy = new Dictionary<int, string>(rowCluster.Value);
+                    
+                foreach (KeyValuePair<int, string> columnCluster in columnClustersCopy)
+                {
+                    if (columnCluster.Value == placedCluster)
+                    {
+                        WordSlot wordSlot = _wordSlotService.GetWordSlotByRowAndColumn(rowCluster.Key, columnCluster.Key);
+                            
+                        if (wordSlot != null && !wordSlot.IsOccupied)
+                        {
+                            clusterItem.PlaceToSlot(wordSlot);
+                            clusterItem.MarkPlacedTo(wordSlot);
+                        }
+                    }
+                }
+            }
+        }
+
+        private bool SkipIfFormedWordInAppropriate(string formedWord, int rowIndex, KeyValuePair<int, string> keyValuePair)
+        {
+            if (!_wordSlotService.WordsToFind.Contains(formedWord, StringComparer.OrdinalIgnoreCase))
+            {
+                Debug.Log($"Row {rowIndex} - {keyValuePair.Value} is not found. {_wordSlotService.WordsToFind.Count} - words to find");
+                return true;
+            }
+
+            return false;
+        }
+
+        private void FindAndClearByRowAndColumn(int targetWordSlotRow, int column)
+        {
+            if (_clustersByRowAndColumns.TryGetValue(targetWordSlotRow, out Dictionary<int, string> rowClusters))
+            {
+                rowClusters.Remove(column);
+                        
+                if (rowClusters.Count == 0)
+                    _clustersByRowAndColumns.Remove(targetWordSlotRow);
             }
         }
 
@@ -137,40 +267,6 @@ namespace CodeBase.UI.Services.Cluster
             _availableClusters.Remove(cluster.Text);
         }
 
-        public void CheckAndHideFilledClusters()
-        {
-            foreach (KeyValuePair<int, string> keyValuePair in _wordSlotService.GetFormedWords())
-            {
-                string formedWord = keyValuePair.Value;
-
-                int rowIndex = keyValuePair.Key;
-
-                if (string.IsNullOrEmpty(formedWord))
-                {
-                    Debug.Log($"Row {rowIndex} is empty");
-                    continue;
-                }
-
-                if (!_wordSlotService.WordsToFind.Contains(formedWord, StringComparer.OrdinalIgnoreCase))
-                {
-                    Debug.Log($"Row {rowIndex} - {keyValuePair.Value} is not found");
-                    continue;
-                }
-
-                Debug.Log($"Found word: {formedWord} in row {rowIndex}");
-                HideAllClustersOutlineIconInRow(rowIndex);
-            }
-        }
-
-        public void Cleanup()
-        {
-            _availableClusters.Clear();
-            _clustersByRow.Clear();
-            _placedClusters.Clear();
-            _clustersByRowAndColumns.Clear();
-            _clustersOccupiedSlots.Clear();
-        }
-
         private void HideAllClustersOutlineIconInRow(int row)
         {
             if (!_clustersByRow.TryGetValue(row, out List<ClusterItem> clustersInRow))
@@ -186,72 +282,22 @@ namespace CodeBase.UI.Services.Cluster
             }
         }
 
-        public void RestorePlacedClusters()
+        private static bool SkipIfNullOrEmpty(string formedWord, int rowIndex)
         {
-            if (_placedClusters.Count == 0)
-                return;
-
-            var placedClustersCopy = new List<string>(_placedClusters);
-
-            foreach (var placedCluster in placedClustersCopy)
+            if (string.IsNullOrEmpty(formedWord))
             {
-                if (!_createdClusters.TryGetValue(placedCluster, out ClusterItem clusterItem))
-                {
-                    Debug.LogWarning($"Could not find created cluster item for text: {placedCluster}");
-                    continue;
-                }
-
-                var clustersByRowAndColumnsCopy = new Dictionary<int, Dictionary<int, string>>(_clustersByRowAndColumns);
-
-                foreach (KeyValuePair<int, Dictionary<int, string>> rowCluster in clustersByRowAndColumnsCopy)
-                {
-                    var columnClustersCopy = new Dictionary<int, string>(rowCluster.Value);
-                    
-                    foreach (KeyValuePair<int, string> columnCluster in columnClustersCopy)
-                    {
-                        if (columnCluster.Value == placedCluster)
-                        {
-                            WordSlot wordSlot = _wordSlotService.GetWordSlotByRowAndColumn(rowCluster.Key, columnCluster.Key);
-                            if (wordSlot != null && !wordSlot.IsOccupied)
-                            {
-                                clusterItem.PlaceToSlot(wordSlot);
-                                clusterItem.MarkPlacedTo(wordSlot);
-                            }
-                        }
-                    }
-                }
+                Debug.Log($"Row {rowIndex} is empty");
+                return true;
             }
 
-            CheckAndHideFilledClusters();
+            return false;
         }
 
-        public void Save(ProgressData progressData)
+        private static void CleanupCollections(PlayerData playerData,Dictionary<int, string> clustersByRows)
         {
-            PlayerData playerData = progressData.PlayerData;
-
-            Dictionary<int, string> clustersByRows = playerData.ClustersByRows;
-
             clustersByRows.Clear();
-
-            playerData.AvailableClusters = _availableClusters;
-            playerData.PlacedClusters = _placedClusters;
-
-            foreach (KeyValuePair<int, List<ClusterItem>> keyValue in _clustersByRow)
-            foreach (ClusterItem clusterItem in keyValue.Value)
-            {
-                clustersByRows[keyValue.Key] = clusterItem.Text;
-            }
-
-            playerData.PlacedClustersByRowAndColumns = _clustersByRowAndColumns;
-        }
-
-        public void Load(ProgressData progressData)
-        {
-            _availableClusters.AddRange(progressData.PlayerData.AvailableClusters);
-
-            _placedClusters.AddRange(progressData.PlayerData.PlacedClusters);
-
-            _clustersByRowAndColumns = progressData.PlayerData.PlacedClustersByRowAndColumns;
+            playerData.PlacedClusters.Clear();
+            playerData.AvailableClusters.Clear();
         }
     }
 }

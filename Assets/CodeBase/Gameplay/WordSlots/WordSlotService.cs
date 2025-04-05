@@ -71,7 +71,7 @@ namespace CodeBase.Gameplay.WordSlots
 
         public IEnumerable<WordSlot> GetWordSlotsByRow(int row)
         {
-           return _wordSlotHolder.GetSlotsByRow(row);
+            return _wordSlotHolder.GetSlotsByRow(row);
         }
 
         public int GetRowBySlot(WordSlot slot)
@@ -146,9 +146,10 @@ namespace CodeBase.Gameplay.WordSlots
         public IReadOnlyDictionary<int, string> GetFormedWords()
         {
             var formedWords = new Dictionary<int, string>();
-
-            Debug.Log("who");
-
+            
+            if (_wordSlotHolder == null)
+                return formedWords;
+            
             foreach (KeyValuePair<int, Dictionary<int, WordSlot>> row in _wordSlotHolder.GetSlotsByRowAndColumn())
             {
                 string word = "";
@@ -172,16 +173,13 @@ namespace CodeBase.Gameplay.WordSlots
         {
             PlayerData playerData = progressData.PlayerData;
             playerData.WordsToFind.Clear();
-            playerData.FormedWordsByRows.Clear();
-            
+            playerData.WordSlotsByRowAndColumns.Clear();
+
             FillFormedWordsFromHolder();
-            
+
             IReadOnlyDictionary<int, string> formedWords = GetFormedWords();
 
             playerData.WordsToFind.AddRange(_targetWordsToFind);
-
-            foreach (KeyValuePair<int, string> keyValue in formedWords)
-                playerData.FormedWordsByRows[keyValue.Key] = keyValue.Value;
 
             foreach (KeyValuePair<int, string> word in formedWords)
             {
@@ -202,10 +200,27 @@ namespace CodeBase.Gameplay.WordSlots
 
         private void SetFormedWordsFromData(ProgressData progressData)
         {
-            foreach (var word in progressData.PlayerData.FormedWordsByRows)
+            if (_wordSlotHolder == null)
+                return;
+
+            foreach (var rowData in progressData.PlayerData.WordSlotsByRowAndColumns)
             {
-                if (!_wordsByColumnAndRow.ContainsKey(word.Key))
-                    _wordsByColumnAndRow[word.Key] = new Dictionary<int, WordSlot>();
+                int row = rowData.Key;
+                foreach (var columnData in rowData.Value)
+                {
+                    int column = columnData.Key;
+                    string letter = columnData.Value;
+
+                    if (!string.IsNullOrEmpty(letter))
+                    {
+                        WordSlot slot = _wordSlotHolder.GetSlotByRowAndColumn(row, column);
+
+                        if (slot != null)
+                        {
+                            slot.SetLetter(letter[0]);
+                        }
+                    }
+                }
             }
         }
 
@@ -214,7 +229,7 @@ namespace CodeBase.Gameplay.WordSlots
             if (_wordSlotHolder == null)
                 return;
 
-            var slotsByRowAndColumn = _wordSlotHolder.GetSlotsByRowAndColumn();
+            IReadOnlyDictionary<int, Dictionary<int, WordSlot>> slotsByRowAndColumn = _wordSlotHolder.GetSlotsByRowAndColumn();
             _wordsByColumnAndRow = new Dictionary<int, Dictionary<int, WordSlot>>(slotsByRowAndColumn);
         }
     }
