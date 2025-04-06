@@ -80,6 +80,8 @@ namespace CodeBase.UI.Services.Cluster
             var clusterModel = new ClusterModel(cluster.Text, false, -1, -1);
 
             _clusterRepository.MarkClusterAsAvailable(clusterModel);
+            
+            _soundService.Play(SoundTypeId.ClusterPlaced);
         }
 
         public void CheckAndHideFilledClusters()
