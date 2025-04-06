@@ -56,10 +56,7 @@ namespace CodeBase.Gameplay.WordSlots
             if (_repository.FormedWordCountLessTargetWordCount()) 
                 return false;
 
-            if (_repository.TargetWordNotFound()) 
-                return false;
-
-            return true;
+            return _repository.AllWordsFound();
         }
 
         public void SetCurrentWordSlotHolder(WordSlotHolder wordSlotHolder)

@@ -54,7 +54,7 @@ namespace CodeBase.Gameplay.WordSlots
             return false;
         }
 
-        public bool TargetWordNotFound()
+        public bool AllWordsFound()
         {
             var isWordFound = false;
 
@@ -63,7 +63,7 @@ namespace CodeBase.Gameplay.WordSlots
                 isWordFound = WordsMatchIgnoringCase(word, _targetWordsToFind);
             }
 
-            return !isWordFound;
+            return isWordFound;
         }
 
         public void SetTargetWords(IEnumerable<string> words)

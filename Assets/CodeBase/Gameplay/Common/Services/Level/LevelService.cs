@@ -5,6 +5,7 @@ using CodeBase.Common.Services.Unity;
 using CodeBase.Data;
 using CodeBase.Gameplay.SO.Level;
 using CodeBase.Gameplay.WordSlots;
+using CodeBase.UI.Services.Cluster;
 using Newtonsoft.Json;
 using UniRx;
 using UnityEngine;
@@ -24,6 +25,7 @@ namespace CodeBase.Gameplay.Common.Services.Level
         private readonly LevelDataSO _levelDataSo;
         private readonly IRemoteConfigService _unityRemoteConfigService;
         private readonly IWordSlotService _wordSlotService;
+        private readonly IClusterService _clusterService;
         private readonly IPersistentService _persistentService;
 
         public IObservable<LevelData> OnLevelLoaded => _onLevelLoaded;
@@ -37,9 +39,11 @@ namespace CodeBase.Gameplay.Common.Services.Level
             LevelDataSO levelDataSO,
             IWordSlotService wordSlotService,
             IPersistentService persistentService,
+            IClusterService clusterService,
             IRemoteConfigService unityRemoteConfigService
             )
         {
+            _clusterService = clusterService;
             _persistentService = persistentService;
             _wordSlotService = wordSlotService;
             _levelDataSo = levelDataSO;
@@ -64,11 +68,17 @@ namespace CodeBase.Gameplay.Common.Services.Level
             _disposables?.Dispose();
         }
 
-        public void Load(ProgressData progressData) => _currentLevel = GetTargetLevelData(progressData.PlayerData.Level);
+        public void Load(ProgressData progressData)
+        {
+            int savedLevelIndex = progressData.PlayerData.Level;
+            _currentLevel = GetTargetLevelData(savedLevelIndex);
+            _currentLevelIndex = savedLevelIndex;
+        }
 
         public void Save(ProgressData progressData)
         {
             progressData.PlayerData.Level = _currentLevelIndex;
+
             _currentLevel = GetTargetLevelData(_currentLevelIndex);
         }
 
@@ -113,6 +123,9 @@ namespace CodeBase.Gameplay.Common.Services.Level
             {
                 UpdateIndex();
                 
+                _clusterService.Cleanup();
+                _wordSlotService.Cleanup();
+                
                 _persistentService.Save();
                 
                 _onLevelCompleted.OnNext(Unit.Default);
@@ -126,6 +139,8 @@ namespace CodeBase.Gameplay.Common.Services.Level
             _currentLevelIndex++;
 
             SetFirstLevelOnMaxLevelReached();
+
+            Debug.Log($"{_currentLevelIndex} level updated");
         }
 
         private void SetFirstLevelOnMaxLevelReached()

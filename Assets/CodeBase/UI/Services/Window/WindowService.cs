@@ -127,7 +127,10 @@ namespace CodeBase.UI.Services.Window
         {
             foreach ((AbstractWindowBase Window, IController Controller) windowData in _activeWindows.Values)
             {
-                windowData.Window.Close();
+                if (windowData.Window != null && windowData.Window.gameObject != null)
+                {
+                    windowData.Window.Close();
+                }
 
                 if (windowData.Controller is IDisposable disposable)
                     disposable.Dispose();
