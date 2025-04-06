@@ -23,12 +23,6 @@ namespace Editor.AddressablesTools
 
         private static readonly IAmazonS3Service _s3Service = new AmazonS3Service(AccessKey, SecretKey, BucketName, ServiceUrl);
 
-        [InitializeOnLoadMethod]
-        private static void Initialize()
-        {
-            BuildPlayerWindow.RegisterBuildPlayerHandler(UploadOnBuildCompleted);
-        }
-
         [MenuItem("Tools/Addressables/Build & Upload to Yandex")]
         public static void BuildAndUpload()
         {
@@ -39,17 +33,7 @@ namespace Editor.AddressablesTools
             UploadAddressablesAsync().Forget();
         }
 
-        private static void UploadOnBuildCompleted(BuildPlayerOptions buildPlayerOptions)
-        {
-            BuildReport report = BuildPipeline.BuildPlayer(buildPlayerOptions);
-            
-            if (report.summary.result == BuildResult.Succeeded)
-            {
-                UploadAddressablesAsync().Forget();
-            }
-        }
-
-        private static async UniTask UploadAddressablesAsync()
+        public static async UniTask UploadAddressablesAsync()
         {
             string platformName = EditorUserBuildSettings.activeBuildTarget.ToString();
             string buildPath = Path.Combine("ServerData", platformName);

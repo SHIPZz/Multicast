@@ -17,22 +17,7 @@ namespace Editor
 
         private static readonly IAmazonS3Service _s3Service = new AmazonS3Service(AccessKey, SecretKey, BucketName, ServiceUrl);
 
-        [InitializeOnLoadMethod]
-        private static void Initialize()
-        {
-            BuildPlayerWindow.RegisterBuildPlayerHandler(BuildPlayerHandler);
-        }
-
-        private static void BuildPlayerHandler(BuildPlayerOptions options)
-        {
-            BuildReport report = BuildPipeline.BuildPlayer(options);
-            if (report.summary.result == BuildResult.Succeeded)
-            {
-                UploadApkAsync(report.summary.outputPath).Forget();
-            }
-        }
-
-        private static async UniTask UploadApkAsync(string apkPath)
+        public static async UniTask UploadApkAsync(string apkPath)
         {
             if (!File.Exists(apkPath))
             {

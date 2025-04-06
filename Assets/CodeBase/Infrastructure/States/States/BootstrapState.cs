@@ -58,14 +58,21 @@ namespace CodeBase.Infrastructure.States.States
             BindWindows();
             
             await InitializeAdressablesAsync();
+
+            _internetConnectionService.LaunchCheckingEveryFixedIntervalAsync();
             
-            if (!_internetConnectionService.CheckConnection())
+            if (!_internetConnectionService.IsInternetAvailable)
             {
                 _windowService.Close<LoadingCurtainWindow>();
                 _windowService.OpenWindow<NoInternetWindow>(true);
-                return;
             }
+
+            while (!_internetConnectionService.IsInternetAvailable) 
+                await UniTask.Yield();
             
+            _windowService.Close<NoInternetWindow>();
+            _windowService.OpenWindow<LoadingCurtainWindow>();
+
             await InitializeConfigAsync();
 
             _persistentService.LoadAll();

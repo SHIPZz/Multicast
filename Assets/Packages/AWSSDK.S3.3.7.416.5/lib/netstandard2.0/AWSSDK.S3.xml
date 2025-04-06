@@ -11,7 +11,7 @@
              
              </summary>
         </member>
-        <member name="M:Amazon.S3.AmazonS3Client.Initialize">
+        <member name="M:Amazon.S3.AmazonS3Client.LaunchCheckingEveryFixedIntervalAsync">
             <summary>
             Specialize the initialize of the client.
             </summary>
@@ -14484,7 +14484,7 @@
             environment variable and the credential file.
             </summary>
         </member>
-        <member name="M:Amazon.S3.AmazonS3Config.Initialize">
+        <member name="M:Amazon.S3.AmazonS3Config.LaunchCheckingEveryFixedIntervalAsync">
             <summary>
             This method contains custom initializations for the config object.
             </summary>
