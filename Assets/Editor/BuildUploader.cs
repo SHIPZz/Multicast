@@ -31,7 +31,7 @@ namespace Editor
             Debug.Log($"📦 Output path from build: {apkPath}");
             Debug.Log($"🗑 Deleting existing APK in {platformFolder}...");
 
-            await _s3Service.DeleteObjectsInFolderAsync($"{RemoteFolder}{platformFolder}");
+            await _s3Service.DeleteObjectsInFolderAsync($"{RemoteFolder}{platformFolder}/");
 
             bool folderExists = await _s3Service.CheckIfFolderExists($"{RemoteFolder}{platformFolder}");
 

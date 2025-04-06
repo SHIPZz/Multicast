@@ -17,14 +17,12 @@ namespace CodeBase.UI.Cluster
 
         private string _clusterText;
         private IClusterService _clusterService;
-        private IWordSlotService _wordSlotService;
 
         public string Text => _clusterText;
 
         [Inject]
-        private void Construct(IClusterService service, IWordSlotService wordSlotService)
+        private void Construct(IClusterService service)
         {
-            _wordSlotService = wordSlotService;
             _clusterService = service;
         }
 
@@ -79,7 +77,7 @@ namespace CodeBase.UI.Cluster
         {
             base.OnReset();
             _text.enabled = true;
-            ShowOutlineIcon();
+            SetOutlineIconActive(true);
             _clusterService.ResetCluster(this);
         }
 
@@ -91,19 +89,14 @@ namespace CodeBase.UI.Cluster
             CanvasGroup.blocksRaycasts = true;
         }
 
-        public void HideOutlineIcon()
+        public void SetOutlineIconActive(bool isActive)
         {
-            _outlineIcon.enabled = false;
+            _outlineIcon.enabled = isActive;
         }
         
         public void SetBlocksRaycasts(bool value)
         {
             CanvasGroup.blocksRaycasts = value;
-        }
-
-        public void ShowOutlineIcon()
-        {
-            _outlineIcon.enabled = true;
         }
     }
 }

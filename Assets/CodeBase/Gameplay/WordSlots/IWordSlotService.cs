@@ -19,5 +19,6 @@ namespace CodeBase.Gameplay.WordSlots
         bool ValidateFormedWords();
         void Cleanup();
         IReadOnlyDictionary<int, string> GetFormedWords();
+        bool WordsMatchIgnoringCase(string formedWordValue, IEnumerable<string> wordsToFind);
     }
 }

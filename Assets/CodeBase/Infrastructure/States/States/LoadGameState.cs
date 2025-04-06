@@ -28,7 +28,7 @@ namespace CodeBase.Infrastructure.States.States
 
         public void Enter()
         {
-            if (!_internetConnectionService.CheckConnection())
+            if (!_internetConnectionService.IsInternetAvailable)
             {
                 _windowService.OpenWindow<NoInternetWindow>();
                 return;

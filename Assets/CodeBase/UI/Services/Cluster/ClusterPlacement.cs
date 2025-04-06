@@ -60,12 +60,12 @@ namespace CodeBase.UI.Services.Cluster
             return _clustersByRow.GetValueOrDefault(row);
         }
 
-        public IReadOnlyDictionary<int, Dictionary<int, string>> GetClustersByRowAndColumns() => 
-            _clustersByRowAndColumns;
+        public IReadOnlyDictionary<int, Dictionary<int, string>> GetClustersByRowAndColumns() => _clustersByRowAndColumns;
 
         public void SetClustersByRowAndColumns(Dictionary<int, Dictionary<int, string>> clusters)
         {
             _clustersByRowAndColumns.Clear();
+            
             foreach (var row in clusters)
             {
                 _clustersByRowAndColumns[row.Key] = new Dictionary<int, string>(row.Value);

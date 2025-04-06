@@ -18,7 +18,7 @@ namespace CodeBase.UI.Victory
         private VictoryWindow _window;
 
         public VictoryWindowController(IWindowService windowService,
-            ISoundService soundService, 
+            ISoundService soundService,
             IStateMachine stateMachine)
         {
             _soundService = soundService;

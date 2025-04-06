@@ -75,6 +75,7 @@ namespace CodeBase.Gameplay.Common.Services.Level
         public void MarkLevelLoaded(int level)
         {
             Debug.Log($"load level - {level}");
+            Debug.Log($"level count - {_totalLevelCount}");
             
             _currentLevel = GetTargetLevelData(level);
 
@@ -107,7 +108,7 @@ namespace CodeBase.Gameplay.Common.Services.Level
                 return;
 
             bool isValid = _wordSlotService.ValidateFormedWords();
-
+            
             if (isValid)
             {
                 UpdateIndex();
@@ -118,7 +119,7 @@ namespace CodeBase.Gameplay.Common.Services.Level
             }
         }
 
-        public LevelData GetCurrentLevel() => _currentLevel;
+        public LevelData GetCurrentLevel() => GetTargetLevelData(_currentLevelIndex);
 
         private void UpdateIndex()
         {

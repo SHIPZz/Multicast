@@ -29,7 +29,7 @@ namespace CodeBase.UI.Services.Cluster
             _wordSlotService = wordSlotService;
             _persistentService = persistentService;
             _soundService = soundService;
-            
+
             _clusterRepository = new ClusterRepository();
             _clusterPlacement = new ClusterPlacement(wordSlotService);
         }
@@ -43,16 +43,16 @@ namespace CodeBase.UI.Services.Cluster
             _clusterPlacement.Initialize(_wordSlotService.WordsToFind.Count);
         }
 
-        public void RegisterCreatedCluster(ClusterItem clusterItem) => 
+        public void RegisterCreatedCluster(ClusterItem clusterItem) =>
             _clusterRepository.RegisterCluster(clusterItem);
 
-        public void SetClusters(IEnumerable<string> clusters) => 
+        public void SetClusters(IEnumerable<string> clusters) =>
             _clusterRepository.AddAvailableClusters(clusters);
 
-        public IEnumerable<string> GetAvailableClusters() => 
+        public IEnumerable<string> GetAvailableClusters() =>
             _clusterRepository.GetAvailableClusters();
 
-        public IEnumerable<string> GetPlacedClustersFromData() => 
+        public IEnumerable<string> GetPlacedClustersFromData() =>
             _clusterRepository.GetPlacedClusters();
 
         public bool TryPlaceCluster(ClusterItem cluster, WordSlot wordSlot)
@@ -65,7 +65,7 @@ namespace CodeBase.UI.Services.Cluster
             return true;
         }
 
-        public void OnClusterSelected(ClusterItem clusterItem) => 
+        public void OnClusterSelected(ClusterItem clusterItem) =>
             _soundService.Play(SoundTypeId.TakeCluster);
 
         public void ResetCluster(ClusterItem cluster)
@@ -81,10 +81,13 @@ namespace CodeBase.UI.Services.Cluster
                 if (string.IsNullOrEmpty(formedWord.Value))
                     continue;
 
-                if (!_wordSlotService.WordsToFind.Contains(formedWord.Value, StringComparer.OrdinalIgnoreCase))
+                if (!_wordSlotService.WordsMatchIgnoringCase(formedWord.Value, _wordSlotService.WordsToFind))
+                {
+                    SetAllClustersOutlineIconActiveInRow(formedWord.Key, true);
                     continue;
+                }
 
-                HideAllClustersOutlineIconInRow(formedWord.Key);
+                SetAllClustersOutlineIconActiveInRow(formedWord.Key, false);
             }
         }
 
@@ -97,11 +100,11 @@ namespace CodeBase.UI.Services.Cluster
         public void RestorePlacedClusters()
         {
             List<string> copiedClusters = _clusterRepository.GetPlacedClusters().ToList();
-            
+
             foreach (string placedCluster in copiedClusters)
             {
                 Debug.Log($"placed {placedCluster}");
-                
+
                 if (!_clusterRepository.TryGetCluster(placedCluster, out ClusterItem clusterItem))
                 {
                     Debug.LogWarning($"Could not find created cluster item for text: {placedCluster}");
@@ -121,7 +124,8 @@ namespace CodeBase.UI.Services.Cluster
 
             playerData.AvailableClusters.AddRange(_clusterRepository.GetAvailableClusters());
             playerData.PlacedClusters.AddRange(_clusterRepository.GetPlacedClusters());
-            playerData.PlacedClustersByRowAndColumns = new Dictionary<int, Dictionary<int, string>>(_clusterPlacement.GetClustersByRowAndColumns());
+            playerData.PlacedClustersByRowAndColumns =
+                new Dictionary<int, Dictionary<int, string>>(_clusterPlacement.GetClustersByRowAndColumns());
         }
 
         public void Load(ProgressData progressData)
@@ -134,17 +138,17 @@ namespace CodeBase.UI.Services.Cluster
         private void RestoreClusterToSavedSlot(string placedCluster, ClusterItem clusterItem)
         {
             var clustersByRowAndColumns = _clusterPlacement.GetClustersByRowAndColumns();
-            
+
             foreach (var row in clustersByRowAndColumns)
             {
                 var columns = new Dictionary<int, string>(row.Value);
-                
+
                 foreach (var column in columns)
                 {
                     if (column.Value == placedCluster)
                     {
                         WordSlot wordSlot = _wordSlotService.GetWordSlotByRowAndColumn(row.Key, column.Key);
-                        
+
                         if (wordSlot != null && !wordSlot.IsOccupied)
                         {
                             clusterItem.PlaceToSlot(wordSlot);
@@ -155,10 +159,10 @@ namespace CodeBase.UI.Services.Cluster
             }
         }
 
-        private void HideAllClustersOutlineIconInRow(int row)
+        private void SetAllClustersOutlineIconActiveInRow(int row, bool isActive)
         {
             IReadOnlyList<ClusterItem> clustersInRow = _clusterPlacement.GetClustersInRow(row);
-            
+
             if (clustersInRow == null)
                 return;
 
@@ -167,8 +171,9 @@ namespace CodeBase.UI.Services.Cluster
                 if (!cluster.IsPlaced)
                     continue;
 
-                cluster.HideOutlineIcon();
-                cluster.SetBlocksRaycasts(false);
+                Debug.Log($"isactive {isActive}");
+                cluster.SetOutlineIconActive(isActive);
+                cluster.SetBlocksRaycasts(isActive);
             }
         }
     }

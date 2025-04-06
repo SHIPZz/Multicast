@@ -15,5 +15,8 @@ namespace CodeBase.Gameplay.WordSlots
         void SetTargetWords(IEnumerable<string> words);
 
         void Clear();
+        bool FormedWordCountLessTargetWordCount();
+        bool TargetWordNotFound();
+        bool WordsMatchIgnoringCase(string formedWordValue, IEnumerable<string> wordsToFind);
     }
 } 

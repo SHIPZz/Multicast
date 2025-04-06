@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using CodeBase.Common.Services.Persistent;
 using CodeBase.UI.WordSlots;
 using Zenject;
@@ -52,6 +51,17 @@ namespace CodeBase.Gameplay.WordSlots
             _persistentService.UnregisterProgressWatcher(_repository);
         }
 
+        public bool ValidateFormedWords()
+        {
+            if (_repository.FormedWordCountLessTargetWordCount()) 
+                return false;
+
+            if (_repository.TargetWordNotFound()) 
+                return false;
+
+            return true;
+        }
+
         public void SetCurrentWordSlotHolder(WordSlotHolder wordSlotHolder)
         {
             _wordSlotHolder = wordSlotHolder;
@@ -83,57 +93,12 @@ namespace CodeBase.Gameplay.WordSlots
 
         public int IndexOf(WordSlot wordSlot) => _wordSlotHolder.IndexOf(wordSlot);
 
-        public void SetTargetWordsToFind(IEnumerable<string> words)
-        {
-            _repository.SetTargetWords(words);
-        }
+        public void SetTargetWordsToFind(IEnumerable<string> words) => _repository.SetTargetWords(words);
 
-        public void Cleanup()
-        {
-            _repository.Clear();
-        }
+        public bool WordsMatchIgnoringCase(string formedWordValue, IEnumerable<string> wordsToFind) => _repository.WordsMatchIgnoringCase(formedWordValue, wordsToFind);
 
-        public bool ValidateFormedWords()
-        {
-            IReadOnlyDictionary<int, string> formedWords = GetFormedWords();
-            IReadOnlyList<string> wordsToFind = WordsToFind;
-            
-            if (FormedWordCountLessTargetWordCount(formedWords, wordsToFind)) 
-                return false;
+        public void Cleanup() => _repository.Clear();
 
-            if (TargetWordNotFound(formedWords, wordsToFind)) 
-                return false;
-
-            return true;
-        }
-
-        private bool FormedWordCountLessTargetWordCount(IReadOnlyDictionary<int, string> formedWords, IReadOnlyList<string> wordsToFind)
-        {
-            if (formedWords.Count != wordsToFind.Count)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        private bool TargetWordNotFound(IReadOnlyDictionary<int, string> formedWords, IReadOnlyList<string> wordsToFind)
-        {
-            foreach (var word in formedWords.Values)
-            {
-                if (!wordsToFind.Contains(word, StringComparer.OrdinalIgnoreCase))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public IReadOnlyDictionary<int, string> GetFormedWords()
-        {
-            IReadOnlyDictionary<int, string> formedWords = _repository.GetFormedWords();
-            return formedWords;
-        }
+        public IReadOnlyDictionary<int, string> GetFormedWords() => _repository.GetFormedWords();
     }
 }
