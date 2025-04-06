@@ -138,11 +138,13 @@ namespace CodeBase.UI.Services.Cluster
             foreach (var row in clustersByRowAndColumns)
             {
                 var columns = new Dictionary<int, string>(row.Value);
+                
                 foreach (var column in columns)
                 {
                     if (column.Value == placedCluster)
                     {
                         WordSlot wordSlot = _wordSlotService.GetWordSlotByRowAndColumn(row.Key, column.Key);
+                        
                         if (wordSlot != null && !wordSlot.IsOccupied)
                         {
                             clusterItem.PlaceToSlot(wordSlot);

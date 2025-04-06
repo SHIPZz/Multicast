@@ -3,6 +3,7 @@ using CodeBase.Common.Services.InternetConnection;
 using CodeBase.Infrastructure.Loading;
 using CodeBase.Infrastructure.States.StateInfrastructure;
 using CodeBase.Infrastructure.States.StateMachine;
+using CodeBase.UI.NoInternet;
 using CodeBase.UI.Services.Window;
 
 namespace CodeBase.Infrastructure.States.States
@@ -27,8 +28,11 @@ namespace CodeBase.Infrastructure.States.States
 
         public void Enter()
         {
-            if(!_internetConnectionService.CheckConnection())
+            if (!_internetConnectionService.CheckConnection())
+            {
+                _windowService.OpenWindow<NoInternetWindow>();
                 return;
+            }
             
             _windowService.CloseAll();
             

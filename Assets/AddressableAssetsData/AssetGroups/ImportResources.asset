@@ -33,7 +33,7 @@ MonoBehaviour:
     m_Address: Assets/ResourcesAdressables/UI/TWD
     m_ReadOnly: 0
     m_SerializedLabels:
-    - remote
+    - default
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 89d766e551783384790167de091c6fc0, type: 2}

@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Threading.Tasks;
 using CodeBase.Common.Services.InternetConnection;
 using CodeBase.Common.Services.Persistent;
 using CodeBase.Common.Services.SaveLoad;
@@ -29,7 +29,6 @@ namespace CodeBase.Infrastructure.States.States
         private readonly IPersistentService _persistentService;
         private readonly ISaveOnApplicationPauseSystem _saveOnApplicationPauseSystem;
         private readonly IStaticDataService _staticDataService;
-        private readonly ILoadingCurtain _loadingCurtain;
 
         public BootstrapState(IStateMachine stateMachine,
             IAssetDownloadService assetDownloadService,
@@ -38,8 +37,7 @@ namespace CodeBase.Infrastructure.States.States
             IRemoteConfigService unityRemoteConfigService, 
             IPersistentService persistentService, 
             ISaveOnApplicationPauseSystem saveOnApplicationPauseSystem,
-            IStaticDataService staticDataService, 
-            ILoadingCurtain loadingCurtain)
+            IStaticDataService staticDataService)
         {
             _internetConnectionService = internetConnectionService;
             _windowService = windowService;
@@ -47,26 +45,29 @@ namespace CodeBase.Infrastructure.States.States
             _persistentService = persistentService;
             _saveOnApplicationPauseSystem = saveOnApplicationPauseSystem;
             _assetDownloadService = assetDownloadService;
-            _stateMachine = stateMachine ?? throw new ArgumentNullException(nameof(stateMachine));
+            _stateMachine = stateMachine;
             _staticDataService = staticDataService;
-            _loadingCurtain = loadingCurtain;
         }
 
         public async void Enter()
         {
-            _loadingCurtain.Show();
-            
-            await InitializeAdressablesAndConfig();
+            BindAndOpenLoadingWindowAsync().Forget();
+
             await _staticDataService.LoadAllAsync();
-            
+
             BindWindows();
+            
+            await InitializeAdressablesAsync();
             
             if (!_internetConnectionService.CheckConnection())
             {
-                _windowService.OpenWindow<NoInternetWindow>();
+                _windowService.Close<LoadingCurtainWindow>();
+                _windowService.OpenWindow<NoInternetWindow>(true);
                 return;
             }
             
+            await InitializeConfigAsync();
+
             _persistentService.LoadAll();
             
             _saveOnApplicationPauseSystem.Initialize();
@@ -74,11 +75,24 @@ namespace CodeBase.Infrastructure.States.States
             _stateMachine.Enter<LoadingMenuState>();
         }
 
-        private async UniTask InitializeAdressablesAndConfig()
+        private async UniTask BindAndOpenLoadingWindowAsync()
         {
-            await _assetDownloadService.InitializeDownloadDataAsync();
+            await _staticDataService.LoadWindowAsync<LoadingCurtainWindow>();
+            
+            _windowService.Bind<LoadingCurtainWindow,LoadingCurtainWindowController>();
+            
+            _windowService.OpenWindow<LoadingCurtainWindow>();
+        }
+
+        private async UniTask InitializeConfigAsync()
+        {
             await _unityRemoteConfigService.InitializeAsync();
             await _unityRemoteConfigService.FetchConfigsAsync(new UserAttributes(), new AppAttributes());
+        }
+
+        private async UniTask InitializeAdressablesAsync()
+        {
+            await _assetDownloadService.InitializeDownloadDataAsync();
             
             if (_assetDownloadService.GetDownloadSizeMb() > 0)
                 await _assetDownloadService.UpdateContentAsync();

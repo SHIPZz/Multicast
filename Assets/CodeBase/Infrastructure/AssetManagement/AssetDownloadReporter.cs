@@ -1,4 +1,5 @@
 ﻿using System;
+using UniRx;
 using UnityEngine;
 
 namespace CodeBase.Infrastructure.AssetManagement
@@ -8,15 +9,18 @@ namespace CodeBase.Infrastructure.AssetManagement
     private const float UpdateThreshold = 0.01f;
     
     public float Progress { get; private set; }
-    public event Action ProgressUpdated;
     
+    private readonly Subject<Unit> _progressUpdated = new Subject<Unit>();
+
+    public IObservable<Unit> ProgressUpdated => _progressUpdated;
+
     public void Report(float value)
     {
       if (Mathf.Abs(Progress - value) < UpdateThreshold)
         return;
       
       Progress = value;
-      ProgressUpdated?.Invoke();
+      _progressUpdated?.OnNext(Unit.Default);
     }
 
     public void Reset()

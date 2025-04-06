@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using CodeBase.Common.Services.Persistent;
 using CodeBase.UI.WordSlots;
-using UniRx;
 using Zenject;
 
 namespace CodeBase.Gameplay.WordSlots
@@ -21,15 +20,9 @@ namespace CodeBase.Gameplay.WordSlots
             _repository = new WordSlotRepository();
         }
 
-        public int LastFormedWordCount { get; private set; }
-
         public int SlotCount => _repository.SlotCount;
 
-        private bool HasFormedWords => GetFormedWords().Count > 0;
-
-        private int FormedWordCount => GetFormedWords().Count;
-
-        public bool NewWordFormed => LastFormedWordCount != FormedWordCount && HasFormedWords;
+        public bool NewWordFormed => _repository.NewWordFormed;
 
         public int MaxLettersInWord
         {
@@ -65,11 +58,6 @@ namespace CodeBase.Gameplay.WordSlots
             _repository.SetWordSlotHolder(wordSlotHolder);
         }
 
-        public IEnumerable<WordSlot> GetWordSlotsByRow(int row)
-        {
-            return _wordSlotHolder.GetSlotsByRow(row);
-        }
-
         public int GetRowBySlot(WordSlot slot)
         {
             foreach (KeyValuePair<int, Dictionary<int, WordSlot>> row in _wordSlotHolder.GetSlotsByRowAndColumn())
@@ -103,15 +91,13 @@ namespace CodeBase.Gameplay.WordSlots
         public void Cleanup()
         {
             _repository.Clear();
-            
-            LastFormedWordCount = 0;
         }
 
         public bool ValidateFormedWords()
         {
             IReadOnlyDictionary<int, string> formedWords = GetFormedWords();
             IReadOnlyList<string> wordsToFind = WordsToFind;
-
+            
             if (FormedWordCountLessTargetWordCount(formedWords, wordsToFind)) 
                 return false;
 
@@ -147,7 +133,6 @@ namespace CodeBase.Gameplay.WordSlots
         public IReadOnlyDictionary<int, string> GetFormedWords()
         {
             IReadOnlyDictionary<int, string> formedWords = _repository.GetFormedWords();
-            LastFormedWordCount = formedWords.Count;
             return formedWords;
         }
     }

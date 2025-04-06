@@ -6,7 +6,6 @@ namespace CodeBase.Gameplay.WordSlots
     public interface IWordSlotService
     {
         void SetCurrentWordSlotHolder(WordSlotHolder wordSlotHolder);
-        IEnumerable<WordSlot> GetWordSlotsByRow(int row);
         WordSlot GetTargetSlot(int index);
         int IndexOf(WordSlot wordSlot);
         int SlotCount { get; }

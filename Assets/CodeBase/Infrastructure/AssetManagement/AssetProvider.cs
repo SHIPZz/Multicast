@@ -8,11 +8,6 @@ namespace CodeBase.Infrastructure.AssetManagement
 {
     public class AssetProvider : IAssetProvider
     {
-        public GameObject LoadAsset(string path)
-        {
-            return Resources.Load<GameObject>(path);
-        }
-
         public async UniTask<T> LoadGameObjectAssetAsync<T>(string path, CancellationToken cancellationToken = default)
         {
             try
@@ -40,16 +35,6 @@ namespace CodeBase.Infrastructure.AssetManagement
                 Debug.LogWarning($"Failed to load prefab {typeof(T).Name}: {e.Message}");
                 throw;
             }
-        }
-
-        public T[] LoadAllAssets<T>(string path) where T : Component
-        {
-            return Resources.LoadAll<T>(path);
-        }
-
-        public T LoadAsset<T>(string path) where T : Component
-        {
-            return Resources.Load<T>(path);
         }
     }
 }

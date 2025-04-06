@@ -1,5 +1,4 @@
-﻿using CodeBase.Constants;
-using CodeBase.Extensions;
+﻿using CodeBase.Extensions;
 using CodeBase.Gameplay.Sound;
 using CodeBase.StaticData;
 using UnityEngine;

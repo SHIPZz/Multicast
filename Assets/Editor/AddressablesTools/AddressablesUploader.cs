@@ -4,9 +4,11 @@ using System.IO;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Amazon.S3.Transfer;
+using CodeBase.Common.Services.ServerDataUploader;
 using Cysharp.Threading.Tasks;
 using UnityEditor;
 using UnityEditor.AddressableAssets.Settings;
+using UnityEditor.Build.Reporting;
 using UnityEngine;
 
 namespace Editor.AddressablesTools
@@ -19,6 +21,14 @@ namespace Editor.AddressablesTools
         private const string RemoteFolder = "Adressables/";
         private const string ServiceUrl = "https://storage.yandexcloud.net";
 
+        private static readonly IAmazonS3Service _s3Service = new AmazonS3Service(AccessKey, SecretKey, BucketName, ServiceUrl);
+
+        [InitializeOnLoadMethod]
+        private static void Initialize()
+        {
+            BuildPlayerWindow.RegisterBuildPlayerHandler(UploadOnBuildCompleted);
+        }
+
         [MenuItem("Tools/Addressables/Build & Upload to Yandex")]
         public static void BuildAndUpload()
         {
@@ -27,6 +37,16 @@ namespace Editor.AddressablesTools
             AddressableAssetSettings.BuildPlayerContent();
 
             UploadAddressablesAsync().Forget();
+        }
+
+        private static void UploadOnBuildCompleted(BuildPlayerOptions buildPlayerOptions)
+        {
+            BuildReport report = BuildPipeline.BuildPlayer(buildPlayerOptions);
+            
+            if (report.summary.result == BuildResult.Succeeded)
+            {
+                UploadAddressablesAsync().Forget();
+            }
         }
 
         private static async UniTask UploadAddressablesAsync()
@@ -40,19 +60,9 @@ namespace Editor.AddressablesTools
                 return;
             }
 
-            var config = new AmazonS3Config
-            {
-                ServiceURL = ServiceUrl,
-            };
-
-            using var s3Client = new AmazonS3Client(AccessKey, SecretKey, config);
-            var transferUtility = new TransferUtility(s3Client);
-
-            // Step 1: Delete existing objects in the remote folder
             Debug.Log($"🗑 Deleting existing objects in {RemoteFolder}...");
-            await DeleteObjectsInFolderAsync(s3Client);
+            await _s3Service.DeleteObjectsInFolderAsync(RemoteFolder);
 
-            // Step 2: Upload new Addressables files
             Debug.Log("📤 Starting upload of new Addressables...");
             string[] localFiles = Directory.GetFiles(buildPath, "*", SearchOption.AllDirectories);
 
@@ -62,17 +72,7 @@ namespace Editor.AddressablesTools
                 string key = $"{RemoteFolder}{fileName}";
 
                 Debug.Log($"⬆ Uploading: {fileName} → {key}");
-
-                var request = new TransferUtilityUploadRequest
-                {
-                    BucketName = BucketName,
-                    FilePath = filePath,
-                    Key = key,
-                    CannedACL = S3CannedACL.PublicRead
-                };
-
-                await transferUtility.UploadAsync(request);
-                Debug.Log($"✅ Uploaded: {fileName}");
+                await _s3Service.UploadFileAsync(filePath, key);
             }
 
             Debug.Log("🎉 All new Addressables uploaded.");

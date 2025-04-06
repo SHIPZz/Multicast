@@ -10,6 +10,7 @@ using CodeBase.UI.AbstractWindow;
 using CodeBase.UI.Cluster;
 using CodeBase.UI.Game;
 using CodeBase.UI.Hint;
+using CodeBase.UI.LoadingCurtains;
 using CodeBase.UI.Menu;
 using CodeBase.UI.NoInternet;
 using CodeBase.UI.Settings;
@@ -126,6 +127,19 @@ namespace CodeBase.StaticData
             }
         }
 
+        public async UniTask LoadWindowAsync<T>(CancellationToken cancellationToken = default) where T : AbstractWindowBase
+        {
+            try
+            {
+                AbstractWindowBase windowPrefab = await _assetProvider.LoadGameObjectAssetAsync<AbstractWindowBase>(typeof(T).Name, cancellationToken);
+                _windowPrefabs[typeof(T)] = windowPrefab;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Failed to load window {typeof(T).Name}: {e.Message}");
+            }
+        }
+
         private async UniTask InitializeWindowsAsync(CancellationToken cancellationToken = default)
         {
             Type[] windowTypes =
@@ -134,6 +148,7 @@ namespace CodeBase.StaticData
                 typeof(MenuWindow),
                 typeof(SettingsWindow),
                 typeof(VictoryWindow),
+                typeof(LoadingCurtainWindow),
                 typeof(HintWindow),
                 typeof(NoInternetWindow)
             };
@@ -142,6 +157,9 @@ namespace CodeBase.StaticData
             {
                 try
                 {
+                    if(_windowPrefabs.ContainsKey(windowType))
+                        continue;
+                    
                     AbstractWindowBase windowPrefab = await _assetProvider.LoadGameObjectAssetAsync<AbstractWindowBase>(windowType.Name, cancellationToken);
                     _windowPrefabs[windowType] = windowPrefab;
                 }

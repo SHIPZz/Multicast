@@ -30,34 +30,6 @@ namespace CodeBase.UI.WordSlots
         }
 
         public int IndexOf(WordSlot wordSlot) => _wordSlots.IndexOf(wordSlot);
-        
-        public void FillWordSlots(int row, string text)
-        {
-            if (_rowSlots.TryGetValue(row, out List<WordSlot> wordSlotsByRow))
-            {
-                int length = Mathf.Min(text.Length, wordSlotsByRow.Count);
-         
-                for (int i = 0; i < length; i++) 
-                    wordSlotsByRow[i].SetLetter(text[i]);
-            }
-        }
-        
-        public void FillWordSlotsWithPositions(int row, Dictionary<int, char> slotPositions)
-        {
-            if (_rowSlots.TryGetValue(row, out List<WordSlot> wordSlotsByRow))
-            {
-                foreach (var entry in slotPositions)
-                {
-                    int column = entry.Key;
-                    char letter = entry.Value;
-                    
-                    if (column < wordSlotsByRow.Count)
-                    {
-                        wordSlotsByRow[column].SetLetter(letter);
-                    }
-                }
-            }
-        }
 
         public void CreateWordSlots()
         {
@@ -84,21 +56,6 @@ namespace CodeBase.UI.WordSlots
             _wordSlots.Clear();
             _rowSlots.Clear();
             _slotsByRowAndColumn.Clear();
-        }
-
-        private void CreateSlotsForRow(int lettersInWord, int row)
-        {
-            if (!_slotsByRowAndColumn.ContainsKey(row))
-                _slotsByRowAndColumn[row] = new Dictionary<int, WordSlot>();
-                
-            for (int column = 0; column < lettersInWord; column++)
-            {
-                WordSlot slot = _wordSlotUIFactory.CreateWordSlotPrefab(_slotsContainer);
-
-                _wordSlots.Add(slot);
-                _rowSlots[row].Add(slot);
-                _slotsByRowAndColumn[row][column] = slot;
-            }
         }
 
         public WordSlot GetSlotByRowAndColumn(int row, int column)
@@ -129,6 +86,21 @@ namespace CodeBase.UI.WordSlots
         public IReadOnlyList<WordSlot> GetSlotsByRow(int row)
         {
             return _rowSlots.GetValueOrDefault(row);
+        }
+
+        private void CreateSlotsForRow(int lettersInWord, int row)
+        {
+            if (!_slotsByRowAndColumn.ContainsKey(row))
+                _slotsByRowAndColumn[row] = new Dictionary<int, WordSlot>();
+                
+            for (int column = 0; column < lettersInWord; column++)
+            {
+                WordSlot slot = _wordSlotUIFactory.CreateWordSlotPrefab(_slotsContainer);
+
+                _wordSlots.Add(slot);
+                _rowSlots[row].Add(slot);
+                _slotsByRowAndColumn[row][column] = slot;
+            }
         }
     }
 }

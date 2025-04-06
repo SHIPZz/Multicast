@@ -7,14 +7,13 @@ namespace CodeBase.Gameplay.WordSlots
     public interface IWordSlotRepository : IProgressWatcher
     {
         int SlotCount { get; }
+        bool NewWordFormed { get; }
         IReadOnlyList<string> GetTargetWords();
         IReadOnlyDictionary<int, string> GetFormedWords();
         
         void SetWordSlotHolder(WordSlotHolder wordSlotHolder);
-        void AddTargetWord(string word);
         void SetTargetWords(IEnumerable<string> words);
-        void UpdateWordSlot(int row, int column, WordSlot slot);
-        WordSlot GetWordSlot(int row, int column);
+
         void Clear();
     }
 } 

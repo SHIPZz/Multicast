@@ -25,8 +25,6 @@ namespace CodeBase.Infrastructure.Installers
 {
     public class BootstrapInstaller : MonoInstaller, ICoroutineRunner, IInitializable
     {
-        [SerializeField] private LoadingCurtain _loadingCurtain;
-        
         public override void InstallBindings()
         {
             BindInfrastructureServices();
@@ -40,14 +38,8 @@ namespace CodeBase.Infrastructure.Installers
             BindUnityRemoteConfigService();
             SetupDevice();
             BindInternetConnectionService();
-            BindLoadingCurtain();
 
             Container.BindInterfacesAndSelfTo<StateMachine>().AsSingle();
-        }
-
-        private void BindLoadingCurtain()
-        {
-            Container.Bind<ILoadingCurtain>().FromInstance(_loadingCurtain).AsSingle();
         }
 
         private void BindInternetConnectionService()
