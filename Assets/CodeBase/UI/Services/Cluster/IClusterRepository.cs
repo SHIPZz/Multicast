@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using CodeBase.Data;
 using CodeBase.UI.Cluster;
 
 namespace CodeBase.UI.Services.Cluster
@@ -6,15 +7,12 @@ namespace CodeBase.UI.Services.Cluster
     public interface IClusterRepository
     {
         void RegisterCluster(ClusterItem clusterItem);
-        void AddAvailableClusters(IEnumerable<string> clusters);
-        void AddPlacedClusters(IEnumerable<string> clusters);
-        IEnumerable<string> GetAvailableClusters();
-        IEnumerable<string> GetPlacedClusters();
-        bool IsClusterAvailable(string clusterText);
-        bool IsClusterPlaced(string clusterText);
-        bool TryGetCluster(string clusterText, out ClusterItem clusterItem);
-        void MarkClusterAsPlaced(string clusterText);
-        void MarkClusterAsAvailable(string clusterText);
+        void AddAvailableClusters(IEnumerable<ClusterModel> clusters);
+        IEnumerable<ClusterModel> GetAvailableClusters();
+        IEnumerable<ClusterModel> GetPlacedClusters();
+        bool TryGetCluster(ClusterModel cluster, out ClusterItem clusterItem);
+        void MarkClusterAsPlaced(ClusterModel cluster);
+        void MarkClusterAsAvailable(ClusterModel cluster);
         void Clear();
     }
 }

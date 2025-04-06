@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using CodeBase.UI.Services.Cluster;
 
 namespace CodeBase.Data
 {
@@ -8,11 +9,10 @@ namespace CodeBase.Data
     {
         public int Level = 1;
         public List<string> WordsToFind = new();
-        public List<string> AvailableClusters = new();
-        public Dictionary<int, string> ClustersByRows = new();
-        public List<string> PlacedClusters = new();
+        public List<ClusterModel> AvailableClusters = new();
         
-        public Dictionary<int, Dictionary<int, string>> PlacedClustersByRowAndColumns = new();
+        public Dictionary<int, Dictionary<int,ClusterModel>> PlacedClusters = new();
+        
         public Dictionary<int, Dictionary<int, string>> WordSlotsByRowAndColumns = new();
     }
 }

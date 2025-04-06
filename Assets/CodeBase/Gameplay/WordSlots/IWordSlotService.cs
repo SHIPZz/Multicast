@@ -11,7 +11,6 @@ namespace CodeBase.Gameplay.WordSlots
         int SlotCount { get; }
         int MaxLettersInWord { get; }
         IReadOnlyList<string> WordsToFind { get; }
-        bool NewWordFormed { get; }
         void SetTargetWordsToFind(IEnumerable<string> words);
         int GetRowBySlot(WordSlot slot);
         int GetColumnBySlot(WordSlot slot);
@@ -19,7 +18,8 @@ namespace CodeBase.Gameplay.WordSlots
         bool ValidateFormedWords();
         void Cleanup();
         IReadOnlyDictionary<int, string> GetFormedWords();
-        bool WordsMatchIgnoringCase(string formedWordValue, IEnumerable<string> wordsToFind);
-        IReadOnlyDictionary<int, bool> GetRowsWithMatchingWords();
+        bool ContainsInTargetWords(string word);
+        bool UpdateFormedWordsAndCheckNew();
+        void RefreshFormedWords();
     }
 }

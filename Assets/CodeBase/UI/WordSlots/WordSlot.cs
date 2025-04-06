@@ -5,7 +5,6 @@ namespace CodeBase.UI.WordSlots
 {
     public class WordSlot : MonoBehaviour
     {
-        [SerializeField] private Transform _placeHolder;
         [SerializeField] private TextMeshProUGUI _letterText;
 
         [field: SerializeField] private bool _isOccupied;
@@ -15,7 +14,7 @@ namespace CodeBase.UI.WordSlots
         public bool IsOccupied => _isOccupied;
         public char CurrentLetter => _currentLetter;
 
-        public void SetLetter(char letter)
+        public void SetText(char letter)
         {
             _currentLetter = letter;
             _letterText.text = letter.ToString();

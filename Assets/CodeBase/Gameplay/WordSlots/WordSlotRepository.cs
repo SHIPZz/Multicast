@@ -14,63 +14,39 @@ namespace CodeBase.Gameplay.WordSlots
         private readonly List<string> _targetWordsToFind = new();
         private readonly Dictionary<int, Dictionary<int, WordSlot>> _wordSlotsByRowAndColumn = new();
         private readonly Dictionary<int, string> _formedWords = new();
-        private readonly Dictionary<int, string> _previousFormedWords = new();
 
         private WordSlotHolder _wordSlotHolder;
 
         public int SlotCount => _wordSlotHolder?.WordSlots.Count ?? 0;
-
-        public bool NewWordFormed
-        {
-            get
-            {
-                var currentFormedWords = GetFormedWords();
-
-                bool hasNewWord = currentFormedWords.Count > _previousFormedWords.Count;
-
-                _previousFormedWords.Clear();
-
-                foreach (var word in currentFormedWords)
-                {
-                    _previousFormedWords[word.Key] = word.Value;
-                }
-
-                return hasNewWord;
-            }
-        }
 
         public void SetWordSlotHolder(WordSlotHolder wordSlotHolder)
         {
             _wordSlotHolder = wordSlotHolder;
         }
 
-        public bool FormedWordCountLessTargetWordCount()
+        public bool FormedWordCountSameTargetWordCount()
         {
-            if (_formedWords.Count != _targetWordsToFind.Count)
-                return true;
-
-            foreach (var formedWord in _formedWords.Values)
-            {
-                bool lengthMatch = _targetWordsToFind.Any(target => 
-                    string.Equals(formedWord, target, StringComparison.OrdinalIgnoreCase) || formedWord.Length == target.Length);
-
-                if (!lengthMatch)
-                    return true;
-            }
-
-            return false;
+            return _formedWords.Count == _targetWordsToFind.Count;
         }
 
         public bool AllWordsFound()
         {
-            var isWordFound = false;
-
             foreach (var word in _formedWords.Values)
             {
-                isWordFound = WordsMatchIgnoringCase(word, _targetWordsToFind);
+                Debug.Log($"formed word - {word}");
+                
+                if(!_targetWordsToFind.Contains(word,StringComparer.OrdinalIgnoreCase))
+                    return false;
             }
 
-            return isWordFound;
+            return true;
+        }
+
+        public void RefreshFormedWords()
+        {
+            _formedWords.Clear();
+            
+            GetFormedWords();
         }
 
         public void SetTargetWords(IEnumerable<string> words)
@@ -89,22 +65,10 @@ namespace CodeBase.Gameplay.WordSlots
 
         public IReadOnlyList<string> GetTargetWords() => _targetWordsToFind;
 
-        public void UpdateWordSlot(int row, int column, WordSlot slot)
-        {
-            if (!_wordSlotsByRowAndColumn.ContainsKey(row))
-            {
-                _wordSlotsByRowAndColumn[row] = new Dictionary<int, WordSlot>();
-            }
-
-            _wordSlotsByRowAndColumn[row][column] = slot;
-        }
-
         public IReadOnlyDictionary<int, string> GetFormedWords()
         {
-            var formedWords = new Dictionary<int, string>();
-
             if (_wordSlotHolder == null)
-                return formedWords;
+                return null;
 
             foreach (KeyValuePair<int, Dictionary<int, WordSlot>> row in _wordSlotHolder.GetSlotsByRowAndColumn())
             {
@@ -118,12 +82,11 @@ namespace CodeBase.Gameplay.WordSlots
 
                 if (!string.IsNullOrEmpty(word))
                 {
-                    formedWords[row.Key] = word;
                     _formedWords[row.Key] = word;
                 }
             }
 
-            return formedWords;
+            return _formedWords;
         }
 
         public void Clear()
@@ -131,15 +94,6 @@ namespace CodeBase.Gameplay.WordSlots
             _targetWordsToFind.Clear();
             _wordSlotsByRowAndColumn.Clear();
             _formedWords.Clear();
-            _previousFormedWords.Clear();
-        }
-
-        public bool WordsMatchIgnoringCase(string formedWord, IEnumerable<string> targetWords)
-        {
-            if (targetWords.Contains(formedWord, StringComparer.OrdinalIgnoreCase))
-                return true;
-
-            return false;
         }
 
         public void Save(ProgressData progressData)
@@ -150,7 +104,7 @@ namespace CodeBase.Gameplay.WordSlots
 
             playerData.WordsToFind.AddRange(_targetWordsToFind);
 
-            foreach (var row in _wordSlotsByRowAndColumn)
+            foreach (KeyValuePair<int, Dictionary<int, WordSlot>> row in _wordSlotsByRowAndColumn)
             {
                 Dictionary<int, string> rowData = new Dictionary<int, string>();
 
@@ -170,8 +124,7 @@ namespace CodeBase.Gameplay.WordSlots
 
             _targetWordsToFind.AddRange(progressData.PlayerData.WordsToFind);
 
-            foreach (KeyValuePair<int, Dictionary<int, string>> rowData in progressData.PlayerData
-                         .WordSlotsByRowAndColumns)
+            foreach (KeyValuePair<int, Dictionary<int, string>> rowData in progressData.PlayerData.WordSlotsByRowAndColumns)
             {
                 int row = rowData.Key;
 
@@ -192,11 +145,21 @@ namespace CodeBase.Gameplay.WordSlots
 
                     if (slot != null)
                     {
-                        slot.SetLetter(letter[0]);
+                        slot.SetText(letter[0]);
                         UpdateWordSlot(row, column, slot);
                     }
                 }
             }
+        }
+
+        private void UpdateWordSlot(int row, int column, WordSlot slot)
+        {
+            if (!_wordSlotsByRowAndColumn.ContainsKey(row))
+            {
+                _wordSlotsByRowAndColumn[row] = new Dictionary<int, WordSlot>(8);
+            }
+
+            _wordSlotsByRowAndColumn[row][column] = slot;
         }
     }
 }

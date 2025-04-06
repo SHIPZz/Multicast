@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using CodeBase.Common.Services.Persistent;
 using CodeBase.UI.WordSlots;
+using UnityEngine;
 using Zenject;
 
 namespace CodeBase.Gameplay.WordSlots
@@ -10,9 +11,11 @@ namespace CodeBase.Gameplay.WordSlots
     {
         private readonly IWordSlotRepository _repository;
         private readonly IPersistentService _persistentService;
-        private readonly Dictionary<int, bool> _matchingRows = new();
-        
+
         private WordSlotHolder _wordSlotHolder;
+        private IReadOnlyDictionary<int, string> _lastFormedWord;
+
+        private readonly HashSet<string> _correctlyFormedWords = new(StringComparer.OrdinalIgnoreCase);
 
         public WordSlotService(IPersistentService persistentService)
         {
@@ -22,20 +25,18 @@ namespace CodeBase.Gameplay.WordSlots
 
         public int SlotCount => _repository.SlotCount;
 
-        public bool NewWordFormed => _repository.NewWordFormed;
-
         public int MaxLettersInWord
         {
             get
             {
                 int maxLength = 0;
-                
+
                 foreach (var word in _repository.GetTargetWords())
                 {
                     if (word.Length > maxLength)
                         maxLength = word.Length;
                 }
-                
+
                 return maxLength;
             }
         }
@@ -54,11 +55,39 @@ namespace CodeBase.Gameplay.WordSlots
 
         public bool ValidateFormedWords()
         {
-            if (_repository.FormedWordCountLessTargetWordCount()) 
+            return _repository.FormedWordCountSameTargetWordCount() && _repository.AllWordsFound();
+        }
+
+        public bool NewWordFormed()
+        {
+            if (_lastFormedWord == null)
                 return false;
 
-            return _repository.AllWordsFound();
+            return true;
         }
+
+        public bool UpdateFormedWordsAndCheckNew()
+        {
+            IReadOnlyDictionary<int, string> currentFormedWords = _repository.GetFormedWords();
+            var newWordFormed = false;
+
+            foreach (var word in currentFormedWords.Values)
+            {
+                if (!_correctlyFormedWords.Contains(word) && ContainsInTargetWords(word))
+                {
+                    _correctlyFormedWords.Add(word);
+                    newWordFormed = true;
+                }
+            }
+
+            return newWordFormed;
+        }
+
+        public void RefreshFormedWords()
+        {
+            _repository.RefreshFormedWords();
+        }
+
 
         public void SetCurrentWordSlotHolder(WordSlotHolder wordSlotHolder)
         {
@@ -73,7 +102,7 @@ namespace CodeBase.Gameplay.WordSlots
                 if (row.Value.ContainsValue(slot))
                     return row.Key;
             }
-            
+
             return -1;
         }
 
@@ -93,24 +122,23 @@ namespace CodeBase.Gameplay.WordSlots
 
         public void SetTargetWordsToFind(IEnumerable<string> words) => _repository.SetTargetWords(words);
 
-        public bool WordsMatchIgnoringCase(string formedWordValue, IEnumerable<string> wordsToFind) => _repository.WordsMatchIgnoringCase(formedWordValue, wordsToFind);
-
         public void Cleanup() => _repository.Clear();
 
         public IReadOnlyDictionary<int, string> GetFormedWords() => _repository.GetFormedWords();
 
-        public IReadOnlyDictionary<int, bool> GetRowsWithMatchingWords()
+        public bool ContainsInTargetWords(string word)
         {
-            var formedWords = _repository.GetFormedWords();
-            var targetWords = _repository.GetTargetWords();
-            _matchingRows.Clear();
+            IReadOnlyList<string> targetWords = _repository.GetTargetWords();
 
-            foreach (var formedWord in formedWords)
+            foreach (string targetWord in targetWords)
             {
-                _matchingRows[formedWord.Key] = _repository.WordsMatchIgnoringCase(formedWord.Value, targetWords);
+                Debug.Log($"{targetWord} - {word} compare - {targetWord.Equals(word, StringComparison.OrdinalIgnoreCase)}");
+                if (targetWord.Equals(word, StringComparison.OrdinalIgnoreCase))
+                    return true;
             }
 
-            return _matchingRows;
+
+            return false;
         }
     }
 }

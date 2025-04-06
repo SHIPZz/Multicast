@@ -7,7 +7,6 @@ namespace CodeBase.Gameplay.WordSlots
     public interface IWordSlotRepository : IProgressWatcher
     {
         int SlotCount { get; }
-        bool NewWordFormed { get; }
         IReadOnlyList<string> GetTargetWords();
         IReadOnlyDictionary<int, string> GetFormedWords();
         
@@ -15,8 +14,8 @@ namespace CodeBase.Gameplay.WordSlots
         void SetTargetWords(IEnumerable<string> words);
 
         void Clear();
-        bool FormedWordCountLessTargetWordCount();
+        bool FormedWordCountSameTargetWordCount();
         bool AllWordsFound();
-        bool WordsMatchIgnoringCase(string formedWordValue, IEnumerable<string> wordsToFind);
+        void RefreshFormedWords();
     }
 } 

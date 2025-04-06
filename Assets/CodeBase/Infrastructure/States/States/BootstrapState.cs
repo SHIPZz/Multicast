@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+﻿using System;
 using CodeBase.Common.Services.InternetConnection;
 using CodeBase.Common.Services.Persistent;
 using CodeBase.Common.Services.SaveLoad;
@@ -9,6 +9,7 @@ using CodeBase.Infrastructure.States.StateMachine;
 using CodeBase.StaticData;
 using CodeBase.UI.Game;
 using CodeBase.UI.Hint;
+using CodeBase.UI.Levels;
 using CodeBase.UI.LoadingCurtains;
 using CodeBase.UI.Menu;
 using CodeBase.UI.NoInternet;
@@ -39,14 +40,14 @@ namespace CodeBase.Infrastructure.States.States
             ISaveOnApplicationPauseSystem saveOnApplicationPauseSystem,
             IStaticDataService staticDataService)
         {
-            _internetConnectionService = internetConnectionService;
-            _windowService = windowService;
-            _unityRemoteConfigService = unityRemoteConfigService;
-            _persistentService = persistentService;
-            _saveOnApplicationPauseSystem = saveOnApplicationPauseSystem;
-            _assetDownloadService = assetDownloadService;
-            _stateMachine = stateMachine;
-            _staticDataService = staticDataService;
+            _internetConnectionService = internetConnectionService ?? throw new ArgumentNullException(nameof(internetConnectionService));
+            _windowService = windowService ?? throw new ArgumentNullException(nameof(windowService));
+            _unityRemoteConfigService = unityRemoteConfigService ?? throw new ArgumentNullException(nameof(unityRemoteConfigService));
+            _persistentService = persistentService ?? throw new ArgumentNullException(nameof(persistentService));
+            _saveOnApplicationPauseSystem = saveOnApplicationPauseSystem ?? throw new ArgumentNullException(nameof(saveOnApplicationPauseSystem));
+            _assetDownloadService = assetDownloadService ?? throw new ArgumentNullException(nameof(assetDownloadService));
+            _stateMachine = stateMachine ?? throw new ArgumentNullException(nameof(stateMachine));
+            _staticDataService = staticDataService ?? throw new ArgumentNullException(nameof(staticDataService));
         }
 
         public async void Enter()
@@ -59,13 +60,7 @@ namespace CodeBase.Infrastructure.States.States
             
             await InitializeAdressablesAsync();
 
-            _internetConnectionService.LaunchCheckingEveryFixedIntervalAsync();
-            
-            if (!_internetConnectionService.IsInternetAvailable)
-            {
-                _windowService.Close<LoadingCurtainWindow>();
-                _windowService.OpenWindow<NoInternetWindow>(true);
-            }
+            LaunchInternetChecking();
 
             while (!_internetConnectionService.IsInternetAvailable) 
                 await UniTask.Yield();
@@ -80,6 +75,13 @@ namespace CodeBase.Infrastructure.States.States
             _saveOnApplicationPauseSystem.Initialize();
             
             _stateMachine.Enter<LoadingMenuState>();
+        }
+
+        private void LaunchInternetChecking()
+        {
+            _internetConnectionService.LaunchCheckingEveryFixedIntervalAsync();
+
+            OpenNoInternetWindowOnNoInternet();
         }
 
         private async UniTask BindAndOpenLoadingWindowAsync()
@@ -104,15 +106,25 @@ namespace CodeBase.Infrastructure.States.States
             if (_assetDownloadService.GetDownloadSizeMb() > 0)
                 await _assetDownloadService.UpdateContentAsync();
         }
-        
+
         private void BindWindows()
         {
             _windowService.Bind<NoInternetWindow,NoInternetWindowController>();
             _windowService.Bind<GameWindow,GameWindowController>();
+            _windowService.Bind<LevelWindow,LevelWindowController>();
             _windowService.Bind<MenuWindow,MenuWindowController>();
             _windowService.Bind<SettingsWindow,SettingsWindowController>();
             _windowService.Bind<VictoryWindow,VictoryWindowController>();
             _windowService.Bind<HintWindow,HintWindowController>();
+        }
+
+        private void OpenNoInternetWindowOnNoInternet()
+        {
+            if (!_internetConnectionService.IsInternetAvailable)
+            {
+                _windowService.Close<LoadingCurtainWindow>();
+                _windowService.OpenWindow<NoInternetWindow>(true);
+            }
         }
 
         public void Exit() { }

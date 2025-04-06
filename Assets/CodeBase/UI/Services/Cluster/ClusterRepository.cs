@@ -1,46 +1,52 @@
+using System;
 using System.Collections.Generic;
+using CodeBase.Data;
 using CodeBase.UI.Cluster;
 
 namespace CodeBase.UI.Services.Cluster
 {
     public class ClusterRepository : IClusterRepository
     {
-        private readonly Dictionary<string, ClusterItem> _createdClusters = new(32);
-        private readonly List<string> _availableClusters = new();
-        private readonly List<string> _placedClusters = new();
+        private readonly List<ClusterItem> _createdClusters = new(32);
+        private readonly List<ClusterModel> _availableClusters = new();
+        private readonly List<ClusterModel> _placedClusters = new();
 
         public void RegisterCluster(ClusterItem clusterItem) => 
-            _createdClusters[clusterItem.Text] = clusterItem;
+            _createdClusters.Add(clusterItem);
 
-        public void AddAvailableClusters(IEnumerable<string> clusters) => 
+        public void AddAvailableClusters(IEnumerable<ClusterModel> clusters) => 
             _availableClusters.AddRange(clusters);
 
-        public void AddPlacedClusters(IEnumerable<string> clusters) =>
-            _placedClusters.AddRange(clusters);
+        public IEnumerable<ClusterModel> GetAvailableClusters() => _availableClusters;
 
-        public IEnumerable<string> GetAvailableClusters() => _availableClusters;
+        public IEnumerable<ClusterModel> GetPlacedClusters() => _placedClusters;
 
-        public IEnumerable<string> GetPlacedClusters() => _placedClusters;
-
-        public bool IsClusterAvailable(string clusterText) => 
-            _availableClusters.Contains(clusterText);
-
-        public bool IsClusterPlaced(string clusterText) => 
-            _placedClusters.Contains(clusterText);
-
-        public bool TryGetCluster(string clusterText, out ClusterItem clusterItem) => 
-            _createdClusters.TryGetValue(clusterText, out clusterItem);
-
-        public void MarkClusterAsPlaced(string clusterText)
+        public bool TryGetCluster(ClusterModel cluster, out ClusterItem clusterItem)
         {
-            _placedClusters.Add(clusterText);
-            _availableClusters.Remove(clusterText);
+            clusterItem = null;
+            
+            foreach (ClusterItem item in _createdClusters)
+            {
+                if (cluster.Text.Equals(item.Text, StringComparison.OrdinalIgnoreCase) && !item.IsPlaced)
+                {
+                    clusterItem = item;
+                    return true;
+                }
+            }
+
+            return clusterItem != null;
         }
 
-        public void MarkClusterAsAvailable(string clusterText)
+        public void MarkClusterAsPlaced(ClusterModel cluster)
         {
-            _placedClusters.Remove(clusterText);
-            _availableClusters.Add(clusterText);
+            _placedClusters.Add(cluster);
+            _availableClusters.RemoveAll(c => c.Text == cluster.Text);
+        }
+
+        public void MarkClusterAsAvailable(ClusterModel cluster)
+        {
+            _placedClusters.RemoveAll(c => c.Text == cluster.Text);
+            _availableClusters.Add(cluster);
         }
 
         public void Clear()

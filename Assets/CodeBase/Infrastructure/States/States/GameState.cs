@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using CodeBase.Data;
 using CodeBase.Extensions;
 using CodeBase.Gameplay.Common.Services.Level;
@@ -6,6 +8,7 @@ using CodeBase.Gameplay.Hint;
 using CodeBase.Gameplay.WordSlots;
 using CodeBase.Infrastructure.States.StateInfrastructure;
 using CodeBase.UI.Game;
+using CodeBase.UI.Levels;
 using CodeBase.UI.Services.Cluster;
 using CodeBase.UI.Services.Window;
 
@@ -36,19 +39,39 @@ namespace CodeBase.Infrastructure.States.States
         {
             LevelData currentLevelData = _levelService.GetCurrentLevel();
 
-            if (_wordSlotService.WordsToFind.IsNullOrEmpty())
-                _wordSlotService.SetTargetWordsToFind(currentLevelData.Words.Shuffle());
+            SetTargetWordsToFind(currentLevelData);
 
-            if (_clusterService.GetAvailableClusters().IsNullOrEmpty())
-                _clusterService.SetClusters(currentLevelData.Clusters);
+            SetClusters(currentLevelData);
 
             _hintService.Init();
-            
             _clusterService.Init();
-
             _windowService.OpenWindow<GameWindow>();
-
+            _windowService.OpenWindow<LevelWindow>();
             _levelService.MarkLevelLoaded(currentLevelData.LevelId);
+        }
+
+        private void SetTargetWordsToFind(LevelData currentLevelData)
+        {
+            if (_wordSlotService.WordsToFind.IsNullOrEmpty()) 
+            {
+                var capitalizedWords = currentLevelData.Words
+                    // .Select(word => word.ToUpper())
+                    .Shuffle();
+
+                _wordSlotService.SetTargetWordsToFind(capitalizedWords);
+            }
+        }
+
+        private void SetClusters(LevelData currentLevelData)
+        {
+            if (_clusterService.GetAvailableClusters().IsNullOrEmpty())
+            {
+                IEnumerable<string> capitalizedClusters = currentLevelData.Clusters
+                    // .Select(word => word.ToUpper())
+                    .Shuffle();
+
+                _clusterService.SetClusters(capitalizedClusters);
+            }
         }
 
         public void Exit() { }

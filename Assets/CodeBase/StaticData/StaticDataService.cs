@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using CodeBase.Common.Services.Sound;
-using CodeBase.Constants;
 using CodeBase.Gameplay.Sound;
 using CodeBase.Infrastructure.AssetManagement;
 using CodeBase.UI.AbstractWindow;
 using CodeBase.UI.Cluster;
 using CodeBase.UI.Game;
 using CodeBase.UI.Hint;
+using CodeBase.UI.Levels;
 using CodeBase.UI.LoadingCurtains;
 using CodeBase.UI.Menu;
 using CodeBase.UI.NoInternet;
@@ -114,19 +114,6 @@ namespace CodeBase.StaticData
             return _clusterItemPrefab;
         }
 
-        private async UniTask<T> LoadPrefabAsync<T>(CancellationToken cancellationToken = default) where T : Component
-        {
-            try
-            {
-                return await _assetProvider.LoadAssetAsyncByTypePath<T>(cancellationToken);
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"Failed to load prefab {typeof(T).Name}: {e.Message}");
-                throw;
-            }
-        }
-
         public async UniTask LoadWindowAsync<T>(CancellationToken cancellationToken = default) where T : AbstractWindowBase
         {
             try
@@ -150,6 +137,7 @@ namespace CodeBase.StaticData
                 typeof(VictoryWindow),
                 typeof(LoadingCurtainWindow),
                 typeof(HintWindow),
+                typeof(LevelWindow),
                 typeof(NoInternetWindow)
             };
 

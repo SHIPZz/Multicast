@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using CodeBase.Common.Services.Sound;
 using CodeBase.Data;
 using CodeBase.Gameplay.Common.Services.Level;
@@ -14,7 +12,6 @@ using CodeBase.UI.Services.Cluster;
 using CodeBase.UI.Services.Window;
 using CodeBase.UI.Victory;
 using UniRx;
-using UnityEngine;
 
 namespace CodeBase.UI.Game
 {
@@ -114,10 +111,11 @@ namespace CodeBase.UI.Game
 
         private void OnValidateClicked()
         {
+            if (_wordSlotService.UpdateFormedWordsAndCheckNew())
+                _soundService.Play(SoundTypeId.WordFormedFound);
+                
             _clusterService.CheckAndHideFilledClusters();
 
-            if (_wordSlotService.NewWordFormed)
-                _soundService.Play(SoundTypeId.WordFormedFound);
 
             _levelService.ValidateLevel();
         }

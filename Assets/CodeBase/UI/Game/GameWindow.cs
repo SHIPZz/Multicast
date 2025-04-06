@@ -78,6 +78,12 @@ namespace CodeBase.UI.Game
             SetClustersActive(isActive);
             SetValidateButtonActive(isActive);
             SetHintButtonActive(isActive);
+            SetRestartButtonActive(isActive);
+        }
+
+        private void SetRestartButtonActive(bool isActive)
+        {
+            _restartButton.gameObject.SetActive(isActive);
         }
 
         public void SetClustersActive(bool isActive) => _clusterItemHolder?.gameObject.SetActive(isActive);
