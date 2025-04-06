@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 
-namespace Editor.AddressablesTools
+namespace Editor
 {
     public class ApkUploader : EditorWindow
     {
@@ -40,6 +40,8 @@ namespace Editor.AddressablesTools
                 return;
             }
 
+            Debug.Log($"📦 Output path from build: {apkPath}");
+            
             string fileName = Path.GetFileName(apkPath);
             string key = $"{RemoteFolder}{fileName}";
 

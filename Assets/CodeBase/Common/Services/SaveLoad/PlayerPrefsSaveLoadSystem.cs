@@ -1,4 +1,5 @@
 ﻿using CodeBase.Data;
+using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -17,15 +18,17 @@ namespace CodeBase.Common.Services.SaveLoad
             PlayerPrefs.Save();
         }
         
-        public ProgressData Load()
+        public UniTask<ProgressData> Load()
         {
             if (PlayerPrefs.HasKey(DataKey))
             {
                 string jsonData = PlayerPrefs.GetString(DataKey);
-                return JsonConvert.DeserializeObject<ProgressData>(jsonData);
+                ProgressData data = JsonConvert.DeserializeObject<ProgressData>(jsonData);
+                return UniTask.FromResult(data);
             }
-            
-            return new ProgressData();
+
+            return UniTask.FromResult(new ProgressData());
         }
+
     }
 }

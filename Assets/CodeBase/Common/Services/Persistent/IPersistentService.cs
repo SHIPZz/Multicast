@@ -1,4 +1,5 @@
 ﻿using CodeBase.Data;
+using Cysharp.Threading.Tasks;
 
 namespace CodeBase.Common.Services.Persistent
 {
@@ -7,7 +8,7 @@ namespace CodeBase.Common.Services.Persistent
         void RegisterProgressWatcher(IProgressWatcher progressWatcher);
         void Save();
         void UnregisterProgressWatcher(IProgressWatcher progressWatcher);
-        void Load();
+        UniTaskVoid Load();
         void LoadAll();
         ProgressData CurrentProgress { get; }
     }

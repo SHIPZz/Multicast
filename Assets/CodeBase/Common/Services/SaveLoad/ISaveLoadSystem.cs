@@ -1,4 +1,5 @@
 ﻿using CodeBase.Data;
+using Cysharp.Threading.Tasks;
 
 namespace CodeBase.Common.Services.SaveLoad
 {
@@ -6,6 +7,6 @@ namespace CodeBase.Common.Services.SaveLoad
     {
         void Save(ProgressData data);
 
-        ProgressData Load();
+        UniTask<ProgressData> Load();
     }
 }

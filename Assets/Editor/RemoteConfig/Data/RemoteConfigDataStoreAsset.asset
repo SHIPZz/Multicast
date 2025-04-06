@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 469c24fdb3bd6431b92cc1465bd9166b, type: 3}
   m_Name: RemoteConfigDataStoreAsset
   m_EditorClassIdentifier: 
-  _rsKeyList: "[\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"3b237e42-c8d5-4823-86b7-cb8ea1b1396c\"\r\n   
+  _rsKeyList: "[\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"9bc89e27-0c05-40a1-b867-df9bdf53fe6e\"\r\n   
     },\r\n    \"rs\": {\r\n      \"key\": \"level_2\",\r\n      \"type\": \"json\",\r\n     
     \"schemaId\": null,\r\n      \"value\": {\r\n        \"levelId\": 2,\r\n       
     \"words\": [\r\n          \"\u041C\u041E\u041B\u041E\u041A\u041E\",\r\n         
@@ -29,7 +29,7 @@ MonoBehaviour:
     \"\u041F\u0418\",\r\n          \"\u0421\u042C\",\r\n          \"\u041C\u041E\",\r\n         
     \"\u0421\u0415\",\r\n          \"\u0421\u0422\",\r\n          \"\u0420\u0410\"\r\n       
     ]\r\n      }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\":
-    \"a9ea0478-8822-4f42-b1a9-30e48a3c4962\"\r\n    },\r\n    \"rs\": {\r\n     
+    \"ac5de41a-5d52-4a10-8cae-11214a7e157a\"\r\n    },\r\n    \"rs\": {\r\n     
     \"key\": \"level_3\",\r\n      \"type\": \"json\",\r\n      \"schemaId\": null,\r\n     
     \"value\": {\r\n        \"levelId\": 3,\r\n        \"words\": [\r\n         
     \"\u041F\u041E\u0413\u041E\u0414\u0410\",\r\n          \"\u041C\u0415\u0422\u0415\u041B\u042C\",\r\n         
@@ -44,7 +44,7 @@ MonoBehaviour:
     \"\u041C\u0415\u041D\u042C\",\r\n          \"\u0421\u0415\",\r\n          \"\u0421\u0422\",\r\n         
     \"\u0420\u0410\",\r\n          \"\u041B\u0410\u041C\",\r\n          \"\u041F\u0410\u0414\"\r\n       
     ]\r\n      }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\":
-    \"32050eea-eab0-47c0-ae17-d16b2feabf35\"\r\n    },\r\n    \"rs\": {\r\n     
+    \"db9b0637-7655-4509-9541-674cce9bf9ef\"\r\n    },\r\n    \"rs\": {\r\n     
     \"key\": \"level_4\",\r\n      \"type\": \"json\",\r\n      \"schemaId\": null,\r\n     
     \"value\": {\r\n        \"levelId\": 4,\r\n        \"words\": [\r\n         
     \"\u0420\u0410\u0411\u041E\u0422\u0410\",\r\n          \"\u041C\u0423\u0417\u042B\u041A\u0410\",\r\n         
@@ -59,7 +59,7 @@ MonoBehaviour:
     \"\u041F\u0420\u0410\",\r\n          \"\u0412\u0414\u0410\",\r\n          \"\u041C\u0415\u0427\",\r\n         
     \"\u0422\u0410\",\r\n          \"\u0414\u0420\u0423\",\r\n          \"\u0416\u0411\u0410\"\r\n       
     ]\r\n      }\r\n    }\r\n  }\r\n]"
-  _rsLastCachedKeyList: "[\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"3b237e42-c8d5-4823-86b7-cb8ea1b1396c\"\r\n   
+  _rsLastCachedKeyList: "[\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"9bc89e27-0c05-40a1-b867-df9bdf53fe6e\"\r\n   
     },\r\n    \"rs\": {\r\n      \"key\": \"level_2\",\r\n      \"type\": \"json\",\r\n     
     \"schemaId\": null,\r\n      \"value\": {\r\n        \"levelId\": 2,\r\n       
     \"words\": [\r\n          \"\u041C\u041E\u041B\u041E\u041A\u041E\",\r\n         
@@ -76,7 +76,7 @@ MonoBehaviour:
     \"\u041F\u0418\",\r\n          \"\u0421\u042C\",\r\n          \"\u041C\u041E\",\r\n         
     \"\u0421\u0415\",\r\n          \"\u0421\u0422\",\r\n          \"\u0420\u0410\"\r\n       
     ]\r\n      }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\":
-    \"a9ea0478-8822-4f42-b1a9-30e48a3c4962\"\r\n    },\r\n    \"rs\": {\r\n     
+    \"ac5de41a-5d52-4a10-8cae-11214a7e157a\"\r\n    },\r\n    \"rs\": {\r\n     
     \"key\": \"level_3\",\r\n      \"type\": \"json\",\r\n      \"schemaId\": null,\r\n     
     \"value\": {\r\n        \"levelId\": 3,\r\n        \"words\": [\r\n         
     \"\u041F\u041E\u0413\u041E\u0414\u0410\",\r\n          \"\u041C\u0415\u0422\u0415\u041B\u042C\",\r\n         
@@ -91,7 +91,7 @@ MonoBehaviour:
     \"\u041C\u0415\u041D\u042C\",\r\n          \"\u0421\u0415\",\r\n          \"\u0421\u0422\",\r\n         
     \"\u0420\u0410\",\r\n          \"\u041B\u0410\u041C\",\r\n          \"\u041F\u0410\u0414\"\r\n       
     ]\r\n      }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\":
-    \"32050eea-eab0-47c0-ae17-d16b2feabf35\"\r\n    },\r\n    \"rs\": {\r\n     
+    \"db9b0637-7655-4509-9541-674cce9bf9ef\"\r\n    },\r\n    \"rs\": {\r\n     
     \"key\": \"level_4\",\r\n      \"type\": \"json\",\r\n      \"schemaId\": null,\r\n     
     \"value\": {\r\n        \"levelId\": 4,\r\n        \"words\": [\r\n         
     \"\u0420\u0410\u0411\u041E\u0422\u0410\",\r\n          \"\u041C\u0423\u0417\u042B\u041A\u0410\",\r\n         

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using CodeBase.Common.Services.SaveLoad;
 using CodeBase.Data;
+using Cysharp.Threading.Tasks;
 
 namespace CodeBase.Common.Services.Persistent
 {
@@ -27,14 +28,14 @@ namespace CodeBase.Common.Services.Persistent
             }
         }
 
-        public void Load()
+        public async UniTaskVoid Load()
         {
-            _currentProgress = _saveLoadSystem.Load();
+            _currentProgress = await _saveLoadSystem.Load();
         }
 
         public void LoadAll()
         {
-            Load();
+            Load().Forget();
 
             foreach (IProgressWatcher progressWatcher in _progressWatchers)
             {
