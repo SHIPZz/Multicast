@@ -107,12 +107,7 @@ namespace CodeBase.UI.Game
 
             _window.CreateClusterItemHolder();
             
-            IEnumerable<string> placedClusters = _clusterService.GetPlacedClustersFromData();
-            IEnumerable<string> availableClusters = _clusterService.GetAvailableClusters();
-
-            IEnumerable<string> targetClusters = placedClusters.Union(availableClusters);
-
-            _window.CreateClusterItems(targetClusters);
+            _window.CreateClusterItems(levelData.Clusters);
             
             _clusterService.RestorePlacedClusters();
         }

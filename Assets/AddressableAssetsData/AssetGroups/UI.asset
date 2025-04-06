@@ -15,16 +15,72 @@ MonoBehaviour:
   m_GroupName: UI
   m_Data:
     m_SerializedData: []
-  m_GUID: ed285f6e051a57d46a15a3cd9f1a8459
+  m_GUID: ca70f08bfe9862142b7ce3b60aec3055
   m_SerializeEntries:
-  - m_GUID: 5461bc52dcfd55c4fa0df8d0c8a2f776
-    m_Address: Assets/ImportResources/1717086060_new_preview_1660675148_3-kartinkin-net-p-pikselnie-oboi-na-rabochii-stol-krasivo-3.jpg
+  - m_GUID: 27d851206a277b94e82876e006f4e417
+    m_Address: ClusterItemHolder
     m_ReadOnly: 0
     m_SerializedLabels:
     - remote
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 924497d0a9de04e4b8589ac8c155272b
-    m_Address: Assets/ImportResources/UI pack
+  - m_GUID: 3202200fa01a9b740b1759afa6d807e0
+    m_Address: ClusterItem
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - remote
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: aa854e4eed9c2084594fb05270a79cae
+    m_Address: WordSlotHolder
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - remote
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 855279ecaeca0284fb1b852d20b381d8
+    m_Address: WordSlot
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - remote
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2dfc05083f06ebb45b2445a5f1dc41b5
+    m_Address: Assets/ResourcesAdressables/UI/Fonts
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - remote
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6ab70aee4d56447429c680537fbf93ed
+    m_Address: Assets/ResourcesAdressables/UI/TextMeshPro/Fonts
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - remote
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e9f693669af91aa45ad615fc681ed29f
+    m_Address: Assets/ResourcesAdressables/UI/TextMeshPro/Shaders
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - remote
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d0603b6d5186471b96c778c3949c7ce2
+    m_Address: Assets/ResourcesAdressables/UI/TextMeshPro/Sprites
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - remote
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 731f1baa9d144a9897cb1d341c2092b8
+    m_Address: Assets/ResourcesAdressables/UI/TextMeshPro/Resources_moved/Fonts &
+      Materials
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - remote
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 512a49d95c0c4332bdd98131869c23c9
+    m_Address: Assets/ResourcesAdressables/UI/TextMeshPro/Resources_moved/Sprite
+      Assets
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - remote
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4aecb92fff08436c8303b10eab8da368
+    m_Address: Assets/ResourcesAdressables/UI/TextMeshPro/Resources_moved/Style Sheets
     m_ReadOnly: 0
     m_SerializedLabels:
     - remote
@@ -33,5 +89,5 @@ MonoBehaviour:
   m_Settings: {fileID: 11400000, guid: 89d766e551783384790167de091c6fc0, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: 34f57030abc0f12458c33d4a8aa9a5ee, type: 2}
-    - {fileID: 11400000, guid: da06ec1697199424b8a4383fcda07da4, type: 2}
+    - {fileID: 11400000, guid: 914c77f9f0f31ec43b5fdd0aa3e2377c, type: 2}
+    - {fileID: 11400000, guid: 17d73110ed993e94586a4563d003bec5, type: 2}

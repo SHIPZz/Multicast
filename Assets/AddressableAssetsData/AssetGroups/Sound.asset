@@ -1,0 +1,85 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Sound
+  m_EditorClassIdentifier: 
+  m_GroupName: Sound
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 02c5144db210e72438c779fdbc23ba62
+  m_SerializeEntries:
+  - m_GUID: 2a6fb1f6331b40d4080d0a9f49fa855b
+    m_Address: SoundPlayerView
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - remote
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 54f7058803757e04e9e72a0b55fb43f7
+    m_Address: ButtonClose
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - remote
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1ce4d673490cc1f4b90f0ff141026373
+    m_Address: ClusterPlaced
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - remote
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e9d57cdfff6864646b2973e6220ae0f4
+    m_Address: ButtonHint
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - remote
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ed3510368b8a4674bae16d58276e9688
+    m_Address: ButtonOpen
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - remote
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 94ad446069ea37a4b80d2d8deece49cf
+    m_Address: TogglePress
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - remote
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bef3ffef3c6bf24498888e62aff50ded
+    m_Address: TakeCluster
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - remote
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0403a2a9634f64340a5651d62d5c6b99
+    m_Address: ButtonValidate
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - remote
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: acd7c62495ced2d4fb7409e0211b4416
+    m_Address: Victory
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - remote
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8a5dde5c068f563488710753a764227f
+    m_Address: WordFormedFound
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - remote
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 89d766e551783384790167de091c6fc0, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 7196f85f50f72aa49b4b076b06342855, type: 2}
+    - {fileID: 11400000, guid: fea1ad963e9b6444cbf22a7fee09f4a3, type: 2}

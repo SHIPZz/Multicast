@@ -1,5 +1,4 @@
 using CodeBase.StaticData;
-using CodeBase.UI.Game;
 using CodeBase.UI.WordSlots;
 using UnityEngine;
 using Zenject;
@@ -8,25 +7,25 @@ namespace CodeBase.UI.Services.WordSlots
 {
     public class WordSlotUIFactory : IWordSlotUIFactory
     {
-        private readonly IUIStaticDataService _uiStaticDataService;
+        private readonly IStaticDataService _staticDataService;
         private readonly IInstantiator _instantiator;
 
-        public WordSlotUIFactory(IUIStaticDataService uiStaticDataService, IInstantiator instantiator)
+        public WordSlotUIFactory(IStaticDataService staticDataService, IInstantiator instantiator)
         {
             _instantiator = instantiator;
-            _uiStaticDataService = uiStaticDataService;
+            _staticDataService = staticDataService;
         }
 
         public WordSlotHolder CreateWordSlotHolder(Transform parent)
         {
-            WordSlotHolder prefab = _uiStaticDataService.GetWordSlotHolderPrefab();
+            WordSlotHolder prefab = _staticDataService.GetWordSlotHolderPrefab();
             
             return _instantiator.InstantiatePrefabForComponent<WordSlotHolder>(prefab, parent);
         }
 
         public WordSlot CreateWordSlotPrefab(Transform parent)
         {
-            WordSlot prefab = _uiStaticDataService.GetWordSlotPrefab();
+            WordSlot prefab = _staticDataService.GetWordSlotPrefab();
             
             return _instantiator.InstantiatePrefabForComponent<WordSlot>(prefab, parent);
         }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading;
-using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using UniRx;
 using Unity.Services.Authentication;
@@ -11,7 +10,7 @@ using Zenject;
 
 namespace CodeBase.Common.Services.Unity
 {
-    public class UnityRemoteConfigService : IUnityRemoteConfigService, IInitializable, IDisposable
+    public class UnityRemoteConfigService : IRemoteConfigService, IInitializable, IDisposable
     {
         private readonly Subject<ConfigResponse> _configsFetched = new();
         private readonly Subject<Unit> _newDataLoaded = new();

@@ -40,7 +40,7 @@ namespace CodeBase.Infrastructure.States.States
                 _wordSlotService.SetTargetWordsToFind(currentLevelData.Words.Shuffle());
 
             if (_clusterService.GetAvailableClusters().IsNullOrEmpty())
-                _clusterService.SetClusters(currentLevelData.Clusters.Shuffle());
+                _clusterService.SetClusters(currentLevelData.Clusters);
 
             _hintService.Init();
             

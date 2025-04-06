@@ -48,6 +48,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: dcaf2e4ea05f18946b5d011b68ffd953, type: 2}
   - {fileID: 11400000, guid: a607813d366f76347a18273c92fa5d17, type: 2}
   - {fileID: 11400000, guid: be1eab53b003a3f4f85340d7667e132a, type: 2}
+  - {fileID: 11400000, guid: b876bb2bd3495484fa8238e11766fc67, type: 2}
+  - {fileID: 11400000, guid: e001c5b53f2d30c4db529a90ae6d688a, type: 2}
+  - {fileID: 11400000, guid: 21bdc7ed17d94584abf8846b9f8e3034, type: 2}
+  - {fileID: 11400000, guid: 7074882f7755e8d479e6c5c5ac90ae4e, type: 2}
   m_BuildSettings:
     m_CompileScriptsInVirtualMode: 0
     m_CleanupStreamingAssetsAfterBuilds: 1
@@ -108,7 +112,8 @@ MonoBehaviour:
     m_HostingServiceInfos: []
     m_Settings: {fileID: 11400000}
     m_NextInstanceId: 0
-    m_RegisteredServiceTypeRefs: []
+    m_RegisteredServiceTypeRefs:
+    - UnityEditor.AddressableAssets.HostingServices.HttpHostingService, Unity.Addressables.Editor
     m_PingTimeoutInMilliseconds: 5000
   m_CcdManagedData:
     EnvironmentId: 

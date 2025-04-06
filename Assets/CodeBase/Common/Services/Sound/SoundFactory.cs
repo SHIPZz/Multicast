@@ -1,8 +1,6 @@
-﻿using System;
-using CodeBase.Constants;
+﻿using CodeBase.Constants;
 using CodeBase.Extensions;
 using CodeBase.Gameplay.Sound;
-using CodeBase.Infrastructure.AssetManagement;
 using CodeBase.StaticData;
 using UnityEngine;
 using Zenject;
@@ -11,26 +9,26 @@ namespace CodeBase.Common.Services.Sound
 {
     public class SoundFactory : ISoundFactory
     {
-        private readonly IUIStaticDataService _uiStaticDataService;
+        private readonly IStaticDataService _staticDataService;
         private readonly IInstantiator _instantiator;
-        private readonly IAssetProvider _assetProvider;
 
-        public SoundFactory(IUIStaticDataService uiStaticDataService, IAssetProvider assetProvider,
-            IInstantiator instantiator)
+        public SoundFactory(IStaticDataService staticDataService, IInstantiator instantiator)
         {
-            _assetProvider = assetProvider;
-            _uiStaticDataService = uiStaticDataService;
+            _staticDataService = staticDataService;
             _instantiator = instantiator;
         }
 
         public SoundPlayerView Create(Transform parent, SoundTypeId soundTypeId)
         {
-            if(soundTypeId == SoundTypeId.None)
-                throw new ArgumentException("SoundTypeId cannot be None");
+            if (soundTypeId == SoundTypeId.None)
+            {
+                Debug.LogError("Sound Type is not specified.");
+                return null;
+            }
             
-            SoundConfig soundConfig = _uiStaticDataService.GetSoundConfig(soundTypeId);
+            SoundConfig soundConfig = _staticDataService.GetSoundConfig(soundTypeId);
 
-            SoundPlayerView prefab = _assetProvider.LoadAsset<SoundPlayerView>(AssetPath.SoundPlayerView);
+            SoundPlayerView prefab =_staticDataService.GetSoundPlayerViewPrefab();
 
             return _instantiator.InstantiatePrefabForComponent<SoundPlayerView>(prefab, parent)
                     .With(x => x.Id = soundConfig.Id)

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using CodeBase.Gameplay.Common.Services.Level;
+using CodeBase.Gameplay.SO.Hints;
 using CodeBase.Gameplay.WordSlots;
 using UniRx;
 using Zenject;
@@ -20,14 +21,16 @@ namespace CodeBase.Gameplay.Hint
 
         private int _remainingHints;
         private string _hint;
+        private HintConfig _hintConfig;
 
         public IObservable<string> OnHintShown => _onHintShown;
         public IObservable<int> OnHintsCountChanged => _onHintsCountChanged;
 
         public int RemainingHints => _remainingHints;
 
-        public HintService(IWordSlotService wordSlotService, ILevelService levelService)
+        public HintService(IWordSlotService wordSlotService, ILevelService levelService, HintConfig hintConfig)
         {
+            _hintConfig = hintConfig;
             _wordSlotService = wordSlotService;
             _levelService = levelService;
         }
@@ -38,9 +41,9 @@ namespace CodeBase.Gameplay.Hint
 
             IEnumerable<string> firstTwoLettersOfWords = _wordSlotService
                 .WordsToFind
-                .Select(w => w.Length >= 2 ? w.Substring(0, 2).ToUpper() : w.ToUpper());
+                .Select(w => w.Length >= _hintConfig.LettersToShow ? w.Substring(0, _hintConfig.LettersToShow).ToUpper() : w.ToUpper());
             
-            _hint = $"Подсказка(первые 2 буквы в нужных словах): {string.Join(", ", firstTwoLettersOfWords)}";
+            _hint = $"{_hintConfig.Text} {string.Join(", ", firstTwoLettersOfWords)}";
         }
 
         public void Initialize()

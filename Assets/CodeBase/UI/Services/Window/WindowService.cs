@@ -14,7 +14,7 @@ namespace CodeBase.UI.Services.Window
         private const int TopSortingOrder = 1000;
         
         private readonly IInstantiator _instantiator;
-        private readonly IUIStaticDataService _uiStaticDataService;
+        private readonly IStaticDataService _staticDataService;
         private readonly IUIProvider _uiProvider;
 
         private readonly Dictionary<Type, WindowBindingInfo> _windowBindings = new();
@@ -22,12 +22,12 @@ namespace CodeBase.UI.Services.Window
         private int _currentSortingOrder = BaseSortingOrder;
 
         public WindowService(IInstantiator instantiator,
-            IUIStaticDataService uiStaticDataService,
+            IStaticDataService staticDataService,
             IUIProvider uiProvider)
         {
             _uiProvider = uiProvider;
             _instantiator = instantiator;
-            _uiStaticDataService = uiStaticDataService;
+            _staticDataService = staticDataService;
         }
 
         public void Bind<TWindow, TController>()
@@ -47,7 +47,7 @@ namespace CodeBase.UI.Services.Window
                 WindowType = windowType,
                 ControllerType = typeof(TController),
                 ModelType = null,
-                Prefab = _uiStaticDataService.GetWindow<TWindow>()
+                Prefab = _staticDataService.GetWindow<TWindow>()
             };
         }
 
@@ -66,7 +66,7 @@ namespace CodeBase.UI.Services.Window
                 WindowType = windowType,
                 ControllerType = typeof(TController),
                 ModelType = typeof(TModel),
-                Prefab = _uiStaticDataService.GetWindow<TWindow>()
+                Prefab = _staticDataService.GetWindow<TWindow>()
             };
         }
 

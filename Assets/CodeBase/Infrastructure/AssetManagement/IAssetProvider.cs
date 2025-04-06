@@ -1,12 +1,11 @@
-using UnityEngine;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 
 namespace CodeBase.Infrastructure.AssetManagement
 {
     public interface IAssetProvider
     {
-        GameObject LoadAsset(string path);
-        
-        T[] LoadAllAssets<T>(string path) where T : Component;
-        T LoadAsset<T>(string path) where T : Component;
+        UniTask<T> LoadAssetAsyncByTypePath<T>(CancellationToken cancellationToken = default);
+        UniTask<T> LoadGameObjectAssetAsync<T>(string path, CancellationToken cancellationToken = default);
     }
 }

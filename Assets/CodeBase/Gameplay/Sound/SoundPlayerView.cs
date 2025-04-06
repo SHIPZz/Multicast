@@ -4,7 +4,7 @@ namespace CodeBase.Gameplay.Sound
 {
     public class SoundPlayerView : MonoBehaviour
     {
-        [field: SerializeField] public SoundTypeId Id { get; set; }
+        public SoundTypeId Id;
 
         [SerializeField] private AudioSource _audioSource;
 

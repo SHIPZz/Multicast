@@ -6,17 +6,17 @@ namespace CodeBase.UI.Services.Cluster
     public class ClusterRepository : IClusterRepository
     {
         private readonly Dictionary<string, ClusterItem> _createdClusters = new(32);
-        private readonly HashSet<string> _availableClusters = new();
-        private readonly HashSet<string> _placedClusters = new();
+        private readonly List<string> _availableClusters = new();
+        private readonly List<string> _placedClusters = new();
 
         public void RegisterCluster(ClusterItem clusterItem) => 
             _createdClusters[clusterItem.Text] = clusterItem;
 
         public void AddAvailableClusters(IEnumerable<string> clusters) => 
-            _availableClusters.UnionWith(clusters);
+            _availableClusters.AddRange(clusters);
 
         public void AddPlacedClusters(IEnumerable<string> clusters) =>
-            _placedClusters.UnionWith(clusters);
+            _placedClusters.AddRange(clusters);
 
         public IEnumerable<string> GetAvailableClusters() => _availableClusters;
 

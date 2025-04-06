@@ -22,7 +22,7 @@ namespace CodeBase.Gameplay.Common.Services.Level
         private readonly CompositeDisposable _disposables = new();
         
         private readonly LevelDataSO _levelDataSo;
-        private readonly IUnityRemoteConfigService _unityRemoteConfigService;
+        private readonly IRemoteConfigService _unityRemoteConfigService;
         private readonly IWordSlotService _wordSlotService;
         private readonly IPersistentService _persistentService;
 
@@ -37,7 +37,7 @@ namespace CodeBase.Gameplay.Common.Services.Level
             LevelDataSO levelDataSO,
             IWordSlotService wordSlotService,
             IPersistentService persistentService,
-            IUnityRemoteConfigService unityRemoteConfigService
+            IRemoteConfigService unityRemoteConfigService
             )
         {
             _persistentService = persistentService;
@@ -54,7 +54,6 @@ namespace CodeBase.Gameplay.Common.Services.Level
                 .AddTo(_disposables);
             
             _persistentService.RegisterProgressWatcher(this);
-            Debug.Log($"{_totalLevelCount} total levels");
         }
 
         public void Dispose()

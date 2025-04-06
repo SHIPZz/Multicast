@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace Editor
+namespace Editor.AddressablesTools
 {
   public class BundleCacheCleaner
   {

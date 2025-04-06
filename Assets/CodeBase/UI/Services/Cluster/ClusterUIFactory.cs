@@ -9,19 +9,19 @@ namespace CodeBase.UI.Services.Cluster
     public class ClusterUIFactory : IClusterUIFactory
     {
         private readonly IInstantiator _instantiator;
-        private readonly IUIStaticDataService _uiStaticDataService;
+        private readonly IStaticDataService _staticDataService;
 
         public ClusterUIFactory(
             IInstantiator instantiator,
-            IUIStaticDataService uiStaticDataService)
+            IStaticDataService staticDataService)
         {
             _instantiator = instantiator;
-            _uiStaticDataService = uiStaticDataService;
+            _staticDataService = staticDataService;
         }
         
         public ClusterItemHolder CreateClusterItemHolder(Transform parent)
         {
-            ClusterItemHolder prefab = _uiStaticDataService.GetClusterItemHolder();
+            ClusterItemHolder prefab = _staticDataService.GetClusterItemHolder();
             
             var clusterItem = _instantiator.InstantiatePrefabForComponent<ClusterItemHolder>(prefab, parent);
 
@@ -30,7 +30,7 @@ namespace CodeBase.UI.Services.Cluster
 
         public ClusterItem CreateClusterItem(Transform parent)
         {
-            ClusterItem prefab = _uiStaticDataService.GetClusterItem();
+            ClusterItem prefab = _staticDataService.GetClusterItem();
             
             var clusterItem = _instantiator.InstantiatePrefabForComponent<ClusterItem>(prefab, parent);
 

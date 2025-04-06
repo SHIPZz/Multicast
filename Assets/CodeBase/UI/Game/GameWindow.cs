@@ -35,22 +35,12 @@ namespace CodeBase.UI.Game
 
         [Inject]
         private void Construct(
-            IUIStaticDataService uiStaticDataService,
+            IStaticDataService staticDataService,
             IWordSlotUIFactory wordSlotUIFactory,
             IClusterUIFactory clusterUIFactory)
         {
             _wordSlotUIFactory = wordSlotUIFactory;
             _clusterUIFactory = clusterUIFactory;
-        }
-
-        public void FillWordSlots(int row, string text)
-        {
-            _wordSlotHolder.FillWordSlots(row, text);
-        }
-        
-        public void FillWordSlotsWithPositions(int row, Dictionary<int, char> slotPositions)
-        {
-            _wordSlotHolder.FillWordSlotsWithPositions(row, slotPositions);
         }
 
         public void CreateWordSlotHolder()

@@ -10,7 +10,6 @@ namespace CodeBase.Gameplay.WordSlots
 {
     public class WordSlotService : IWordSlotService, IInitializable, IDisposable
     {
-        private readonly Subject<bool> _onValidationResult = new();
         private readonly IWordSlotRepository _repository;
         private readonly IPersistentService _persistentService;
         
@@ -25,8 +24,6 @@ namespace CodeBase.Gameplay.WordSlots
         public int LastFormedWordCount { get; private set; }
 
         public int SlotCount => _repository.SlotCount;
-
-        public IObservable<bool> OnValidationResult => _onValidationResult;
 
         private bool HasFormedWords => GetFormedWords().Count > 0;
 
@@ -60,7 +57,6 @@ namespace CodeBase.Gameplay.WordSlots
         public void Dispose()
         {
             _persistentService.UnregisterProgressWatcher(_repository);
-            _onValidationResult.Dispose();
         }
 
         public void SetCurrentWordSlotHolder(WordSlotHolder wordSlotHolder)
@@ -122,7 +118,6 @@ namespace CodeBase.Gameplay.WordSlots
             if (TargetWordNotFound(formedWords, wordsToFind)) 
                 return false;
 
-            _onValidationResult.OnNext(true);
             return true;
         }
 
@@ -130,7 +125,6 @@ namespace CodeBase.Gameplay.WordSlots
         {
             if (formedWords.Count != wordsToFind.Count)
             {
-                _onValidationResult.OnNext(false);
                 return true;
             }
 
@@ -143,7 +137,6 @@ namespace CodeBase.Gameplay.WordSlots
             {
                 if (!wordsToFind.Contains(word, StringComparer.OrdinalIgnoreCase))
                 {
-                    _onValidationResult.OnNext(false);
                     return true;
                 }
             }

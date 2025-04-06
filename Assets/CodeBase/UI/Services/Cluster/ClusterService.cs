@@ -96,8 +96,12 @@ namespace CodeBase.UI.Services.Cluster
 
         public void RestorePlacedClusters()
         {
-            foreach (string placedCluster in _clusterRepository.GetPlacedClusters())
+            List<string> copiedClusters = _clusterRepository.GetPlacedClusters().ToList();
+            
+            foreach (string placedCluster in copiedClusters)
             {
+                Debug.Log($"placed {placedCluster}");
+                
                 if (!_clusterRepository.TryGetCluster(placedCluster, out ClusterItem clusterItem))
                 {
                     Debug.LogWarning($"Could not find created cluster item for text: {placedCluster}");
@@ -106,8 +110,6 @@ namespace CodeBase.UI.Services.Cluster
 
                 RestoreClusterToSavedSlot(placedCluster, clusterItem);
             }
-
-            CheckAndHideFilledClusters();
         }
 
         public void Save(ProgressData progressData)
@@ -153,7 +155,8 @@ namespace CodeBase.UI.Services.Cluster
 
         private void HideAllClustersOutlineIconInRow(int row)
         {
-            var clustersInRow = _clusterPlacement.GetClustersInRow(row);
+            IReadOnlyList<ClusterItem> clustersInRow = _clusterPlacement.GetClustersInRow(row);
+            
             if (clustersInRow == null)
                 return;
 

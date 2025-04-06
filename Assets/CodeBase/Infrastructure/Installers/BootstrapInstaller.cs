@@ -12,6 +12,7 @@ using CodeBase.Infrastructure.States.Factory;
 using CodeBase.Infrastructure.States.StateMachine;
 using CodeBase.Infrastructure.States.States;
 using CodeBase.StaticData;
+using CodeBase.UI.LoadingCurtains;
 using CodeBase.UI.Services;
 using CodeBase.UI.Services.Cluster;
 using CodeBase.UI.Services.Window;
@@ -24,6 +25,8 @@ namespace CodeBase.Infrastructure.Installers
 {
     public class BootstrapInstaller : MonoInstaller, ICoroutineRunner, IInitializable
     {
+        [SerializeField] private LoadingCurtain _loadingCurtain;
+        
         public override void InstallBindings()
         {
             BindInfrastructureServices();
@@ -37,8 +40,14 @@ namespace CodeBase.Infrastructure.Installers
             BindUnityRemoteConfigService();
             SetupDevice();
             BindInternetConnectionService();
+            BindLoadingCurtain();
 
             Container.BindInterfacesAndSelfTo<StateMachine>().AsSingle();
+        }
+
+        private void BindLoadingCurtain()
+        {
+            Container.Bind<ILoadingCurtain>().FromInstance(_loadingCurtain).AsSingle();
         }
 
         private void BindInternetConnectionService()
@@ -77,7 +86,7 @@ namespace CodeBase.Infrastructure.Installers
         {
             Container.Bind<IWindowService>().To<WindowService>().AsSingle();
             Container.Bind<IUIProvider>().To<UIProvider>().AsSingle();
-            Container.Bind<IUIStaticDataService>().To<UIStaticDataService>().AsSingle();
+            Container.Bind<IStaticDataService>().To<StaticDataService>().AsSingle();
             Container.Bind<IWordSlotUIFactory>().To<WordSlotUIFactory>().AsSingle();
             Container.BindInterfacesTo<WordSlotService>().AsSingle();
             Container.Bind<IClusterUIFactory>().To<ClusterUIFactory>().AsSingle();

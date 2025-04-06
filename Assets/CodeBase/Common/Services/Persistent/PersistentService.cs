@@ -21,9 +21,6 @@ namespace CodeBase.Common.Services.Persistent
 
         public void RegisterProgressWatcher(IProgressWatcher progressWatcher)
         {
-            if(_currentProgress == null)
-                Load();
-            
             if (!_progressWatchers.Contains(progressWatcher))
             {
                 _progressWatchers.Add(progressWatcher);

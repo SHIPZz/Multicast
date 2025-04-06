@@ -2,14 +2,7 @@ using System;
 using CodeBase.Infrastructure.Loading;
 using CodeBase.Infrastructure.States.StateInfrastructure;
 using CodeBase.Infrastructure.States.StateMachine;
-using CodeBase.UI.Game;
-using CodeBase.UI.Hint;
-using CodeBase.UI.LoadingWindow;
-using CodeBase.UI.Menu;
-using CodeBase.UI.NoInternet;
 using CodeBase.UI.Services.Window;
-using CodeBase.UI.Settings;
-using CodeBase.UI.Victory;
 
 namespace CodeBase.Infrastructure.States.States
 {
