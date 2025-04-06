@@ -13,11 +13,11 @@ namespace Editor.AddressablesTools
 {
     public class AddressablesUploader : EditorWindow
     {
-        private const string accessKey = "YCAJENApVJ026YJRwoFdYtSs0";
-        private const string secretKey = "YCP0k2fqL5JXVv9toc_wOGyp6FxG1guXt2SPk1KU";
-        private const string bucketName = "multicasttest";
-        private const string remoteFolder = "Adressables/";
-        private const string serviceUrl = "https://storage.yandexcloud.net";
+        private const string AccessKey = "YCAJENApVJ026YJRwoFdYtSs0";
+        private const string SecretKey = "YCP0k2fqL5JXVv9toc_wOGyp6FxG1guXt2SPk1KU";
+        private const string BucketName = "multicasttest";
+        private const string RemoteFolder = "Adressables/";
+        private const string ServiceUrl = "https://storage.yandexcloud.net";
 
         [MenuItem("Tools/Addressables/Build & Upload to Yandex")]
         public static void BuildAndUpload()
@@ -42,14 +42,14 @@ namespace Editor.AddressablesTools
 
             var config = new AmazonS3Config
             {
-                ServiceURL = serviceUrl,
+                ServiceURL = ServiceUrl,
             };
 
-            using var s3Client = new AmazonS3Client(accessKey, secretKey, config);
+            using var s3Client = new AmazonS3Client(AccessKey, SecretKey, config);
             var transferUtility = new TransferUtility(s3Client);
 
             // Step 1: Delete existing objects in the remote folder
-            Debug.Log($"🗑 Deleting existing objects in {remoteFolder}...");
+            Debug.Log($"🗑 Deleting existing objects in {RemoteFolder}...");
             await DeleteObjectsInFolderAsync(s3Client);
 
             // Step 2: Upload new Addressables files
@@ -59,13 +59,13 @@ namespace Editor.AddressablesTools
             foreach (string filePath in localFiles)
             {
                 string fileName = Path.GetFileName(filePath);
-                string key = $"{remoteFolder}{fileName}";
+                string key = $"{RemoteFolder}{fileName}";
 
                 Debug.Log($"⬆ Uploading: {fileName} → {key}");
 
                 var request = new TransferUtilityUploadRequest
                 {
-                    BucketName = bucketName,
+                    BucketName = BucketName,
                     FilePath = filePath,
                     Key = key,
                     CannedACL = S3CannedACL.PublicRead
@@ -89,8 +89,8 @@ namespace Editor.AddressablesTools
                 {
                     var listRequest = new ListObjectsV2Request
                     {
-                        BucketName = bucketName,
-                        Prefix = remoteFolder,
+                        BucketName = BucketName,
+                        Prefix = RemoteFolder,
                         ContinuationToken = continuationToken
                     };
 
@@ -107,12 +107,12 @@ namespace Editor.AddressablesTools
                 {
                     var deleteRequest = new DeleteObjectsRequest
                     {
-                        BucketName = bucketName,
+                        BucketName = BucketName,
                         Objects = objectsToDelete
                     };
 
                     var deleteResponse = await client.DeleteObjectsAsync(deleteRequest);
-                    Debug.Log($"✅ Deleted {deleteResponse.DeletedObjects.Count} objects from {remoteFolder}");
+                    Debug.Log($"✅ Deleted {deleteResponse.DeletedObjects.Count} objects from {RemoteFolder}");
 
                     if (deleteResponse.DeleteErrors.Count > 0)
                     {
@@ -124,12 +124,12 @@ namespace Editor.AddressablesTools
                 }
                 else
                 {
-                    Debug.Log($"ℹ No objects found in {remoteFolder} to delete.");
+                    Debug.Log($"ℹ No objects found in {RemoteFolder} to delete.");
                 }
             }
             catch (Exception ex)
             {
-                Debug.LogError($"❌ Error deleting objects in {remoteFolder}: {ex.Message}\nStack Trace: {ex.StackTrace}");
+                Debug.LogError($"❌ Error deleting objects in {RemoteFolder}: {ex.Message}\nStack Trace: {ex.StackTrace}");
             }
         }
 
@@ -144,8 +144,8 @@ namespace Editor.AddressablesTools
                 {
                     var request = new ListObjectsV2Request
                     {
-                        BucketName = bucketName,
-                        Prefix = remoteFolder,
+                        BucketName = BucketName,
+                        Prefix = RemoteFolder,
                         ContinuationToken = continuationToken
                     };
 
