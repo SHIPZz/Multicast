@@ -42,6 +42,28 @@ namespace CodeBase.Common.Services.ServerDataUploader
             await _transferUtility.UploadAsync(request,token);
             Debug.Log($"✅ Uploaded: {Path.GetFileName(localFilePath)} → {remoteKey}");
         }
+        
+        public async UniTask<bool> CheckIfFolderExists(string folderPrefix, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var request = new ListObjectsV2Request
+                {
+                    BucketName = _bucketName,
+                    Prefix = folderPrefix,
+                    MaxKeys = 1 
+                };
+
+                var response = await _s3Client.ListObjectsV2Async(request, cancellationToken);
+
+                return response.S3Objects.Count > 0; 
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"❌ Error checking folder existence: {ex.Message}\nStack Trace: {ex.StackTrace}");
+                return false;
+            }
+        }
 
         public async UniTask DeleteObjectsInFolderAsync(string folderPrefix, CancellationToken cancellationToken = default)
         {

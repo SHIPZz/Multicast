@@ -21,7 +21,7 @@ namespace Editor
             {
                 Debug.Log("✅ Build succeeded, starting uploads...");
                 
-                ApkUploader.UploadApkAsync(report.summary.outputPath).Forget();
+                BuildUploader.UploadApkAsync(report.summary.outputPath).Forget();
                 
                 AddressablesTools.AddressablesUploader.UploadAddressablesAsync().Forget();
             }
