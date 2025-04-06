@@ -47,8 +47,15 @@ namespace CodeBase.Gameplay.WordSlots
         public bool FormedWordCountLessTargetWordCount()
         {
             if (_formedWords.Count != _targetWordsToFind.Count)
-            {
                 return true;
+
+            foreach (var formedWord in _formedWords.Values)
+            {
+                bool lengthMatch = _targetWordsToFind.Any(target => 
+                    string.Equals(formedWord, target, StringComparison.OrdinalIgnoreCase) || formedWord.Length == target.Length);
+
+                if (!lengthMatch)
+                    return true;
             }
 
             return false;

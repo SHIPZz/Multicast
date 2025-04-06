@@ -10,6 +10,7 @@ namespace CodeBase.Gameplay.WordSlots
     {
         private readonly IWordSlotRepository _repository;
         private readonly IPersistentService _persistentService;
+        private readonly Dictionary<int, bool> _matchingRows = new();
         
         private WordSlotHolder _wordSlotHolder;
 
@@ -97,5 +98,19 @@ namespace CodeBase.Gameplay.WordSlots
         public void Cleanup() => _repository.Clear();
 
         public IReadOnlyDictionary<int, string> GetFormedWords() => _repository.GetFormedWords();
+
+        public IReadOnlyDictionary<int, bool> GetRowsWithMatchingWords()
+        {
+            var formedWords = _repository.GetFormedWords();
+            var targetWords = _repository.GetTargetWords();
+            _matchingRows.Clear();
+
+            foreach (var formedWord in formedWords)
+            {
+                _matchingRows[formedWord.Key] = _repository.WordsMatchIgnoringCase(formedWord.Value, targetWords);
+            }
+
+            return _matchingRows;
+        }
     }
 }

@@ -76,18 +76,11 @@ namespace CodeBase.UI.Services.Cluster
 
         public void CheckAndHideFilledClusters()
         {
-            foreach (KeyValuePair<int, string> formedWord in _wordSlotService.GetFormedWords())
+            foreach (var  row  in _wordSlotService.GetRowsWithMatchingWords())
             {
-                if (string.IsNullOrEmpty(formedWord.Value))
-                    continue;
+                bool isRowFilledCorrectly = row.Value;
 
-                if (!_wordSlotService.WordsMatchIgnoringCase(formedWord.Value, _wordSlotService.WordsToFind))
-                {
-                    SetAllClustersOutlineIconActiveInRow(formedWord.Key, true);
-                    continue;
-                }
-
-                SetAllClustersOutlineIconActiveInRow(formedWord.Key, false);
+                SetAllClustersOutlineIconActiveInRow(row.Key, !isRowFilledCorrectly);
             }
         }
 

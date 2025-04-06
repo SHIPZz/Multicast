@@ -20,5 +20,6 @@ namespace CodeBase.Gameplay.WordSlots
         void Cleanup();
         IReadOnlyDictionary<int, string> GetFormedWords();
         bool WordsMatchIgnoringCase(string formedWordValue, IEnumerable<string> wordsToFind);
+        IReadOnlyDictionary<int, bool> GetRowsWithMatchingWords();
     }
 }
