@@ -14,7 +14,7 @@ namespace CodeBase.UI.Cluster
         [SerializeField] private Transform _clusterItemLayout;
         [SerializeField] private GameObject _clusterItemAttachPrefab;
         
-        private readonly List<ClusterItem> _clusterItems = new(GameplayConstants.MaxClusterCount);
+        private readonly List<GameObject> _attachItems = new(GameplayConstants.MaxClusterCount);
         
         private IClusterUIFactory _clusterUIFactory;
         private WordSlotHolder _wordSlotHolder;
@@ -29,12 +29,12 @@ namespace CodeBase.UI.Cluster
 
         public void Clear()
         {
-            foreach (var clusterItem in _clusterItems)
+            foreach (var clusterItem in _attachItems)
             {
                 Destroy(clusterItem.gameObject);
             }
             
-            _clusterItems.Clear();
+            _attachItems.Clear();
         }
 
         public void CreateClusterItems(IEnumerable<string> clusters, Canvas parentCanvas)
@@ -47,7 +47,7 @@ namespace CodeBase.UI.Cluster
             
                 clusterItem.Initialize(clusters.ElementAt(i), attachItem.transform, parentCanvas);
                 _clusterService.RegisterCreatedCluster(clusterItem);
-                _clusterItems.Add(clusterItem);
+                _attachItems.Add(attachItem);
             }
         }
     }

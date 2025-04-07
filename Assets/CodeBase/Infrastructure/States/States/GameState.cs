@@ -10,6 +10,7 @@ using CodeBase.UI.Hint;
 using CodeBase.UI.Levels;
 using CodeBase.UI.Services.Window;
 using CodeBase.UI.WordSlots.Services;
+using UnityEngine;
 
 namespace CodeBase.Infrastructure.States.States
 {
@@ -67,7 +68,17 @@ namespace CodeBase.Infrastructure.States.States
         {
             if (_clusterService.GetAvailableClusters().IsNullOrEmpty())
             {
+                foreach (var cluster in currentLevelData.Clusters)
+                {
+                    Debug.Log($"before: {cluster}");
+                }
+                
                 IEnumerable<string> capitalizedClusters = currentLevelData.Clusters.Shuffle();
+                
+                foreach (var cluster in capitalizedClusters)
+                {
+                    Debug.Log($"after: {cluster}");
+                }
 
                 _clusterService.SetClusters(capitalizedClusters);
             }

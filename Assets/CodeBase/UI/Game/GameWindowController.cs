@@ -1,3 +1,4 @@
+using System.Linq;
 using CodeBase.Data;
 using CodeBase.Gameplay.Common.Services.Level;
 using CodeBase.Infrastructure.States.StateMachine;
@@ -103,7 +104,7 @@ namespace CodeBase.UI.Game
 
             _window.CreateClusterItemHolder();
             
-            _window.CreateClusterItems(levelData.Clusters);
+            _window.CreateClusterItems(_clusterService.AllClusters);
             
             _clusterService.RestorePlacedClusters();
         }

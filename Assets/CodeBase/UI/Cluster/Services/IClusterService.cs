@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using CodeBase.Data;
 using CodeBase.UI.WordSlots;
 
 namespace CodeBase.UI.Cluster.Services
@@ -15,5 +16,7 @@ namespace CodeBase.UI.Cluster.Services
         void RegisterCreatedCluster(ClusterItem clusterItem);
         void Init();
         void RestorePlacedClusters();
+        IEnumerable<string> PlacedClusters { get; }
+        IEnumerable<string> AllClusters { get; }
     }
 }

@@ -96,6 +96,10 @@ namespace CodeBase.UI.Cluster.Services
                 SetAllClustersOutlineIconActiveInRow(rowId, false);
             }
         }
+        
+        public IEnumerable<string> PlacedClusters => _clusterRepository.GetPlacedClusters().Select(x => x.Text);
+
+        public IEnumerable<string> AllClusters => PlacedClusters.Union(GetAvailableClusters());
 
         public void Cleanup()
         {
@@ -139,7 +143,7 @@ namespace CodeBase.UI.Cluster.Services
         {
             PlayerData playerData = progressData.PlayerData;
 
-            using var availableModels = UnityEngine.Pool.ListPool<ClusterModel>.Get(out var models);
+            List<ClusterModel> models = new();
 
             FormAvailableClusters(playerData, models);
 

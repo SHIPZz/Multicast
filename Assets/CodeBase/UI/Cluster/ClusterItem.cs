@@ -103,6 +103,7 @@ namespace CodeBase.UI.Cluster
         private void ReturnToOriginalPosition()
         {
             transform.SetParent(_originalParent);
+            transform.localPosition = Vector3.zero;
         }
     }
 }
