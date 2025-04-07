@@ -180,8 +180,7 @@ namespace CodeBase.UI.Cluster.Services
             {
                 if (!playerData.PlacedClusters.TryGetValue(placed.Row, out Dictionary<int, ClusterModel> rowDict))
                 {
-                    using var pooled = UnityEngine.Pool.DictionaryPool<int, ClusterModel>.Get(out rowDict);
-                    
+                    rowDict = new Dictionary<int, ClusterModel>();
                     playerData.PlacedClusters[placed.Row] = rowDict;
                 }
 

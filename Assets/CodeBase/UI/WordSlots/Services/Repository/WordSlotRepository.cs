@@ -77,21 +77,7 @@ namespace CodeBase.UI.WordSlots.Services.Repository
             if (_wordSlotHolder == null)
                 return null;
 
-            foreach ((var rowId, Dictionary<int, WordSlot> columns) in _wordSlotHolder.GetSlotsByRowAndColumn())
-            {
-                string word = "";
-
-                foreach (var slot in columns.Values)
-                {
-                    if (slot.IsOccupied)
-                        word += slot.CurrentLetter;
-                }
-
-                if (!string.IsNullOrEmpty(word))
-                {
-                    _formedWords[rowId] = word;
-                }
-            }
+            AddWordFromToListSlots();
 
             return _formedWords;
         }
@@ -111,17 +97,7 @@ namespace CodeBase.UI.WordSlots.Services.Repository
 
             playerData.WordsToFind.AddRange(_targetWordsToFind);
 
-            foreach ((var rowId, Dictionary<int, WordSlot> columns) in _wordSlotsByRowAndColumn)
-            {
-                using var pooledDictionary = DictionaryPool<int, String>.Get(out var rowData);
-
-                foreach ((var columnId, WordSlot slot) in columns)
-                {
-                    rowData[columnId] = slot.IsOccupied ? slot.CurrentLetter.ToString() : string.Empty;
-                }
-
-                playerData.WordSlotsByRowAndColumns[rowId] = rowData;
-            }
+            SaveWordSlotsByRowAndColumn(playerData);
         }
 
         public void Load(ProgressData progressData)
@@ -158,6 +134,40 @@ namespace CodeBase.UI.WordSlots.Services.Repository
         private void UpdateWordSlot(int row, int column, WordSlot slot)
         {
             _wordSlotsByRowAndColumn[row][column] = slot;
+        }
+
+        private void SaveWordSlotsByRowAndColumn(PlayerData playerData)
+        {
+            foreach ((var rowId, Dictionary<int, WordSlot> columns) in _wordSlotsByRowAndColumn)
+            {
+                var rowData = new Dictionary<int, string>();
+
+                foreach ((var columnId, WordSlot slot) in columns)
+                {
+                    rowData[columnId] = slot.IsOccupied ? slot.CurrentLetter.ToString() : string.Empty;
+                }
+
+                playerData.WordSlotsByRowAndColumns[rowId] = rowData;
+            }
+        }
+
+        private void AddWordFromToListSlots()
+        {
+            foreach ((var rowId, Dictionary<int, WordSlot> columns) in _wordSlotHolder.GetSlotsByRowAndColumn())
+            {
+                string word = "";
+
+                foreach (var slot in columns.Values)
+                {
+                    if (slot.IsOccupied)
+                        word += slot.CurrentLetter;
+                }
+
+                if (!string.IsNullOrEmpty(word))
+                {
+                    _formedWords[rowId] = word;
+                }
+            }
         }
     }
 }
