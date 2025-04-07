@@ -140,14 +140,14 @@ namespace CodeBase.UI.WordSlots.Services.Repository
         {
             foreach ((var rowId, Dictionary<int, WordSlot> columns) in _wordSlotsByRowAndColumn)
             {
-                var rowData = new Dictionary<int, string>();
+                var columnDictionary = new Dictionary<int, string>();
 
                 foreach ((var columnId, WordSlot slot) in columns)
                 {
-                    rowData[columnId] = slot.IsOccupied ? slot.CurrentLetter.ToString() : string.Empty;
+                    columnDictionary[columnId] = slot.IsOccupied ? slot.CurrentLetter.ToString() : string.Empty;
                 }
 
-                playerData.WordSlotsByRowAndColumns[rowId] = rowData;
+                playerData.WordSlotsByRowAndColumns[rowId] = columnDictionary;
             }
         }
 
