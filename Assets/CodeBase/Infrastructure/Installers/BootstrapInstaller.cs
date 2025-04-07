@@ -114,7 +114,7 @@ namespace CodeBase.Infrastructure.Installers
             Container.Bind<ISaveLoadSystem>().To<PlayerPrefsSaveLoadSystem>().AsSingle();
             Container.BindInterfacesTo<SoundService>().AsSingle();
             Container.BindInterfacesTo<SoundFactory>().AsSingle();
-            Container.BindInterfacesTo<SaveOnApplicationPauseSystem>().AsSingle();
+            Container.BindInterfacesTo<SaveOnApplicationFocusChangedSystem>().AsSingle();
         }
 
         public void Initialize()

@@ -4,11 +4,11 @@ using UnityEngine;
 
 namespace CodeBase.Common.Services.SaveLoad
 {
-    public class SaveOnApplicationPauseSystem : ISaveOnApplicationPauseSystem, IDisposable
+    public class SaveOnApplicationFocusChangedSystem : ISaveOnApplicationPauseSystem, IDisposable
     {
         private readonly IPersistentService _persistentService;
 
-        public SaveOnApplicationPauseSystem(IPersistentService persistentService) => _persistentService = persistentService;
+        public SaveOnApplicationFocusChangedSystem(IPersistentService persistentService) => _persistentService = persistentService;
 
         public void Initialize() => Application.focusChanged += OnApplicationFocusChanged;
 
