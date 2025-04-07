@@ -78,7 +78,7 @@ namespace CodeBase.Infrastructure.Installers
         {
             Container.Bind<IWindowService>().To<WindowService>().AsSingle();
             Container.Bind<IUIProvider>().To<UIProvider>().AsSingle();
-            Container.Bind<IStaticDataService>().To<StaticDataService>().AsSingle();
+            Container.BindInterfacesTo<StaticDataService>().AsSingle();
             Container.Bind<IWordSlotUIFactory>().To<WordSlotUIFactory>().AsSingle();
             Container.BindInterfacesTo<WordSlotService>().AsSingle();
             Container.Bind<IClusterUIFactory>().To<ClusterUIFactory>().AsSingle();

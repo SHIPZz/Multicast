@@ -22,7 +22,7 @@ using UnityEngine.AddressableAssets;
 
 namespace CodeBase.StaticData
 {
-    public class StaticDataService : IStaticDataService
+    public class StaticDataService : IStaticDataService, IDisposable
     {
         private readonly Dictionary<Type, AbstractWindowBase> _windowPrefabs = new();
         private readonly IAssetProvider _assetProvider;
@@ -57,6 +57,11 @@ namespace CodeBase.StaticData
                 Debug.LogError($"Failed to load prefabs: {e.Message}");
                 throw;
             }
+        }
+
+        public void Dispose()
+        {
+            _assetProvider.ReleaseAll();
         }
 
         private async UniTask InitializeSoundConfigsAsync(CancellationToken cancellationToken = default)

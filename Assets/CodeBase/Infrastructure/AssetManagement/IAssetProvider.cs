@@ -8,5 +8,7 @@ namespace CodeBase.Infrastructure.AssetManagement
         UniTask<T> LoadGameObjectAssetAsyncByTypePath<T>(CancellationToken cancellationToken = default);
         UniTask<T> LoadGameObjectAssetAsync<T>(string path, CancellationToken cancellationToken = default);
         UniTask<T> LoadAssetAsync<T>(string path, CancellationToken cancellationToken = default);
+        void Release(string path);
+        void ReleaseAll();
     }
 }
