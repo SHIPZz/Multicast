@@ -58,8 +58,8 @@ namespace CodeBase.UI.Cluster.Services
             _clusterRepository.AddAvailableClusters(clusterModels);
         }
 
-        public IEnumerable<string> GetAvailableClusters() =>
-            _clusterRepository.GetAvailableClusters().Select(c => c.Text);
+        public IEnumerable<ClusterModel> GetAvailableClusters() =>
+            _clusterRepository.GetAvailableClusters();
 
         public bool TryPlaceCluster(ClusterItem cluster, WordSlot wordSlot)
         {
@@ -97,9 +97,9 @@ namespace CodeBase.UI.Cluster.Services
             }
         }
         
-        public IEnumerable<string> PlacedClusters => _clusterRepository.GetPlacedClusters().Select(x => x.Text);
+        public IEnumerable<ClusterModel> PlacedClusters => _clusterRepository.GetPlacedClusters();
 
-        public IEnumerable<string> AllClusters => PlacedClusters.Union(GetAvailableClusters());
+        public IEnumerable<ClusterModel> AllClusters => PlacedClusters.Union(GetAvailableClusters());
 
         public void Cleanup()
         {
@@ -212,7 +212,10 @@ namespace CodeBase.UI.Cluster.Services
                 {
                     if (playerData.PlacedClustersGrid[row, col].Text != null)
                     {
-                        _clusterRepository.MarkClusterAsPlaced(playerData.PlacedClustersGrid[row, col]);
+                        var cluster = playerData.PlacedClustersGrid[row, col];
+                        // Create a new cluster with the same text but new ID
+                        var newCluster = new ClusterModel(cluster.Text, cluster.IsPlaced, cluster.Row, cluster.Column);
+                        _clusterRepository.MarkClusterAsPlaced(newCluster);
                     }
                 }
             }

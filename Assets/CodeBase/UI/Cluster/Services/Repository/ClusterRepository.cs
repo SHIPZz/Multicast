@@ -40,12 +40,12 @@ namespace CodeBase.UI.Cluster.Services.Repository
         public void MarkClusterAsPlaced(ClusterModel cluster)
         {
             _placedClusters.Add(cluster);
-            _availableClusters.RemoveAll(c => c.Text == cluster.Text);
+            _availableClusters.RemoveAll(c => c.Id == cluster.Id);
         }
 
         public void MarkClusterAsAvailable(ClusterModel cluster)
         {
-            _placedClusters.RemoveAll(c => c.Text == cluster.Text);
+            _placedClusters.RemoveAll(c => c.Id == cluster.Id);
             _availableClusters.Add(cluster);
         }
 

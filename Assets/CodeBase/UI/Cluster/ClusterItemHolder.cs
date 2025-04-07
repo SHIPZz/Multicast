@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using CodeBase.Data;
 using CodeBase.Gameplay.Constants;
 using CodeBase.UI.Cluster.Services;
 using CodeBase.UI.Cluster.Services.Factory;
@@ -37,7 +38,7 @@ namespace CodeBase.UI.Cluster
             _attachItems.Clear();
         }
 
-        public void CreateClusterItems(IEnumerable<string> clusters, Canvas parentCanvas)
+        public void CreateClusterItems(IEnumerable<ClusterModel> clusters, Canvas parentCanvas)
         {
             for (int i = 0; i < clusters.Count(); i++)
             {
@@ -45,7 +46,7 @@ namespace CodeBase.UI.Cluster
                 
                 ClusterItem clusterItem = _clusterUIFactory.CreateClusterItem(attachItem.transform);
             
-                clusterItem.Initialize(clusters.ElementAt(i), attachItem.transform, parentCanvas);
+                clusterItem.Initialize(clusters.ElementAt(i).Text, attachItem.transform, parentCanvas);
                 _clusterService.RegisterCreatedCluster(clusterItem);
                 _attachItems.Add(attachItem);
             }

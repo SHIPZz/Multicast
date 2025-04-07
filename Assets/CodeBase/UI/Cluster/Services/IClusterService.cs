@@ -11,12 +11,12 @@ namespace CodeBase.UI.Cluster.Services
         void CheckAndHideFilledClusters();
         void OnClusterSelected(ClusterItem clusterItem);
         void SetClusters(IEnumerable<string> clusters);
-        IEnumerable<string> GetAvailableClusters();
+        IEnumerable<ClusterModel> GetAvailableClusters();
         void Cleanup();
         void RegisterCreatedCluster(ClusterItem clusterItem);
         void Init();
         void RestorePlacedClusters();
-        IEnumerable<string> PlacedClusters { get; }
-        IEnumerable<string> AllClusters { get; }
+        IEnumerable<ClusterModel> PlacedClusters { get; }
+        IEnumerable<ClusterModel> AllClusters { get; }
     }
 }

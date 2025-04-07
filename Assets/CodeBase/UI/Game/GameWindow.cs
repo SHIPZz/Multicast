@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using CodeBase.Data;
 using CodeBase.StaticData;
 using CodeBase.UI.AbstractWindow;
 using CodeBase.UI.Cluster;
@@ -60,7 +61,7 @@ namespace CodeBase.UI.Game
 
         }
 
-        public void CreateClusterItems(IEnumerable<string> clusters)
+        public void CreateClusterItems(IEnumerable<ClusterModel> clusters)
         {
             _clusterItemHolder.CreateClusterItems(clusters, _canvas);
         }
