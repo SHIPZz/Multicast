@@ -11,7 +11,6 @@ using CodeBase.UI.Sound.Services;
 using CodeBase.UI.WordSlots;
 using CodeBase.UI.WordSlots.Services;
 using UnityEngine;
-using UnityEngine.Pool;
 using Zenject;
 
 namespace CodeBase.UI.Cluster.Services
@@ -67,9 +66,11 @@ namespace CodeBase.UI.Cluster.Services
             if (!_clusterPlacement.TryPlaceCluster(cluster, wordSlot))
                 return false;
 
-            ClusterModel clusterModel = cluster.ToModel(_wordSlotService.GetRowBySlot(wordSlot), _wordSlotService.GetColumnBySlot(wordSlot));
+            ClusterModel clusterModel = cluster.ToModel(_wordSlotService.GetRowBySlot(wordSlot),
+                _wordSlotService.GetColumnBySlot(wordSlot));
             _clusterRepository.MarkClusterAsPlaced(clusterModel);
             _soundService.Play(SoundTypeId.ClusterPlaced);
+
             return true;
         }
 
@@ -120,12 +121,13 @@ namespace CodeBase.UI.Cluster.Services
 
                 RestoreClusterToSavedSlot(placedCluster, clusterItem);
             }
+            
+            CheckAndHideFilledClusters();
         }
 
         public void Save(ProgressData progressData)
         {
             PlayerData playerData = progressData.PlayerData;
-            playerData.PlacedClusters.Clear();
             playerData.AvailableClusters.Clear();
 
             playerData.AvailableClusters.AddRange(_clusterRepository.GetAvailableClusters());
@@ -176,25 +178,38 @@ namespace CodeBase.UI.Cluster.Services
 
         private void SavePlacedClusters(PlayerData playerData)
         {
+            int maxRow = 0;
+            int maxCol = 0;
+
             foreach (ClusterModel placed in _clusterRepository.GetPlacedClusters())
             {
-                if (!playerData.PlacedClusters.TryGetValue(placed.Row, out Dictionary<int, ClusterModel> rowDict))
-                {
-                    rowDict = new Dictionary<int, ClusterModel>();
-                    playerData.PlacedClusters[placed.Row] = rowDict;
-                }
+                maxRow = Math.Max(maxRow, placed.Row);
+                maxCol = Math.Max(maxCol, placed.Column);
+            }
 
-                rowDict[placed.Column] = placed;
+            playerData.GridRows = maxRow + 1;
+            playerData.GridColumns = maxCol + 1;
+            playerData.PlacedClustersGrid = new ClusterModel[playerData.GridRows, playerData.GridColumns];
+
+            foreach (ClusterModel placed in _clusterRepository.GetPlacedClusters())
+            {
+                playerData.PlacedClustersGrid[placed.Row, placed.Column] = placed;
             }
         }
 
         private void LoadPlacedClusters(PlayerData playerData)
         {
-            foreach ((var row, Dictionary<int, ClusterModel> value) in playerData.PlacedClusters)
+            if (playerData.PlacedClustersGrid == null)
+                return;
+
+            for (int row = 0; row < playerData.GridRows; row++)
             {
-                foreach ((var column, ClusterModel model) in value)
+                for (int col = 0; col < playerData.GridColumns; col++)
                 {
-                    _clusterRepository.MarkClusterAsPlaced(model);
+                    if (playerData.PlacedClustersGrid[row, col].Text != null)
+                    {
+                        _clusterRepository.MarkClusterAsPlaced(playerData.PlacedClustersGrid[row, col]);
+                    }
                 }
             }
         }

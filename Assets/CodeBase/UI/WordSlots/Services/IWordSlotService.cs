@@ -9,7 +9,7 @@ namespace CodeBase.UI.WordSlots.Services
         int IndexOf(WordSlot wordSlot);
         int SlotCount { get; }
         int MaxLettersInWord { get; }
-        IReadOnlyList<string> WordsToFind { get; }
+        IReadOnlyCollection<string> WordsToFind { get; }
         void SetTargetWordsToFind(IEnumerable<string> words);
         int GetRowBySlot(WordSlot slot);
         int GetColumnBySlot(WordSlot slot);

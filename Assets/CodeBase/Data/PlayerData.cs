@@ -10,8 +10,10 @@ namespace CodeBase.Data
         public List<string> WordsToFind = new();
         public List<ClusterModel> AvailableClusters = new();
         
-        public Dictionary<int, Dictionary<int,ClusterModel>> PlacedClusters = new();
+        public ClusterModel[,] PlacedClustersGrid;
+        public string[,] WordSlotsGrid;
         
-        public Dictionary<int, Dictionary<int, string>> WordSlotsByRowAndColumns = new();
+        public int GridRows;
+        public int GridColumns;
     }
 }

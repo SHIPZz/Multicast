@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using CodeBase.Gameplay.Constants;
 using CodeBase.UI.Cluster.Services;
 using CodeBase.UI.Cluster.Services.Factory;
@@ -37,11 +38,11 @@ namespace CodeBase.UI.Cluster
 
         public void CreateClusterItems(IEnumerable<string> clusters, Canvas parentCanvas)
         {
-            foreach (string cluster in clusters)
+            for (int i = 0; i < clusters.Count(); i++)
             {
                 ClusterItem clusterItem = _clusterUIFactory.CreateClusterItem(_clusterItemLayout);
             
-                clusterItem.Initialize(cluster, _clusterItemLayout, parentCanvas);
+                clusterItem.Initialize(clusters.ElementAt(i), _clusterItemLayout, parentCanvas);
                 _clusterService.RegisterCreatedCluster(clusterItem);
                 _clusterItems.Add(clusterItem);
             }

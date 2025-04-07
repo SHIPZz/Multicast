@@ -16,6 +16,9 @@ namespace CodeBase.UI.Cluster
 
         private string _clusterText;
         private IClusterService _clusterService;
+        private Transform _originalParent;
+        private int _originalSiblingIndex;
+        private LayoutGroup _parentLayoutGroup;
 
         public string Text => _clusterText;
 
@@ -32,12 +35,13 @@ namespace CodeBase.UI.Cluster
             _clusterText = text;
             _text.text = text;
             _outlineIcon.enabled = true;
+            _originalParent = parent;
+            _originalSiblingIndex = transform.GetSiblingIndex();
         }
 
         public override void OnBeginDrag(PointerEventData eventData)
         {
             base.OnBeginDrag(eventData);
-
             _clusterService.OnClusterSelected(this);
         }
 
@@ -53,7 +57,7 @@ namespace CodeBase.UI.Cluster
         {
             if (wordSlot == null || wordSlot.IsOccupied)
             {
-                ReturnToStartPosition();
+                OnReset();
                 return;
             }
             
@@ -63,7 +67,7 @@ namespace CodeBase.UI.Cluster
                 return;
             }
 
-            ReturnToStartPosition();
+            OnReset();
         }
 
         public void OnPointerClick(PointerEventData eventData)
@@ -78,6 +82,7 @@ namespace CodeBase.UI.Cluster
             _text.enabled = true;
             SetOutlineIconActive(true);
             _clusterService.ResetCluster(this);
+            ReturnToOriginalPosition();
         }
 
         public void MarkPlacedTo(WordSlot wordSlot)
@@ -96,6 +101,12 @@ namespace CodeBase.UI.Cluster
         public void SetBlocksRaycasts(bool value)
         {
             CanvasGroup.blocksRaycasts = value;
+        }
+
+        private void ReturnToOriginalPosition()
+        {
+            transform.SetParent(_originalParent);
+            transform.SetSiblingIndex(_originalSiblingIndex - 1);
         }
     }
 }

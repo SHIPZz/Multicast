@@ -38,12 +38,11 @@ namespace CodeBase.UI.WordSlots.Services
             }
         }
 
-        public IReadOnlyList<string> WordsToFind => _repository.GetTargetWords();
+        public IReadOnlyCollection<string> WordsToFind => _repository.GetTargetWords();
 
         public void Initialize()
         {
             _persistentService.RegisterProgressWatcher(_repository);
-            _repository.Initialize();
         }
 
         public void Dispose()
@@ -86,10 +85,13 @@ namespace CodeBase.UI.WordSlots.Services
 
         public int GetRowBySlot(WordSlot slot)
         {
-            foreach ((var rowId, Dictionary<int, WordSlot> columns) in _wordSlotHolder.GetSlotsByRowAndColumn())
+            for (int row = 0; row < _wordSlotHolder.GridRows; row++)
             {
-                if (columns.ContainsValue(slot))
-                    return rowId;
+                for (int col = 0; col < _wordSlotHolder.GridColumns; col++)
+                {
+                    if (_wordSlotHolder.GetSlotByRowAndColumn(row, col) == slot)
+                        return row;
+                }
             }
 
             return -1;
@@ -117,11 +119,12 @@ namespace CodeBase.UI.WordSlots.Services
 
         public bool ContainsInTargetWords(string word)
         {
-            IReadOnlyList<string> targetWords = _repository.GetTargetWords();
+            IReadOnlyCollection<string> targetWords = _repository.GetTargetWords();
 
             foreach (string targetWord in targetWords)
             {
                 Debug.Log($"{targetWord} - {word} compare - {targetWord.Equals(word, StringComparison.OrdinalIgnoreCase)}");
+                
                 if (targetWord.Equals(word, StringComparison.OrdinalIgnoreCase))
                     return true;
             }

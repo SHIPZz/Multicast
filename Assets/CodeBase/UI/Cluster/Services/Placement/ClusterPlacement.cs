@@ -11,9 +11,7 @@ namespace CodeBase.UI.Cluster.Services.Placement
         private readonly Dictionary<ClusterItem, List<WordSlot>> _clustersOccupiedSlots =
             new(GameplayConstants.MaxClusterCount);
 
-        private readonly Dictionary<int, Dictionary<int, ClusterItem>> _clusters =
-            new(GameplayConstants.MaxClusterCount);
-
+        private ClusterItem[,] _clustersGrid;
         private readonly IWordSlotService _wordSlotService;
 
         public ClusterPlacement(IWordSlotService wordSlotService)
@@ -23,10 +21,7 @@ namespace CodeBase.UI.Cluster.Services.Placement
 
         public void Initialize(int rowCount)
         {
-            for (int i = 0; i < rowCount; i++)
-            {
-                _clusters[i] = new Dictionary<int, ClusterItem>(GameplayConstants.MaxClustersInColumn);
-            }
+            _clustersGrid = new ClusterItem[rowCount, GameplayConstants.MaxClustersInColumn];
         }
 
         public bool TryPlaceCluster(ClusterItem cluster, WordSlot wordSlot)
@@ -61,10 +56,17 @@ namespace CodeBase.UI.Cluster.Services.Placement
 
         public IEnumerable<ClusterItem> GetClustersInRow(int row)
         {
-            if (_clusters.TryGetValue(row, out var rowClusters))
-                return rowClusters.Values;
-
-            return ListPool<ClusterItem>.Get();
+            var rowClusters = ListPool<ClusterItem>.Get();
+            
+            for (int col = 0; col < _clustersGrid.GetLength(1); col++)
+            {
+                if (_clustersGrid[row, col] != null)
+                {
+                    rowClusters.Add(_clustersGrid[row, col]);
+                }
+            }
+            
+            return rowClusters;
         }
 
         private bool IsPlacementAvailable(ClusterItem cluster, int startIndex)
@@ -79,8 +81,9 @@ namespace CodeBase.UI.Cluster.Services.Placement
                 int targetIndex = startIndex + i;
                 WordSlot slot = _wordSlotService.GetTargetSlot(targetIndex);
                 int slotRow = _wordSlotService.GetRowBySlot(slot);
+                int slotCol = _wordSlotService.GetColumnBySlot(slot);
 
-                if (slotRow != startRow || slot.IsOccupied)
+                if (slotRow != startRow || slot.IsOccupied || _clustersGrid[slotRow, slotCol] != null)
                     return false;
             }
 
@@ -98,13 +101,7 @@ namespace CodeBase.UI.Cluster.Services.Placement
                 int row = _wordSlotService.GetRowBySlot(slot);
                 int column = _wordSlotService.GetColumnBySlot(slot);
 
-                if (!_clusters.TryGetValue(row, out Dictionary<int, ClusterItem> rowClusters))
-                {
-                      rowClusters = DictionaryPool<int, ClusterItem>.Get();
-                    _clusters[row] = rowClusters;
-                }
-
-                rowClusters[column] = cluster;
+                _clustersGrid[row, column] = cluster;
                 slot.SetText(cluster.Text[i]);
                 occupiedSlots.Add(slot);
             }
@@ -114,16 +111,7 @@ namespace CodeBase.UI.Cluster.Services.Placement
 
         private void ClearSlot(int row, int column)
         {
-            if (_clusters.TryGetValue(row, out Dictionary<int, ClusterItem> rowClusters))
-            {
-                rowClusters.Remove(column);
-
-                if (rowClusters.Count == 0)
-                {
-                    DictionaryPool<int, ClusterItem>.Release(rowClusters);
-                    _clusters.Remove(row);
-                }
-            }
+            _clustersGrid[row, column] = null;
         }
 
         public void Clear()
@@ -132,14 +120,19 @@ namespace CodeBase.UI.Cluster.Services.Placement
             {
                 ListPool<WordSlot>.Release(list);
             }
-
-            foreach (Dictionary<int, ClusterItem> clusters in _clusters.Values)
-            {
-                DictionaryPool<int, ClusterItem>.Release(clusters);
-            }
             
-            _clusters.Clear();
             _clustersOccupiedSlots.Clear();
+            
+            if (_clustersGrid != null)
+            {
+                for (int row = 0; row < _clustersGrid.GetLength(0); row++)
+                {
+                    for (int col = 0; col < _clustersGrid.GetLength(1); col++)
+                    {
+                        _clustersGrid[row, col] = null;
+                    }
+                }
+            }
         }
     }
 }

@@ -26,6 +26,16 @@ namespace CodeBase.Extensions
             return enumerable[Random.Range(0, enumerable.Length)];
         }
 
+        public static HashSet<T> AddRange<T>(this HashSet<T> hashSet, IEnumerable<T> collection)
+        {
+            foreach (T item in collection)
+            {
+                hashSet.Add(item);
+            }
+
+            return hashSet;
+        }
+
         public static IEnumerable<T> Except<T>(this IEnumerable<T> enumerable, T toExcept) =>
             enumerable.Except(new[] { toExcept });
 

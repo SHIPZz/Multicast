@@ -6,7 +6,7 @@ namespace CodeBase.UI.WordSlots.Services.Repository
     public interface IWordSlotRepository : IProgressWatcher
     {
         int SlotCount { get; }
-        IReadOnlyList<string> GetTargetWords();
+        IReadOnlyCollection<string> GetTargetWords();
         IReadOnlyDictionary<int, string> GetFormedWords();
         
         void SetWordSlotHolder(WordSlotHolder wordSlotHolder);
@@ -16,6 +16,5 @@ namespace CodeBase.UI.WordSlots.Services.Repository
         bool FormedWordCountSameTargetWordCount();
         bool AllWordsFound();
         void RefreshFormedWords();
-        void Initialize();
     }
 } 

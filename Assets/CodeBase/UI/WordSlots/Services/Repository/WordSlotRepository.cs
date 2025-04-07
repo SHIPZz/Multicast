@@ -2,27 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using CodeBase.Data;
+using CodeBase.Extensions;
 using CodeBase.Gameplay.Constants;
 using UnityEngine;
-using UnityEngine.Pool;
 
 namespace CodeBase.UI.WordSlots.Services.Repository
 {
     public class WordSlotRepository : IWordSlotRepository
     {
-        private readonly List<string> _targetWordsToFind = new(GameplayConstants.MaxWordCount);
-        private readonly Dictionary<int, Dictionary<int, WordSlot>> _wordSlotsByRowAndColumn = new(GameplayConstants.MaxWordCount);
+        private readonly HashSet<string> _targetWordsToFind = new(GameplayConstants.MaxWordCount);
         private readonly Dictionary<int, string> _formedWords = new(GameplayConstants.MaxWordCount);
 
         private WordSlotHolder _wordSlotHolder;
-
-        public void Initialize()
-        {
-            foreach (KeyValuePair<int, Dictionary<int, WordSlot>> row in _wordSlotsByRowAndColumn)
-            {
-                _wordSlotsByRowAndColumn[row.Key] = new Dictionary<int, WordSlot>(GameplayConstants.MaxClustersInColumn);
-            }
-        }
 
         public int SlotCount => _wordSlotHolder?.WordSlots.Count ?? 0;
 
@@ -41,8 +32,8 @@ namespace CodeBase.UI.WordSlots.Services.Repository
             foreach (var word in _formedWords.Values)
             {
                 Debug.Log($"formed word - {word}");
-                
-                if(!_targetWordsToFind.Contains(word,StringComparer.OrdinalIgnoreCase))
+
+                if (!_targetWordsToFind.Contains(word, StringComparer.OrdinalIgnoreCase))
                     return false;
             }
 
@@ -52,7 +43,6 @@ namespace CodeBase.UI.WordSlots.Services.Repository
         public void RefreshFormedWords()
         {
             _formedWords.Clear();
-            
             GetFormedWords();
         }
 
@@ -70,7 +60,7 @@ namespace CodeBase.UI.WordSlots.Services.Repository
             }
         }
 
-        public IReadOnlyList<string> GetTargetWords() => _targetWordsToFind;
+        public IReadOnlyCollection<string> GetTargetWords() => _targetWordsToFind;
 
         public IReadOnlyDictionary<int, string> GetFormedWords()
         {
@@ -78,14 +68,12 @@ namespace CodeBase.UI.WordSlots.Services.Repository
                 return null;
 
             AddWordFromToListSlots();
-
             return _formedWords;
         }
 
         public void Clear()
         {
             _targetWordsToFind.Clear();
-            _wordSlotsByRowAndColumn.Clear();
             _formedWords.Clear();
         }
 
@@ -93,10 +81,8 @@ namespace CodeBase.UI.WordSlots.Services.Repository
         {
             PlayerData playerData = progressData.PlayerData;
             playerData.WordsToFind.Clear();
-            playerData.WordSlotsByRowAndColumns.Clear();
 
             playerData.WordsToFind.AddRange(_targetWordsToFind);
-
             SaveWordSlotsByRowAndColumn(playerData);
         }
 
@@ -105,68 +91,47 @@ namespace CodeBase.UI.WordSlots.Services.Repository
             Clear();
 
             _targetWordsToFind.AddRange(progressData.PlayerData.WordsToFind);
-
-            foreach (KeyValuePair<int, Dictionary<int, string>> rowData in progressData.PlayerData.WordSlotsByRowAndColumns)
-            {
-                int row = rowData.Key;
-
-                UpdateColumnsByRow(rowData, row);
-            }
-        }
-
-        private void UpdateColumnsByRow(KeyValuePair<int, Dictionary<int, string>> rowData, int row)
-        {
-            foreach (var (column, letter) in rowData.Value)
-            {
-                if (!string.IsNullOrEmpty(letter) && _wordSlotHolder != null)
-                {
-                    WordSlot slot = _wordSlotHolder.GetSlotByRowAndColumn(row, column);
-
-                    if (slot != null)
-                    {
-                        slot.SetText(letter[0]);
-                        UpdateWordSlot(row, column, slot);
-                    }
-                }
-            }
-        }
-
-        private void UpdateWordSlot(int row, int column, WordSlot slot)
-        {
-            _wordSlotsByRowAndColumn[row][column] = slot;
         }
 
         private void SaveWordSlotsByRowAndColumn(PlayerData playerData)
         {
-            foreach ((var rowId, Dictionary<int, WordSlot> columns) in _wordSlotsByRowAndColumn)
+            if (_wordSlotHolder == null)
+                return;
+
+            playerData.GridRows = _wordSlotHolder.GridRows;
+            playerData.GridColumns = _wordSlotHolder.GridColumns;
+            playerData.WordSlotsGrid = new string[playerData.GridRows, playerData.GridColumns];
+
+            for (int row = 0; row < playerData.GridRows; row++)
             {
-                var columnDictionary = new Dictionary<int, string>();
-
-                foreach ((var columnId, WordSlot slot) in columns)
+                for (int col = 0; col < playerData.GridColumns; col++)
                 {
-                    columnDictionary[columnId] = slot.IsOccupied ? slot.CurrentLetter.ToString() : string.Empty;
+                    WordSlot slot = _wordSlotHolder.GetSlotByRowAndColumn(row, col);
+                    
+                    playerData.WordSlotsGrid[row, col] = slot?.IsOccupied == true ? slot.CurrentLetter.ToString() : string.Empty;
                 }
-
-                playerData.WordSlotsByRowAndColumns[rowId] = columnDictionary;
             }
         }
 
         private void AddWordFromToListSlots()
         {
-            foreach ((var rowId, Dictionary<int, WordSlot> columns) in _wordSlotHolder.GetSlotsByRowAndColumn())
+            if (_wordSlotHolder == null)
+                return;
+
+            for (int row = 0; row < _wordSlotHolder.GridRows; row++)
             {
                 string word = "";
 
-                foreach (var slot in columns.Values)
+                for (int col = 0; col < _wordSlotHolder.GridColumns; col++)
                 {
-                    if (slot.IsOccupied)
+                    WordSlot slot = _wordSlotHolder.GetSlotByRowAndColumn(row, col);
+
+                    if (slot?.IsOccupied == true)
                         word += slot.CurrentLetter;
                 }
 
                 if (!string.IsNullOrEmpty(word))
-                {
-                    _formedWords[rowId] = word;
-                }
+                    _formedWords[row] = word;
             }
         }
     }
