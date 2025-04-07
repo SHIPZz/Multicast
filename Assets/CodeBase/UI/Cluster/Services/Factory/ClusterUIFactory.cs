@@ -26,6 +26,11 @@ namespace CodeBase.UI.Cluster.Services.Factory
             return clusterItem;
         }
 
+        public GameObject Create(Transform parent, GameObject prefab)
+        {
+            return _instantiator.InstantiatePrefab(prefab, parent);
+        }
+
         public ClusterItem CreateClusterItem(Transform parent)
         {
             ClusterItem prefab = _staticDataService.GetClusterItem();

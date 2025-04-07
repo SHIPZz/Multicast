@@ -17,8 +17,6 @@ namespace CodeBase.UI.Cluster
         private string _clusterText;
         private IClusterService _clusterService;
         private Transform _originalParent;
-        private int _originalSiblingIndex;
-        private LayoutGroup _parentLayoutGroup;
 
         public string Text => _clusterText;
 
@@ -36,7 +34,6 @@ namespace CodeBase.UI.Cluster
             _text.text = text;
             _outlineIcon.enabled = true;
             _originalParent = parent;
-            _originalSiblingIndex = transform.GetSiblingIndex();
         }
 
         public override void OnBeginDrag(PointerEventData eventData)
@@ -106,7 +103,6 @@ namespace CodeBase.UI.Cluster
         private void ReturnToOriginalPosition()
         {
             transform.SetParent(_originalParent);
-            transform.SetSiblingIndex(_originalSiblingIndex - 1);
         }
     }
 }

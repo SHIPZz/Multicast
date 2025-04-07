@@ -12,6 +12,7 @@ namespace CodeBase.UI.Cluster
     public class ClusterItemHolder : MonoBehaviour
     {
         [SerializeField] private Transform _clusterItemLayout;
+        [SerializeField] private GameObject _clusterItemAttachPrefab;
         
         private readonly List<ClusterItem> _clusterItems = new(GameplayConstants.MaxClusterCount);
         
@@ -40,9 +41,11 @@ namespace CodeBase.UI.Cluster
         {
             for (int i = 0; i < clusters.Count(); i++)
             {
-                ClusterItem clusterItem = _clusterUIFactory.CreateClusterItem(_clusterItemLayout);
+                GameObject attachItem = _clusterUIFactory.Create(_clusterItemLayout, _clusterItemAttachPrefab);
+                
+                ClusterItem clusterItem = _clusterUIFactory.CreateClusterItem(attachItem.transform);
             
-                clusterItem.Initialize(clusters.ElementAt(i), _clusterItemLayout, parentCanvas);
+                clusterItem.Initialize(clusters.ElementAt(i), attachItem.transform, parentCanvas);
                 _clusterService.RegisterCreatedCluster(clusterItem);
                 _clusterItems.Add(clusterItem);
             }

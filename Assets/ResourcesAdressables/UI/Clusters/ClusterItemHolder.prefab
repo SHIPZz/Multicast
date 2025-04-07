@@ -247,6 +247,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _clusterItemLayout: {fileID: 1200581656501072170}
+  _clusterItemAttachPrefab: {fileID: 3990324522460668594, guid: 3ffedf27adf98d645b9dac988e8aca3c, type: 3}
 --- !u!1 &8193165102738109109
 GameObject:
   m_ObjectHideFlags: 0

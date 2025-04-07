@@ -6,5 +6,6 @@ namespace CodeBase.UI.Cluster.Services.Factory
     {
         ClusterItem CreateClusterItem(Transform parent);
         ClusterItemHolder CreateClusterItemHolder(Transform parent);
+        GameObject Create(Transform parent, GameObject prefab);
     }
 }
