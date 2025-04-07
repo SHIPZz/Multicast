@@ -15,12 +15,14 @@ namespace CodeBase.UI.LoadingCurtains
             base.OnOpen();
             
             _canvasAnimator.Show();
+            _loadingView.Show();
         }
 
         public override void OnClose()
         {
             base.OnClose();
             
+            _loadingView.Hide();
             _canvasAnimator.Hide();
         }
     }

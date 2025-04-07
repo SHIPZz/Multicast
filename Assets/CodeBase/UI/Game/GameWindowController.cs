@@ -1,16 +1,15 @@
-using CodeBase.Common.Services.Sound;
 using CodeBase.Data;
 using CodeBase.Gameplay.Common.Services.Level;
-using CodeBase.Gameplay.Hint;
-using CodeBase.Gameplay.Sound;
-using CodeBase.Gameplay.WordSlots;
 using CodeBase.Infrastructure.States.StateMachine;
 using CodeBase.Infrastructure.States.States;
+using CodeBase.UI.Cluster.Services;
 using CodeBase.UI.Controllers;
 using CodeBase.UI.Hint;
-using CodeBase.UI.Services.Cluster;
 using CodeBase.UI.Services.Window;
+using CodeBase.UI.Sound;
+using CodeBase.UI.Sound.Services;
 using CodeBase.UI.Victory;
+using CodeBase.UI.WordSlots.Services;
 using UniRx;
 
 namespace CodeBase.UI.Game
@@ -115,9 +114,14 @@ namespace CodeBase.UI.Game
                 _soundService.Play(SoundTypeId.WordFormedFound);
                 
             _clusterService.CheckAndHideFilledClusters();
-
-
-            _levelService.ValidateLevel();
+            
+            if(!_wordSlotService.ValidateFormedWords())
+                return;
+            
+            _wordSlotService.Cleanup();
+            _clusterService.Cleanup();
+            
+            _levelService.MarkLevelCompleted();
         }
 
         private void OnHintClicked() => _windowService.OpenWindow<HintWindow>(true);

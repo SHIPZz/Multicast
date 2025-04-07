@@ -1,5 +1,5 @@
-﻿using CodeBase.Gameplay.SO.Hints;
-using CodeBase.Gameplay.SO.Level;
+﻿using CodeBase.Gameplay.Common.Services.Level.Configs;
+using CodeBase.UI.Hint.Configs;
 using UnityEngine;
 using Zenject;
 

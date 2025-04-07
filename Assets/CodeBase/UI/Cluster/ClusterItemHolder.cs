@@ -1,5 +1,7 @@
 using System.Collections.Generic;
-using CodeBase.UI.Services.Cluster;
+using CodeBase.Gameplay.Constants;
+using CodeBase.UI.Cluster.Services;
+using CodeBase.UI.Cluster.Services.Factory;
 using CodeBase.UI.WordSlots;
 using UnityEngine;
 using Zenject;
@@ -10,7 +12,7 @@ namespace CodeBase.UI.Cluster
     {
         [SerializeField] private Transform _clusterItemLayout;
         
-        private readonly List<ClusterItem> _clusterItems = new();
+        private readonly List<ClusterItem> _clusterItems = new(GameplayConstants.MaxClusterCount);
         
         private IClusterUIFactory _clusterUIFactory;
         private WordSlotHolder _wordSlotHolder;

@@ -1,9 +1,8 @@
-using CodeBase.Common.Services.Sound;
 using CodeBase.UI.Controllers;
 using CodeBase.UI.Menu;
 using CodeBase.UI.Services.Window;
+using CodeBase.UI.Sound.Services;
 using UniRx;
-using UnityEngine;
 
 namespace CodeBase.UI.Settings
 {

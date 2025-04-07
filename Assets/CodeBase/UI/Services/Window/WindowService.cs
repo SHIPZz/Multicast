@@ -5,7 +5,6 @@ using CodeBase.UI.AbstractWindow;
 using CodeBase.UI.Controllers;
 using UnityEngine;
 using Zenject;
-using Object = UnityEngine.Object;
 
 namespace CodeBase.UI.Services.Window
 {

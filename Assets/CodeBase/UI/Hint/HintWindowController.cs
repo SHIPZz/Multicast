@@ -1,4 +1,3 @@
-using CodeBase.Gameplay.Hint;
 using CodeBase.UI.Controllers;
 using CodeBase.UI.Services.Window;
 using UniRx;

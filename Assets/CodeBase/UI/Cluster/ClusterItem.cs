@@ -1,5 +1,5 @@
-using CodeBase.UI.Common;
-using CodeBase.UI.Services.Cluster;
+using CodeBase.UI.Cluster.Services;
+using CodeBase.UI.Draggable;
 using CodeBase.UI.WordSlots;
 using TMPro;
 using UnityEngine;

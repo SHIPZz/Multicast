@@ -1,8 +1,6 @@
-using CodeBase.Common.Services.SaveLoad;
 using CodeBase.Infrastructure.States.StateMachine;
 using CodeBase.Infrastructure.States.States;
 using CodeBase.UI.Controllers;
-using CodeBase.UI.Game;
 using CodeBase.UI.Services.Window;
 using CodeBase.UI.Settings;
 using UniRx;
@@ -12,14 +10,13 @@ namespace CodeBase.UI.Menu
     public class MenuWindowController : IController<MenuWindow>
     {
         private readonly IWindowService _windowService;
-        private MenuWindow _window;
+        private readonly IStateMachine _stateMachine;
         private readonly CompositeDisposable _disposables = new();
-        private IStateMachine _stateMachine;
-        private ISaveLoadSystem _saveLoadSystem;
+        
+        private MenuWindow _window;
 
-        public MenuWindowController(IWindowService windowService, IStateMachine stateMachine, ISaveLoadSystem saveLoadSystem)
+        public MenuWindowController(IWindowService windowService, IStateMachine stateMachine)
         {
-            _saveLoadSystem = saveLoadSystem;
             _stateMachine = stateMachine;
             _windowService = windowService;
         }

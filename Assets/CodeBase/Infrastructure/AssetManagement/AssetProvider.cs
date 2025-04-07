@@ -23,8 +23,21 @@ namespace CodeBase.Infrastructure.AssetManagement
                 throw;
             }
         }
+        
+        public async UniTask<T> LoadAssetAsync<T>(string path, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return await Addressables.LoadAssetAsync<T>(path).ToUniTask(cancellationToken: cancellationToken);
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"Failed to load prefab:  {path}: {e.Message}");
+                throw;
+            }
+        }
 
-        public async UniTask<T> LoadAssetAsyncByTypePath<T>(CancellationToken cancellationToken = default)
+        public async UniTask<T> LoadGameObjectAssetAsyncByTypePath<T>(CancellationToken cancellationToken = default)
         {
             try
             {

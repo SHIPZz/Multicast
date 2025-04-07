@@ -8,20 +8,11 @@ namespace CodeBase.Common.Services.SaveLoad
     {
         private readonly IPersistentService _persistentService;
 
-        public SaveOnApplicationPauseSystem(IPersistentService persistentService)
-        {
-            _persistentService = persistentService;
-        }
+        public SaveOnApplicationPauseSystem(IPersistentService persistentService) => _persistentService = persistentService;
 
-        public void Initialize()
-        {
-            Application.focusChanged += OnApplicationFocusChanged;
-        }
+        public void Initialize() => Application.focusChanged += OnApplicationFocusChanged;
 
-        public void Dispose()
-        {
-            Application.focusChanged -= OnApplicationFocusChanged;
-        }
+        public void Dispose() => Application.focusChanged -= OnApplicationFocusChanged;
 
         private void OnApplicationFocusChanged(bool hasFocus)
         {
@@ -31,9 +22,6 @@ namespace CodeBase.Common.Services.SaveLoad
             }
         }
 
-        private void Save()
-        {
-            _persistentService.Save();
-        }
+        private void Save() => _persistentService.Save();
     }
 }

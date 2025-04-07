@@ -1,9 +1,9 @@
-using CodeBase.Common.Services.Sound;
-using CodeBase.Gameplay.Sound;
 using CodeBase.Infrastructure.States.StateMachine;
 using CodeBase.Infrastructure.States.States;
 using CodeBase.UI.Controllers;
 using CodeBase.UI.Services.Window;
+using CodeBase.UI.Sound;
+using CodeBase.UI.Sound.Services;
 using UniRx;
 
 namespace CodeBase.UI.Victory

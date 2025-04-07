@@ -1,8 +1,8 @@
 ﻿using System;
-using CodeBase.Gameplay.WordSlots;
 using CodeBase.Infrastructure.States.StateInfrastructure;
 using CodeBase.Infrastructure.States.StateMachine;
-using CodeBase.UI.Services.Cluster;
+using CodeBase.UI.Cluster.Services;
+using CodeBase.UI.WordSlots.Services;
 
 namespace CodeBase.Infrastructure.States.States
 {

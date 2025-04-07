@@ -1,6 +1,6 @@
 ﻿using System;
 using CodeBase.UI.AbstractWindow;
-using Unity.VisualScripting;
+using Zenject;
 
 namespace CodeBase.UI.Controllers
 {

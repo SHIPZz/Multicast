@@ -3,9 +3,7 @@ using System.Linq;
 using CodeBase.Common.Services.Persistent;
 using CodeBase.Common.Services.Unity;
 using CodeBase.Data;
-using CodeBase.Gameplay.SO.Level;
-using CodeBase.Gameplay.WordSlots;
-using CodeBase.UI.Services.Cluster;
+using CodeBase.Gameplay.Common.Services.Level.Configs;
 using Newtonsoft.Json;
 using UniRx;
 using UnityEngine;
@@ -13,7 +11,7 @@ using Zenject;
 
 namespace CodeBase.Gameplay.Common.Services.Level
 {
-    public class LevelService : ILevelService, 
+    public class LevelService : ILevelService,
         IProgressWatcher,
         IInitializable
         , IDisposable
@@ -21,11 +19,9 @@ namespace CodeBase.Gameplay.Common.Services.Level
         private readonly Subject<LevelData> _onLevelLoaded = new();
         private readonly Subject<Unit> _onLevelCompleted = new();
         private readonly CompositeDisposable _disposables = new();
-        
+
         private readonly LevelDataSO _levelDataSo;
         private readonly IRemoteConfigService _unityRemoteConfigService;
-        private readonly IWordSlotService _wordSlotService;
-        private readonly IClusterService _clusterService;
         private readonly IPersistentService _persistentService;
 
         public IObservable<LevelData> OnLevelLoaded => _onLevelLoaded;
@@ -37,15 +33,11 @@ namespace CodeBase.Gameplay.Common.Services.Level
 
         public LevelService(
             LevelDataSO levelDataSO,
-            IWordSlotService wordSlotService,
             IPersistentService persistentService,
-            IClusterService clusterService,
             IRemoteConfigService unityRemoteConfigService
-            )
+        )
         {
-            _clusterService = clusterService;
             _persistentService = persistentService;
-            _wordSlotService = wordSlotService;
             _levelDataSo = levelDataSO;
             _unityRemoteConfigService = unityRemoteConfigService;
         }
@@ -54,9 +46,11 @@ namespace CodeBase.Gameplay.Common.Services.Level
         {
             _unityRemoteConfigService
                 .OnNewDataLoaded
-                .Subscribe(_ =>_totalLevelCount = _unityRemoteConfigService.GetKeys().Count(x => x.Contains("level_")) + _levelDataSo.Levels.Count)
+                .Subscribe(_ =>
+                    _totalLevelCount = _unityRemoteConfigService.GetKeys().Count(x => x.Contains("level_")) +
+                                       _levelDataSo.Levels.Count)
                 .AddTo(_disposables);
-            
+
             _persistentService.RegisterProgressWatcher(this);
         }
 
@@ -86,7 +80,7 @@ namespace CodeBase.Gameplay.Common.Services.Level
         {
             Debug.Log($"load level - {level}");
             Debug.Log($"level count - {_totalLevelCount}");
-            
+
             _currentLevel = GetTargetLevelData(level);
 
             _onLevelLoaded.OnNext(_currentLevel);
@@ -94,7 +88,9 @@ namespace CodeBase.Gameplay.Common.Services.Level
 
         public LevelData GetTargetLevelData(int level)
         {
-            return level > _levelDataSo.Levels.Count ? GetLevelFromUnityConfig(level) : _levelDataSo.GetLevelData(level);
+            return level > _levelDataSo.Levels.Count
+                ? GetLevelFromUnityConfig(level)
+                : _levelDataSo.GetLevelData(level);
         }
 
         private LevelData GetLevelFromUnityConfig(int level)
@@ -112,24 +108,16 @@ namespace CodeBase.Gameplay.Common.Services.Level
             return targetLevel;
         }
 
-        public void ValidateLevel()
+        public void MarkLevelCompleted()
         {
             if (_currentLevel == null)
                 return;
 
-            bool isValid = _wordSlotService.ValidateFormedWords();
+            UpdateIndex();
             
-            if (isValid)
-            {
-                UpdateIndex();
-                
-                _clusterService.Cleanup();
-                _wordSlotService.Cleanup();
-                
-                _persistentService.Save();
-                
-                _onLevelCompleted.OnNext(Unit.Default);
-            }
+            _persistentService.Save();
+
+            _onLevelCompleted.OnNext(Unit.Default);
         }
 
         public LevelData GetCurrentLevel() => GetTargetLevelData(_currentLevelIndex);

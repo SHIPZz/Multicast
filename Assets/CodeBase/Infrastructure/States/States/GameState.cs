@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using CodeBase.Data;
 using CodeBase.Extensions;
 using CodeBase.Gameplay.Common.Services.Level;
-using CodeBase.Gameplay.Hint;
-using CodeBase.Gameplay.WordSlots;
 using CodeBase.Infrastructure.States.StateInfrastructure;
+using CodeBase.UI.Cluster.Services;
 using CodeBase.UI.Game;
+using CodeBase.UI.Hint;
 using CodeBase.UI.Levels;
-using CodeBase.UI.Services.Cluster;
 using CodeBase.UI.Services.Window;
+using CodeBase.UI.WordSlots.Services;
 
 namespace CodeBase.Infrastructure.States.States
 {
@@ -44,9 +43,13 @@ namespace CodeBase.Infrastructure.States.States
             SetClusters(currentLevelData);
 
             _hintService.Init();
+            
             _clusterService.Init();
+            
             _windowService.OpenWindow<GameWindow>();
             _windowService.OpenWindow<LevelWindow>();
+            
+            
             _levelService.MarkLevelLoaded(currentLevelData.LevelId);
         }
 
@@ -54,9 +57,7 @@ namespace CodeBase.Infrastructure.States.States
         {
             if (_wordSlotService.WordsToFind.IsNullOrEmpty()) 
             {
-                var capitalizedWords = currentLevelData.Words
-                    // .Select(word => word.ToUpper())
-                    .Shuffle();
+                var capitalizedWords = currentLevelData.Words.Shuffle();
 
                 _wordSlotService.SetTargetWordsToFind(capitalizedWords);
             }
@@ -66,9 +67,7 @@ namespace CodeBase.Infrastructure.States.States
         {
             if (_clusterService.GetAvailableClusters().IsNullOrEmpty())
             {
-                IEnumerable<string> capitalizedClusters = currentLevelData.Clusters
-                    // .Select(word => word.ToUpper())
-                    .Shuffle();
+                IEnumerable<string> capitalizedClusters = currentLevelData.Clusters.Shuffle();
 
                 _clusterService.SetClusters(capitalizedClusters);
             }

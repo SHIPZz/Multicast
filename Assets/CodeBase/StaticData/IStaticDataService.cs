@@ -1,8 +1,8 @@
 ﻿using System.Threading;
-using CodeBase.Common.Services.Sound;
-using CodeBase.Gameplay.Sound;
 using CodeBase.UI.AbstractWindow;
 using CodeBase.UI.Cluster;
+using CodeBase.UI.Sound;
+using CodeBase.UI.Sound.Configs;
 using CodeBase.UI.WordSlots;
 using Cysharp.Threading.Tasks;
 

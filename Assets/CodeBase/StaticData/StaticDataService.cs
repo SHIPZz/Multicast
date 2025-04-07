@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using CodeBase.Common.Services.Sound;
-using CodeBase.Gameplay.Sound;
 using CodeBase.Infrastructure.AssetManagement;
 using CodeBase.UI.AbstractWindow;
 using CodeBase.UI.Cluster;
@@ -14,6 +12,8 @@ using CodeBase.UI.LoadingCurtains;
 using CodeBase.UI.Menu;
 using CodeBase.UI.NoInternet;
 using CodeBase.UI.Settings;
+using CodeBase.UI.Sound;
+using CodeBase.UI.Sound.Configs;
 using CodeBase.UI.Victory;
 using CodeBase.UI.WordSlots;
 using Cysharp.Threading.Tasks;
@@ -46,11 +46,11 @@ namespace CodeBase.StaticData
             
             try
             {
-                _wordSlotPrefab = await _assetProvider.LoadAssetAsyncByTypePath<WordSlot>(cancellationToken);
-                _wordSlotHolderPrefab = await _assetProvider.LoadAssetAsyncByTypePath<WordSlotHolder>(cancellationToken);
-                _clusterItemHolderPrefab = await _assetProvider.LoadAssetAsyncByTypePath<ClusterItemHolder>(cancellationToken);
-                _clusterItemPrefab = await _assetProvider.LoadAssetAsyncByTypePath<ClusterItem>(cancellationToken);
-                _soundPlayerPrefab = await _assetProvider.LoadAssetAsyncByTypePath<SoundPlayerView>(cancellationToken);
+                _wordSlotPrefab = await _assetProvider.LoadGameObjectAssetAsyncByTypePath<WordSlot>(cancellationToken);
+                _wordSlotHolderPrefab = await _assetProvider.LoadGameObjectAssetAsyncByTypePath<WordSlotHolder>(cancellationToken);
+                _clusterItemHolderPrefab = await _assetProvider.LoadGameObjectAssetAsyncByTypePath<ClusterItemHolder>(cancellationToken);
+                _clusterItemPrefab = await _assetProvider.LoadGameObjectAssetAsyncByTypePath<ClusterItem>(cancellationToken);
+                _soundPlayerPrefab = await _assetProvider.LoadGameObjectAssetAsyncByTypePath<SoundPlayerView>(cancellationToken);
             }
             catch (Exception e)
             {
@@ -69,7 +69,8 @@ namespace CodeBase.StaticData
             {
                 try
                 {
-                    var soundConfig = await Addressables.LoadAssetAsync<SoundConfig>(soundType.ToString());
+                    var soundConfig = await _assetProvider.LoadAssetAsync<SoundConfig>(soundType.ToString(), cancellationToken);
+                    
                     _soundConfigs[soundType] = soundConfig;
                 }
                 catch (Exception e)

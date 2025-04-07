@@ -1,6 +1,7 @@
 using System.Collections.Generic;
-using CodeBase.Gameplay.WordSlots;
-using CodeBase.UI.Services.WordSlots;
+using CodeBase.Gameplay.Constants;
+using CodeBase.UI.WordSlots.Services;
+using CodeBase.UI.WordSlots.Services.Factory;
 using UnityEngine;
 using Zenject;
 
@@ -10,9 +11,9 @@ namespace CodeBase.UI.WordSlots
     {
         [SerializeField] private Transform _slotsContainer;
 
-        private readonly List<WordSlot> _wordSlots = new();
-        private readonly Dictionary<int, List<WordSlot>> _rowSlots = new();
-        private readonly Dictionary<int, Dictionary<int, WordSlot>> _slotsByRowAndColumn = new();
+        private readonly List<WordSlot> _wordSlots = new(GameplayConstants.SlotCount);
+        private readonly Dictionary<int, List<WordSlot>> _rowSlots = new(GameplayConstants.MaxWordCount);
+        private readonly Dictionary<int, Dictionary<int, WordSlot>> _slotsByRowAndColumn = new(GameplayConstants.SlotCount);
 
         private IWordSlotUIFactory _wordSlotUIFactory;
         private IWordSlotService _wordSlotService;
@@ -81,11 +82,6 @@ namespace CodeBase.UI.WordSlots
                 }
             }
             return -1;
-        }
-
-        public IReadOnlyList<WordSlot> GetSlotsByRow(int row)
-        {
-            return _rowSlots.GetValueOrDefault(row);
         }
 
         private void CreateSlotsForRow(int lettersInWord, int row)
