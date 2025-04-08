@@ -86,7 +86,7 @@ MonoBehaviour:
     - remote
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3ffedf27adf98d645b9dac988e8aca3c
-    m_Address: Assets/ResourcesAdressables/UI/Clusters/ClusterItemAttach.prefab
+    m_Address: ClusterAttachItem
     m_ReadOnly: 0
     m_SerializedLabels:
     - remote

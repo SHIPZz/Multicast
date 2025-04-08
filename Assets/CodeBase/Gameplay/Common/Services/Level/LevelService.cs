@@ -113,8 +113,6 @@ namespace CodeBase.Gameplay.Common.Services.Level
             if (_currentLevel == null)
                 return;
 
-            UpdateIndex();
-            
             _persistentService.Save();
 
             _onLevelCompleted.OnNext(Unit.Default);
@@ -122,7 +120,7 @@ namespace CodeBase.Gameplay.Common.Services.Level
 
         public LevelData GetCurrentLevel() => GetTargetLevelData(_currentLevelIndex);
 
-        private void UpdateIndex()
+        public void UpdateLevelIndex()
         {
             _currentLevelIndex++;
 

@@ -5,6 +5,7 @@ using CodeBase.Gameplay.Constants;
 using CodeBase.UI.Cluster.Services;
 using CodeBase.UI.Cluster.Services.Factory;
 using CodeBase.UI.WordSlots;
+using UniRx;
 using UnityEngine;
 using Zenject;
 
@@ -13,9 +14,8 @@ namespace CodeBase.UI.Cluster
     public class ClusterItemHolder : MonoBehaviour
     {
         [SerializeField] private Transform _clusterItemLayout;
-        [SerializeField] private GameObject _clusterItemAttachPrefab;
         
-        private readonly List<GameObject> _attachItems = new(GameplayConstants.MaxClusterCount);
+        private readonly Dictionary<ClusterAttachItem, ClusterItem> _clusterItems = new(GameplayConstants.MaxClusterCount);
         
         private IClusterUIFactory _clusterUIFactory;
         private WordSlotHolder _wordSlotHolder;
@@ -30,25 +30,26 @@ namespace CodeBase.UI.Cluster
 
         public void Clear()
         {
-            foreach (var clusterItem in _attachItems)
+            foreach (ClusterAttachItem attachItem in _clusterItems.Keys)
             {
-                Destroy(clusterItem.gameObject);
+                attachItem.Cleanup();
             }
             
-            _attachItems.Clear();
+            _clusterItems.Clear();
         }
 
         public void CreateClusterItems(IEnumerable<ClusterModel> clusters, Canvas parentCanvas)
         {
             for (int i = 0; i < clusters.Count(); i++)
             {
-                GameObject attachItem = _clusterUIFactory.Create(_clusterItemLayout, _clusterItemAttachPrefab);
+                ClusterAttachItem attachItem = _clusterUIFactory.CreateClusterAttachItem(_clusterItemLayout);
                 
                 ClusterItem clusterItem = _clusterUIFactory.CreateClusterItem(attachItem.transform);
             
                 clusterItem.Initialize(clusters.ElementAt(i).Text, attachItem.transform, parentCanvas);
                 _clusterService.RegisterCreatedCluster(clusterItem);
-                _attachItems.Add(attachItem);
+                _clusterItems[attachItem] = clusterItem;
+                clusterItem.DisabledEvent.Subscribe(_ => attachItem.Cleanup()).AddTo(attachItem);
             }
         }
     }

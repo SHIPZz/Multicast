@@ -107,6 +107,13 @@ namespace CodeBase.UI.Game
             _window.CreateClusterItems(_clusterService.AllClusters);
             
             _clusterService.RestorePlacedClusters();
+
+            if (_wordSlotService.ValidateFormedWords())
+            {
+                _soundService.Play(SoundTypeId.WordFormedFound);
+                
+                _levelService.MarkLevelCompleted();
+            }
         }
 
         private void OnValidateClicked()

@@ -1,7 +1,9 @@
+using System;
 using CodeBase.UI.Cluster.Services;
 using CodeBase.UI.Draggable;
 using CodeBase.UI.WordSlots;
 using TMPro;
+using UniRx;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -14,9 +16,13 @@ namespace CodeBase.UI.Cluster
         [SerializeField] private TextMeshProUGUI _text;
         [SerializeField] private Image _outlineIcon;
 
+        private readonly Subject<Unit> _disabledEvent = new Subject<Unit>();
+        
         private string _clusterText;
         private IClusterService _clusterService;
         private Transform _originalParent;
+
+        public IObservable<Unit> DisabledEvent => _disabledEvent;
 
         public string Text => _clusterText;
 
@@ -87,12 +93,15 @@ namespace CodeBase.UI.Cluster
             IsPlaced = true;
             _text.enabled = false;
             MoveToCenter(wordSlot.transform);
-            CanvasGroup.blocksRaycasts = true;
+            SetBlocksRaycasts(true);
         }
 
         public void SetOutlineIconActive(bool isActive)
         {
             _outlineIcon.enabled = isActive;
+            
+            if(!isActive)
+                _disabledEvent.OnNext(Unit.Default);
         }
         
         public void SetBlocksRaycasts(bool value)

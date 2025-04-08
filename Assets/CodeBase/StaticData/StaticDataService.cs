@@ -33,6 +33,7 @@ namespace CodeBase.StaticData
         private ClusterItemHolder _clusterItemHolderPrefab;
         private ClusterItem _clusterItemPrefab;
         private SoundPlayerView _soundPlayerPrefab;
+        private ClusterAttachItem _clusterAttachItemPrefab;
 
         public StaticDataService(IAssetProvider assetProvider)
         {
@@ -51,6 +52,7 @@ namespace CodeBase.StaticData
                 _clusterItemHolderPrefab = await _assetProvider.LoadGameObjectAssetAsyncByTypePath<ClusterItemHolder>(cancellationToken);
                 _clusterItemPrefab = await _assetProvider.LoadGameObjectAssetAsyncByTypePath<ClusterItem>(cancellationToken);
                 _soundPlayerPrefab = await _assetProvider.LoadGameObjectAssetAsyncByTypePath<SoundPlayerView>(cancellationToken);
+                _clusterAttachItemPrefab = await _assetProvider.LoadGameObjectAssetAsyncByTypePath<ClusterAttachItem>(cancellationToken);
             }
             catch (Exception e)
             {
@@ -131,6 +133,11 @@ namespace CodeBase.StaticData
             {
                 Debug.LogError($"Failed to load window {typeof(T).Name}: {e.Message}");
             }
+        }
+
+        public ClusterAttachItem GetClusterAttachItem()
+        {
+            return _clusterAttachItemPrefab;
         }
 
         private async UniTask InitializeWindowsAsync(CancellationToken cancellationToken = default)

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using CodeBase.Common.Services.Persistent;
 using CodeBase.Data;
 using CodeBase.Extensions;
@@ -15,7 +14,7 @@ using Zenject;
 
 namespace CodeBase.UI.Cluster.Services
 {
-    public class ClusterService : IClusterService, IProgressWatcher, IDisposable, IInitializable
+    public class ClusterService : IClusterService, IDisposable, IInitializable
     {
         private readonly IClusterRepository _clusterRepository;
         private readonly IClusterPlacement _clusterPlacement;
@@ -36,17 +35,13 @@ namespace CodeBase.UI.Cluster.Services
             _clusterPlacement = new ClusterPlacement(wordSlotService);
         }
 
-        public void Initialize() => _persistentService.RegisterProgressWatcher(this);
+        public void Initialize() => _persistentService.RegisterProgressWatcher(_clusterRepository);
 
-        public void Dispose() => _persistentService.UnregisterProgressWatcher(this);
+        public void Dispose() => _persistentService.UnregisterProgressWatcher(_clusterRepository);
 
-        public void Init()
-        {
-            _clusterPlacement.Initialize(_wordSlotService.WordsToFind.Count);
-        }
+        public void Init() => _clusterPlacement.Initialize(_wordSlotService.WordsToFind.Count);
 
-        public void RegisterCreatedCluster(ClusterItem clusterItem) =>
-            _clusterRepository.RegisterCluster(clusterItem);
+        public void RegisterCreatedCluster(ClusterItem clusterItem) => _clusterRepository.RegisterCluster(clusterItem);
 
         public void SetClusters(IEnumerable<string> clusters)
         {
@@ -66,8 +61,7 @@ namespace CodeBase.UI.Cluster.Services
             if (!_clusterPlacement.TryPlaceCluster(cluster, wordSlot))
                 return false;
 
-            ClusterModel clusterModel = cluster.ToModel(_wordSlotService.GetRowBySlot(wordSlot),
-                _wordSlotService.GetColumnBySlot(wordSlot));
+            ClusterModel clusterModel = cluster.ToModel(_wordSlotService.GetRowBySlot(wordSlot), _wordSlotService.GetColumnBySlot(wordSlot));
             _clusterRepository.MarkClusterAsPlaced(clusterModel);
             _soundService.Play(SoundTypeId.ClusterPlaced);
 
@@ -99,7 +93,7 @@ namespace CodeBase.UI.Cluster.Services
         
         public IEnumerable<ClusterModel> PlacedClusters => _clusterRepository.GetPlacedClusters();
 
-        public IEnumerable<ClusterModel> AllClusters => PlacedClusters.Union(GetAvailableClusters());
+        public IEnumerable<ClusterModel> AllClusters => _clusterRepository.GetAllClusters();
 
         public void Cleanup()
         {
@@ -109,14 +103,12 @@ namespace CodeBase.UI.Cluster.Services
 
         public void RestorePlacedClusters()
         {
-            using var copiedClusters = UnityEngine.Pool.ListPool<ClusterModel>.Get(out var list);
+            using var pool = UnityEngine.Pool.ListPool<ClusterModel>.Get(out List<ClusterModel> list);
 
             list.AddRange(_clusterRepository.GetPlacedClusters());
 
             foreach (ClusterModel placedCluster in list)
             {
-                Debug.Log($"placed {placedCluster.Text}");
-
                 if (!_clusterRepository.TryGetCluster(placedCluster, out ClusterItem clusterItem))
                 {
                     Debug.LogWarning($"Could not find created cluster item for text: {placedCluster}");
@@ -127,29 +119,6 @@ namespace CodeBase.UI.Cluster.Services
             }
             
             CheckAndHideFilledClusters();
-        }
-
-        public void Save(ProgressData progressData)
-        {
-            PlayerData playerData = progressData.PlayerData;
-            playerData.AvailableClusters.Clear();
-
-            playerData.AvailableClusters.AddRange(_clusterRepository.GetAvailableClusters());
-
-            SavePlacedClusters(playerData);
-        }
-
-        public void Load(ProgressData progressData)
-        {
-            PlayerData playerData = progressData.PlayerData;
-
-            List<ClusterModel> models = new();
-
-            FormAvailableClusters(playerData, models);
-
-            _clusterRepository.AddAvailableClusters(models);
-
-            LoadPlacedClusters(playerData);
         }
 
         private void RestoreClusterToSavedSlot(ClusterModel placedCluster, ClusterItem clusterItem)
@@ -172,59 +141,9 @@ namespace CodeBase.UI.Cluster.Services
 
             foreach (ClusterItem cluster in clustersInRow)
             {
-                if (!cluster.IsPlaced)
-                    continue;
-
                 cluster.SetOutlineIconActive(isActive);
                 cluster.SetBlocksRaycasts(isActive);
             }
-        }
-
-        private void SavePlacedClusters(PlayerData playerData)
-        {
-            int maxRow = 0;
-            int maxCol = 0;
-
-            foreach (ClusterModel placed in _clusterRepository.GetPlacedClusters())
-            {
-                maxRow = Math.Max(maxRow, placed.Row);
-                maxCol = Math.Max(maxCol, placed.Column);
-            }
-
-            playerData.GridRows = maxRow + 1;
-            playerData.GridColumns = maxCol + 1;
-            playerData.PlacedClustersGrid = new ClusterModel[playerData.GridRows, playerData.GridColumns];
-
-            foreach (ClusterModel placed in _clusterRepository.GetPlacedClusters())
-            {
-                playerData.PlacedClustersGrid[placed.Row, placed.Column] = placed;
-            }
-        }
-
-        private void LoadPlacedClusters(PlayerData playerData)
-        {
-            if (playerData.PlacedClustersGrid == null)
-                return;
-
-            for (int row = 0; row < playerData.GridRows; row++)
-            {
-                for (int col = 0; col < playerData.GridColumns; col++)
-                {
-                    if (playerData.PlacedClustersGrid[row, col].Text != null)
-                    {
-                        var cluster = playerData.PlacedClustersGrid[row, col];
-                        // Create a new cluster with the same text but new ID
-                        var newCluster = new ClusterModel(cluster.Text, cluster.IsPlaced, cluster.Row, cluster.Column);
-                        _clusterRepository.MarkClusterAsPlaced(newCluster);
-                    }
-                }
-            }
-        }
-
-        private static void FormAvailableClusters(PlayerData playerData, List<ClusterModel> models)
-        {
-            foreach (ClusterModel model in playerData.AvailableClusters)
-                models.Add(new ClusterModel(model.Text, false, -1, -1));
         }
     }
 }

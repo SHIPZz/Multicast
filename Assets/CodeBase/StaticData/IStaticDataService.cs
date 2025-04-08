@@ -19,5 +19,6 @@ namespace CodeBase.StaticData
         ClusterItem GetClusterItem();
         SoundPlayerView GetSoundPlayerViewPrefab();
         UniTask LoadWindowAsync<T>(CancellationToken cancellationToken = default) where T : AbstractWindowBase;
+        ClusterAttachItem GetClusterAttachItem();
     }
 }

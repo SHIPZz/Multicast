@@ -1,3 +1,4 @@
+using CodeBase.Gameplay.Common.Services.Level;
 using CodeBase.Infrastructure.States.StateMachine;
 using CodeBase.Infrastructure.States.States;
 using CodeBase.UI.Controllers;
@@ -16,11 +17,14 @@ namespace CodeBase.UI.Victory
         private readonly ISoundService _soundService;
 
         private VictoryWindow _window;
+        private ILevelService _levelService;
 
         public VictoryWindowController(IWindowService windowService,
             ISoundService soundService,
+            ILevelService levelService,
             IStateMachine stateMachine)
         {
+            _levelService = levelService;
             _soundService = soundService;
             _stateMachine = stateMachine;
             _windowService = windowService;
@@ -52,6 +56,8 @@ namespace CodeBase.UI.Victory
         private void OnNextLevelClicked()
         {
             _windowService.Close<VictoryWindow>();
+            
+            _levelService.UpdateLevelIndex();
             
             _stateMachine.Enter<CleanupBeforeLoadingGameState>();
         }

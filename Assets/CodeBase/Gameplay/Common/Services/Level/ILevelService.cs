@@ -13,5 +13,6 @@ namespace CodeBase.Gameplay.Common.Services.Level
         void MarkLevelLoaded(int level);
         void Initialize();
         LevelData GetTargetLevelData(int level);
+        void UpdateLevelIndex();
     }
 }

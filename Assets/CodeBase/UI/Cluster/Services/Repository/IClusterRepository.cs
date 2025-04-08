@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using CodeBase.Common.Services.Persistent;
 using CodeBase.Data;
 
 namespace CodeBase.UI.Cluster.Services.Repository
 {
-    public interface IClusterRepository
+    public interface IClusterRepository : IProgressWatcher
     {
         void RegisterCluster(ClusterItem clusterItem);
         void AddAvailableClusters(IEnumerable<ClusterModel> clusters);
@@ -13,5 +14,6 @@ namespace CodeBase.UI.Cluster.Services.Repository
         void MarkClusterAsPlaced(ClusterModel cluster);
         void MarkClusterAsAvailable(ClusterModel cluster);
         void Clear();
+        IEnumerable<ClusterModel> GetAllClusters();
     }
 }

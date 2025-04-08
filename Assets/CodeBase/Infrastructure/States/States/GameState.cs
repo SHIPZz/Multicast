@@ -47,9 +47,8 @@ namespace CodeBase.Infrastructure.States.States
             
             _clusterService.Init();
             
-            _windowService.OpenWindow<GameWindow>();
             _windowService.OpenWindow<LevelWindow>();
-            
+            _windowService.OpenWindow<GameWindow>();
             
             _levelService.MarkLevelLoaded(currentLevelData.LevelId);
         }
@@ -68,17 +67,7 @@ namespace CodeBase.Infrastructure.States.States
         {
             if (_clusterService.GetAvailableClusters().IsNullOrEmpty())
             {
-                foreach (var cluster in currentLevelData.Clusters)
-                {
-                    Debug.Log($"before: {cluster}");
-                }
-                
                 IEnumerable<string> capitalizedClusters = currentLevelData.Clusters.Shuffle();
-                
-                foreach (var cluster in capitalizedClusters)
-                {
-                    Debug.Log($"after: {cluster}");
-                }
 
                 _clusterService.SetClusters(capitalizedClusters);
             }
