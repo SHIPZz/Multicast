@@ -11,7 +11,7 @@ using CodeBase.Infrastructure.States.States;
 using CodeBase.StaticData;
 using CodeBase.UI.Cluster.Services;
 using CodeBase.UI.Cluster.Services.Factory;
-using CodeBase.UI.Hint.Serviecs;
+using CodeBase.UI.Hint.Serviсes;
 using CodeBase.UI.Services;
 using CodeBase.UI.Services.Window;
 using CodeBase.UI.Sound.Services;

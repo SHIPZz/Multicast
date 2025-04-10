@@ -4,10 +4,8 @@ using CodeBase.Data;
 using CodeBase.StaticData;
 using CodeBase.UI.AbstractWindow;
 using CodeBase.UI.Cluster;
-using CodeBase.UI.Cluster.Services;
 using CodeBase.UI.Cluster.Services.Factory;
 using CodeBase.UI.WordSlots;
-using CodeBase.UI.WordSlots.Services;
 using CodeBase.UI.WordSlots.Services.Factory;
 using UniRx;
 using UnityEngine;
@@ -25,16 +23,18 @@ namespace CodeBase.UI.Game
 
         [SerializeField] private Transform _clusterItemHolderParent;
         [SerializeField] private Button _validateButton;
+        [SerializeField] private Button _menuButton;
 
         private WordSlotHolder _wordSlotHolder;
         private IClusterUIFactory _clusterUIFactory;
         private ClusterItemHolder _clusterItemHolder;
         private IWordSlotUIFactory _wordSlotUIFactory;
 
-        public IObservable<Unit> OnValidateClicked => _validateButton.OnClickAsObservable();
-        public IObservable<Unit> OnHintClicked => _hintButton.OnClickAsObservable();
+        public IObservable<Unit> OnValidateClicked => _validateButton?.OnClickAsObservable();
+        public IObservable<Unit> OnHintClicked => _hintButton?.OnClickAsObservable();
+        public IObservable<Unit> OnRestartClicked => _restartButton?.OnClickAsObservable();
         
-        public IObservable<Unit> OnRestartClicked => _restartButton.OnClickAsObservable();
+        public IObservable<Unit> OnMenuClicked => _menuButton?.OnClickAsObservable();
 
         [Inject]
         private void Construct(
@@ -61,14 +61,7 @@ namespace CodeBase.UI.Game
 
         }
 
-        public void CreateClusterItems(IEnumerable<ClusterModel> clusters)
-        {
-            _clusterItemHolder.CreateClusterItems(clusters, _canvas);
-        }
-
-        public void ClearWordSlots() => _wordSlotHolder?.ClearSlots();
-
-        public void ClearClusters() => _clusterItemHolder?.Clear();
+        public void CreateClusterItems(IEnumerable<ClusterModel> clusters) => _clusterItemHolder.CreateClusterItems(clusters, _canvas);
 
         public void Cleanup()
         {
@@ -82,17 +75,21 @@ namespace CodeBase.UI.Game
             SetValidateButtonActive(isActive);
             SetHintButtonActive(isActive);
             SetRestartButtonActive(isActive);
+            SetMenuButtonActive(isActive);
         }
 
-        private void SetRestartButtonActive(bool isActive)
-        {
-            _restartButton.gameObject.SetActive(isActive);
-        }
+        private void ClearWordSlots() => _wordSlotHolder?.ClearSlots();
 
-        public void SetClustersActive(bool isActive) => _clusterItemHolder?.gameObject.SetActive(isActive);
+        private void ClearClusters() => _clusterItemHolder?.Clear();
+        
+        private void SetValidateButtonActive(bool isActive) => _validateButton?.gameObject.SetActive(isActive);
+        
+        private void SetRestartButtonActive(bool isActive) => _restartButton.gameObject.SetActive(isActive);
 
-        public void SetValidateButtonActive(bool isActive) => _validateButton?.gameObject.SetActive(isActive);
-
+        private void SetClustersActive(bool isActive) => _clusterItemHolder?.gameObject.SetActive(isActive);
+        
         public void SetHintButtonActive(bool isActive) => _hintButton?.gameObject.SetActive(isActive);
+        
+        private void SetMenuButtonActive(bool isActive) => _menuButton.gameObject.SetActive(isActive);
     }
 }

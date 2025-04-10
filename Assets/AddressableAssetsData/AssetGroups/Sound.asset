@@ -17,12 +17,6 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: 02c5144db210e72438c779fdbc23ba62
   m_SerializeEntries:
-  - m_GUID: 2a6fb1f6331b40d4080d0a9f49fa855b
-    m_Address: SoundPlayerView
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - remote
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 54f7058803757e04e9e72a0b55fb43f7
     m_Address: ButtonClose
     m_ReadOnly: 0

@@ -17,30 +17,6 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: ca70f08bfe9862142b7ce3b60aec3055
   m_SerializeEntries:
-  - m_GUID: 27d851206a277b94e82876e006f4e417
-    m_Address: ClusterItemHolder
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - remote
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 3202200fa01a9b740b1759afa6d807e0
-    m_Address: ClusterItem
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - remote
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: aa854e4eed9c2084594fb05270a79cae
-    m_Address: WordSlotHolder
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - remote
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 855279ecaeca0284fb1b852d20b381d8
-    m_Address: WordSlot
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - remote
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2dfc05083f06ebb45b2445a5f1dc41b5
     m_Address: Assets/ResourcesAdressables/UI/Fonts
     m_ReadOnly: 0
@@ -81,12 +57,6 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4aecb92fff08436c8303b10eab8da368
     m_Address: Assets/ResourcesAdressables/UI/TextMeshPro/Resources_moved/Style Sheets
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - remote
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 3ffedf27adf98d645b9dac988e8aca3c
-    m_Address: ClusterAttachItem
     m_ReadOnly: 0
     m_SerializedLabels:
     - remote

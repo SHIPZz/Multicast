@@ -17,8 +17,8 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: 20255c61f7a26a044a399f5d46e782cc
   m_SerializeEntries:
-  - m_GUID: adb9df14921d3844ba1a07fdb2766d3b
-    m_Address: Assets/ResourcesAdressables/UI/TWD/FreeButtonSet/Textures/icons/32x32/repeat.png
+  - m_GUID: 2a6fb1f6331b40d4080d0a9f49fa855b
+    m_Address: SoundPlayerView
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
@@ -31,6 +31,42 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9cc01d2336083cb44adea2f778bc3591
     m_Address: UIParent
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e9a6e1e9560132b439342196ca4f9b97
+    m_Address: Assets/ResourcesAdressables/UICommon/coin.png
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3ffedf27adf98d645b9dac988e8aca3c
+    m_Address: ClusterAttachItem
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 27d851206a277b94e82876e006f4e417
+    m_Address: ClusterItemHolder
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3202200fa01a9b740b1759afa6d807e0
+    m_Address: ClusterItem
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: aa854e4eed9c2084594fb05270a79cae
+    m_Address: WordSlotHolder
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - default
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 855279ecaeca0284fb1b852d20b381d8
+    m_Address: WordSlot
     m_ReadOnly: 0
     m_SerializedLabels:
     - default

@@ -87,10 +87,10 @@ namespace CodeBase.UI.Cluster.Services
                 if (!_wordSlotService.ContainsInTargetWords(formedWord))
                     continue;
 
-                SetAllClustersOutlineIconActiveInRow(rowId, false);
+                MarkClustersDisabledInRow(rowId);
             }
         }
-        
+
         public IEnumerable<ClusterModel> PlacedClusters => _clusterRepository.GetPlacedClusters();
 
         public IEnumerable<ClusterModel> AllClusters => _clusterRepository.GetAllClusters();
@@ -117,7 +117,7 @@ namespace CodeBase.UI.Cluster.Services
 
                 RestoreClusterToSavedSlot(placedCluster, clusterItem);
             }
-            
+
             CheckAndHideFilledClusters();
         }
 
@@ -132,18 +132,15 @@ namespace CodeBase.UI.Cluster.Services
             }
         }
 
-        private void SetAllClustersOutlineIconActiveInRow(int row, bool isActive)
+        private void MarkClustersDisabledInRow(int row)
         {
             IEnumerable<ClusterItem> clustersInRow = _clusterPlacement.GetClustersInRow(row);
 
             if (clustersInRow == null)
                 return;
 
-            foreach (ClusterItem cluster in clustersInRow)
-            {
-                cluster.SetOutlineIconActive(isActive);
-                cluster.SetBlocksRaycasts(isActive);
-            }
+            foreach (ClusterItem cluster in clustersInRow) 
+                cluster.MarkDisabled();
         }
     }
 }

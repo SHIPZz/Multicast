@@ -1,4 +1,3 @@
-using System.Linq;
 using CodeBase.Data;
 using CodeBase.Gameplay.Common.Services.Level;
 using CodeBase.Infrastructure.States.StateMachine;
@@ -62,11 +61,11 @@ namespace CodeBase.UI.Game
         private void ProcessLevelServiceEvents()
         {
             _levelService.OnLevelLoaded
-                .Subscribe(OnLevelLoaded)
+                .Subscribe(SetupWindow)
                 .AddTo(_disposables);
 
             _levelService.OnLevelCompleted
-                .Subscribe(_ => OnLevelCompleted())
+                .Subscribe(_ => OpenVictoryWindow())
                 .AddTo(_disposables);
         }
 
@@ -81,20 +80,32 @@ namespace CodeBase.UI.Game
         private void ProcessWindowButtonsClicks()
         {
             _window.OnValidateClicked
-                .Subscribe(_ => OnValidateClicked())
+                .Subscribe(_ => MarkLevelCompleted())
                 .AddTo(_disposables);
 
             _window.OnHintClicked
-                .Subscribe(_ => OnHintClicked())
+                .Subscribe(_ => OpenHintWindow())
                 .AddTo(_disposables);
 
+            _window.OnMenuClicked
+                .Subscribe(_ => SwitchToMenuState())
+                .AddTo(_disposables);
+            
             _window
                 .OnRestartClicked
                 .Subscribe(_ => _stateMachine.Enter<CleanupBeforeLoadingGameState>())
                 .AddTo(_disposables);
         }
 
-        private void OnLevelLoaded(LevelData levelData)
+        private void SwitchToMenuState()
+        {
+            _clusterService.Cleanup();
+            _wordSlotService.Cleanup();
+            
+            _stateMachine.Enter<LoadingMenuState>();
+        }
+
+        private void SetupWindow(LevelData levelData)
         {
             _window.Cleanup();
 
@@ -116,7 +127,7 @@ namespace CodeBase.UI.Game
             }
         }
 
-        private void OnValidateClicked()
+        private void MarkLevelCompleted()
         {
             if (_wordSlotService.UpdateFormedWordsAndCheckNew())
                 _soundService.Play(SoundTypeId.WordFormedFound);
@@ -132,9 +143,9 @@ namespace CodeBase.UI.Game
             _levelService.MarkLevelCompleted();
         }
 
-        private void OnHintClicked() => _windowService.OpenWindow<HintWindow>(true);
+        private void OpenHintWindow() => _windowService.OpenWindow<HintWindow>(true);
 
-        private void OnLevelCompleted()
+        private void OpenVictoryWindow()
         {
             _window.SetInteractableItemsActive(false);
 

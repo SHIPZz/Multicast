@@ -7,7 +7,7 @@ using CodeBase.UI.WordSlots.Services;
 using UniRx;
 using Zenject;
 
-namespace CodeBase.UI.Hint.Serviecs
+namespace CodeBase.UI.Hint.Serviсes
 {
     public class HintService : IHintService, IInitializable, IDisposable
     {

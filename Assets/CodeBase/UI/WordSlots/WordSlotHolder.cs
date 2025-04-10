@@ -11,7 +11,7 @@ namespace CodeBase.UI.WordSlots
     {
         [SerializeField] private Transform _slotsContainer;
 
-        private readonly List<WordSlot> _wordSlots = new(GameplayConstants.SlotCount);
+        private readonly List<WordSlot> _wordSlots = new(GameplayConstants.WordSlotCount);
         private WordSlot[,] _slotsGrid;
         private int _gridRows;
         private int _gridColumns;

@@ -14,10 +14,12 @@ namespace CodeBase.UI.Cluster
     public class ClusterItem : DraggableItem, IPointerClickHandler
     {
         [SerializeField] private TextMeshProUGUI _text;
-        [SerializeField] private Image _outlineIcon;
+        [SerializeField] private Sprite _outlineIcon;
+        [SerializeField] private Sprite _baseIcon;
+        [SerializeField] private Image _image;
 
         private readonly Subject<Unit> _disabledEvent = new Subject<Unit>();
-        
+
         private string _clusterText;
         private IClusterService _clusterService;
         private Transform _originalParent;
@@ -35,10 +37,9 @@ namespace CodeBase.UI.Cluster
         public void Initialize(string text, Transform parent, Canvas parentCanvas)
         {
             base.Initialize(parent, parentCanvas);
-            
+
             _clusterText = text;
             _text.text = text;
-            _outlineIcon.enabled = true;
             _originalParent = parent;
         }
 
@@ -52,7 +53,7 @@ namespace CodeBase.UI.Cluster
         {
             GameObject raycastObject = eventData.pointerCurrentRaycast.gameObject;
             var wordSlot = raycastObject?.GetComponent<WordSlot>();
-            
+
             PlaceToSlot(wordSlot);
         }
 
@@ -63,7 +64,7 @@ namespace CodeBase.UI.Cluster
                 OnReset();
                 return;
             }
-            
+
             if (_clusterService.TryPlaceCluster(this, wordSlot))
             {
                 MarkPlacedTo(wordSlot);
@@ -75,7 +76,7 @@ namespace CodeBase.UI.Cluster
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            if (IsPlaced) 
+            if (IsPlaced)
                 OnReset();
         }
 
@@ -83,8 +84,10 @@ namespace CodeBase.UI.Cluster
         {
             base.OnReset();
             _text.enabled = true;
-            SetOutlineIconActive(true);
             _clusterService.ResetCluster(this);
+
+            SetOutlineIconActive(false);
+
             ReturnToOriginalPosition();
         }
 
@@ -92,18 +95,26 @@ namespace CodeBase.UI.Cluster
         {
             IsPlaced = true;
             _text.enabled = false;
+
             MoveToCenter(wordSlot.transform);
+            SetOutlineIconActive(true);
             SetBlocksRaycasts(true);
         }
 
         public void SetOutlineIconActive(bool isActive)
         {
-            _outlineIcon.enabled = isActive;
-            
-            if(!isActive)
-                _disabledEvent.OnNext(Unit.Default);
+            _image.sprite = isActive ? _outlineIcon : _baseIcon;
         }
-        
+
+        public void MarkDisabled()
+        {
+            SetBlocksRaycasts(false);
+            
+            _image.enabled = false;
+            
+            _disabledEvent.OnNext(Unit.Default);
+        }
+
         public void SetBlocksRaycasts(bool value)
         {
             CanvasGroup.blocksRaycasts = value;

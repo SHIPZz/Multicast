@@ -17,12 +17,6 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: ed285f6e051a57d46a15a3cd9f1a8459
   m_SerializeEntries:
-  - m_GUID: 5461bc52dcfd55c4fa0df8d0c8a2f776
-    m_Address: Background
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - remote
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 924497d0a9de04e4b8589ac8c155272b
     m_Address: Assets/ImportResources/UI pack
     m_ReadOnly: 0
@@ -33,7 +27,13 @@ MonoBehaviour:
     m_Address: Assets/ResourcesAdressables/UI/TWD
     m_ReadOnly: 0
     m_SerializedLabels:
-    - default
+    - remote
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 04675c78a82b3e7418def4d6189766e9
+    m_Address: Assets/ResourcesAdressables/ImportResources/Sweet Land GUI
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - remote
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 89d766e551783384790167de091c6fc0, type: 2}
