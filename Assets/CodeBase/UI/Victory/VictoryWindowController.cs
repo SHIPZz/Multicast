@@ -34,6 +34,8 @@ namespace CodeBase.UI.Victory
         {
             _soundService.Play(SoundTypeId.Victory);
             
+            _levelService.UpdateLevelIndex();
+            
             _window.OnNextLevelClicked
                 .Subscribe(_ => OnNextLevelClicked())
                 .AddTo(_disposables);
@@ -56,8 +58,6 @@ namespace CodeBase.UI.Victory
         private void OnNextLevelClicked()
         {
             _windowService.Close<VictoryWindow>();
-            
-            _levelService.UpdateLevelIndex();
             
             _stateMachine.Enter<CleanupBeforeLoadingGameState>();
         }
