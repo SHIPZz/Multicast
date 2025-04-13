@@ -37,10 +37,7 @@ namespace CodeBase.UI.Game
         public IObservable<Unit> OnMenuClicked => _menuButton?.OnClickAsObservable();
 
         [Inject]
-        private void Construct(
-            IStaticDataService staticDataService,
-            IWordSlotUIFactory wordSlotUIFactory,
-            IClusterUIFactory clusterUIFactory)
+        private void Construct(IWordSlotUIFactory wordSlotUIFactory, IClusterUIFactory clusterUIFactory)
         {
             _wordSlotUIFactory = wordSlotUIFactory;
             _clusterUIFactory = clusterUIFactory;

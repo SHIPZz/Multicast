@@ -7,7 +7,7 @@ namespace CodeBase.UI.WordSlots
     {
         [SerializeField] private TextMeshProUGUI _letterText;
 
-        [field: SerializeField] private bool _isOccupied;
+        private bool _isOccupied;
 
         private char _currentLetter;
 
