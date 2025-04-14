@@ -21,12 +21,16 @@ namespace CodeBase.Common.Services.InternetConnection
 
                 try
                 {
-                    await UniTask.WaitForSeconds(CheckInternetConnectionInterval,true,PlayerLoopTiming.Update,_cancellationTokenSource.Token);
+                    await UniTask.WaitForSeconds(CheckInternetConnectionInterval, true, PlayerLoopTiming.Update, _cancellationTokenSource.Token);
+                }
+                catch (OperationCanceledException)
+                {
+                    break; 
                 }
                 catch (Exception e)
                 {
-                    
-                } 
+                    Debug.LogError($"Internet connection error: {e}");
+                }
             }
         }
 
@@ -38,7 +42,7 @@ namespace CodeBase.Common.Services.InternetConnection
                 return true;
             }
 
-            Debug.LogError("Нет интернета!");
+            Debug.LogError("No internet!");
 
             IsInternetAvailable = false;
             return false;
@@ -46,6 +50,7 @@ namespace CodeBase.Common.Services.InternetConnection
 
         public void Dispose()
         {
+            _cancellationTokenSource?.Cancel();
             _cancellationTokenSource?.Dispose();
         }
     }

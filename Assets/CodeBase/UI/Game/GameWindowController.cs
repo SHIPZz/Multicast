@@ -115,6 +115,8 @@ namespace CodeBase.UI.Game
 
             _window.CreateClusterItemHolder();
             
+            _window.SetLevelNumber(levelData.LevelId);
+            
             _window.CreateClusterItems(_clusterService.AllClusters);
             
             _clusterService.RestorePlacedClusters();
@@ -147,6 +149,8 @@ namespace CodeBase.UI.Game
 
         private void OpenVictoryWindow()
         {
+            _window.HideLevelText();
+            
             _window.SetInteractableItemsActive(false);
 
             _windowService.OpenWindow<VictoryWindow>(onTop: true);

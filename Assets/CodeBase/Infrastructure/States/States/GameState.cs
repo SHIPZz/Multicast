@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using CodeBase.Data;
 using CodeBase.Extensions;
 using CodeBase.Gameplay.Common.Services.Level;
+using CodeBase.Gameplay.Constants;
 using CodeBase.Infrastructure.States.StateInfrastructure;
 using CodeBase.UI.Cluster.Services;
 using CodeBase.UI.Game;
 using CodeBase.UI.Hint;
-using CodeBase.UI.Levels;
 using CodeBase.UI.Services.Window;
 using CodeBase.UI.WordSlots.Services;
-using UnityEngine;
 
 namespace CodeBase.Infrastructure.States.States
 {
@@ -28,11 +28,11 @@ namespace CodeBase.Infrastructure.States.States
             IWordSlotService wordSlotService,
             IClusterService clusterService)
         {
-            _hintService = hintService ?? throw new ArgumentNullException(nameof(hintService));
-            _levelService = levelService ?? throw new ArgumentNullException(nameof(levelService));
-            _wordSlotService = wordSlotService ?? throw new ArgumentNullException(nameof(wordSlotService));
-            _clusterService = clusterService ?? throw new ArgumentNullException(nameof(clusterService));
-            _windowService = windowService ?? throw new ArgumentNullException(nameof(windowService));
+            _hintService = hintService;
+            _levelService = levelService;
+            _wordSlotService = wordSlotService;
+            _clusterService = clusterService;
+            _windowService = windowService;
         }
 
         public void Enter()
@@ -45,9 +45,6 @@ namespace CodeBase.Infrastructure.States.States
 
             _hintService.Init();
             
-            _clusterService.Init();
-            
-            _windowService.OpenWindow<LevelWindow>();
             _windowService.OpenWindow<GameWindow>();
             
             _levelService.MarkLevelLoaded(currentLevelData.LevelId);
@@ -57,7 +54,7 @@ namespace CodeBase.Infrastructure.States.States
         {
             if (_wordSlotService.WordsToFind.IsNullOrEmpty()) 
             {
-                var capitalizedWords = currentLevelData.Words.Shuffle();
+                var capitalizedWords = currentLevelData.Words.Shuffle().Take(GameplayConstants.MaxWordCount);
 
                 _wordSlotService.SetTargetWordsToFind(capitalizedWords);
             }

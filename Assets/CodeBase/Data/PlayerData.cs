@@ -12,8 +12,5 @@ namespace CodeBase.Data
         
         public ClusterModel[,] PlacedClustersGrid;
         public string[,] WordSlotsGrid;
-        
-        public int GridRows;
-        public int GridColumns;
     }
 }

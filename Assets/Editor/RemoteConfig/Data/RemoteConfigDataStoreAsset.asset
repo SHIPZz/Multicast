@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 469c24fdb3bd6431b92cc1465bd9166b, type: 3}
   m_Name: RemoteConfigDataStoreAsset
   m_EditorClassIdentifier: 
-  _rsKeyList: "[\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"07465ccb-873f-45d9-9772-58f06112d77a\"\r\n   
+  _rsKeyList: "[\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"6df8fb9f-e413-4b13-b872-8b588ced7986\"\r\n   
     },\r\n    \"rs\": {\r\n      \"key\": \"level_2\",\r\n      \"type\": \"json\",\r\n     
     \"schemaId\": null,\r\n      \"value\": {\r\n        \"levelId\": 2,\r\n       
     \"words\": [\r\n          \"\u041C\u041E\u041B\u041E\u041A\u041E\",\r\n         
@@ -29,7 +29,7 @@ MonoBehaviour:
     \"\u041F\u0418\",\r\n          \"\u0421\u042C\",\r\n          \"\u041C\u041E\",\r\n         
     \"\u0421\u0415\",\r\n          \"\u0421\u0422\",\r\n          \"\u0420\u0410\"\r\n       
     ]\r\n      }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\":
-    \"3d36c19d-56e3-4853-a917-e80accb9a81b\"\r\n    },\r\n    \"rs\": {\r\n     
+    \"43dd18b0-5786-4db5-b519-08868173bb5c\"\r\n    },\r\n    \"rs\": {\r\n     
     \"key\": \"level_3\",\r\n      \"type\": \"json\",\r\n      \"schemaId\": null,\r\n     
     \"value\": {\r\n        \"levelId\": 3,\r\n        \"words\": [\r\n         
     \"\u041F\u041E\u0413\u041E\u0414\u0410\",\r\n          \"\u041C\u0415\u0422\u0415\u041B\u042C\",\r\n         
@@ -44,7 +44,7 @@ MonoBehaviour:
     \"\u041C\u0415\u041D\u042C\",\r\n          \"\u0421\u0415\",\r\n          \"\u0421\u0422\",\r\n         
     \"\u0420\u0410\",\r\n          \"\u041A\u0420\u0418\",\r\n          \"\u0412\u0410\u042F\"\r\n       
     ]\r\n      }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\":
-    \"69c233cf-befb-4804-92a6-7a1b157646e9\"\r\n    },\r\n    \"rs\": {\r\n     
+    \"5c2590ba-807d-48ed-a95b-8aa8fb91ce35\"\r\n    },\r\n    \"rs\": {\r\n     
     \"key\": \"level_4\",\r\n      \"type\": \"json\",\r\n      \"schemaId\": null,\r\n     
     \"value\": {\r\n        \"levelId\": 4,\r\n        \"words\": [\r\n         
     \"\u0420\u0410\u0411\u041E\u0422\u0410\",\r\n          \"\u041C\u0423\u0417\u042B\u041A\u0410\",\r\n         
@@ -54,12 +54,12 @@ MonoBehaviour:
     ],\r\n        \"clusters\": [\r\n          \"\u0420\u0410\",\r\n          \"\u0411\u041E\",\r\n         
     \"\u0422\u0410\",\r\n          \"\u041C\u0423\",\r\n          \"\u0417\u042B\",\r\n         
     \"\u041A\u0410\",\r\n          \"\u041F\u041E\",\r\n          \"\u0411\u0415\",\r\n         
-    \"\u0414\u0410\",\r\n          \"\u0420\u0410\",\r\n          \"\u0414\u0423\",\r\n         
-    \"\u0413\u0410\",\r\n          \"\u0421\u0415\u0420\",\r\n          \"\u0414\u0426\u0415\",\r\n         
-    \"\u041F\u0420\u0410\",\r\n          \"\u0412\u0414\u0410\",\r\n          \"\u0411\u0418\u0417\",\r\n         
-    \"\u041D\u0415\u0421\",\r\n          \"\u0414\u0420\u0423\",\r\n          \"\u0416\u0411\u0410\"\r\n       
-    ]\r\n      }\r\n    }\r\n  }\r\n]"
-  _rsLastCachedKeyList: "[\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"07465ccb-873f-45d9-9772-58f06112d77a\"\r\n   
+    \"\u0414\u0410\",\r\n          \"\u0420\u0410\",\r\n          \"\u0414\u0410\",\r\n         
+    \"\u0414\u0423\",\r\n          \"\u0413\u0410\",\r\n          \"\u0421\u0415\u0420\",\r\n         
+    \"\u0414\u0426\u0415\",\r\n          \"\u041F\u0420\u0410\",\r\n          \"\u0412\u0414\u0410\",\r\n         
+    \"\u0411\u0418\u0417\",\r\n          \"\u041D\u0415\u0421\",\r\n          \"\u0414\u0420\u0423\",\r\n         
+    \"\u0416\u0411\u0410\"\r\n        ]\r\n      }\r\n    }\r\n  }\r\n]"
+  _rsLastCachedKeyList: "[\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\": \"6df8fb9f-e413-4b13-b872-8b588ced7986\"\r\n   
     },\r\n    \"rs\": {\r\n      \"key\": \"level_2\",\r\n      \"type\": \"json\",\r\n     
     \"schemaId\": null,\r\n      \"value\": {\r\n        \"levelId\": 2,\r\n       
     \"words\": [\r\n          \"\u041C\u041E\u041B\u041E\u041A\u041E\",\r\n         
@@ -76,7 +76,7 @@ MonoBehaviour:
     \"\u041F\u0418\",\r\n          \"\u0421\u042C\",\r\n          \"\u041C\u041E\",\r\n         
     \"\u0421\u0415\",\r\n          \"\u0421\u0422\",\r\n          \"\u0420\u0410\"\r\n       
     ]\r\n      }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\":
-    \"3d36c19d-56e3-4853-a917-e80accb9a81b\"\r\n    },\r\n    \"rs\": {\r\n     
+    \"43dd18b0-5786-4db5-b519-08868173bb5c\"\r\n    },\r\n    \"rs\": {\r\n     
     \"key\": \"level_3\",\r\n      \"type\": \"json\",\r\n      \"schemaId\": null,\r\n     
     \"value\": {\r\n        \"levelId\": 3,\r\n        \"words\": [\r\n         
     \"\u041F\u041E\u0413\u041E\u0414\u0410\",\r\n          \"\u041C\u0415\u0422\u0415\u041B\u042C\",\r\n         
@@ -91,7 +91,7 @@ MonoBehaviour:
     \"\u041C\u0415\u041D\u042C\",\r\n          \"\u0421\u0415\",\r\n          \"\u0421\u0422\",\r\n         
     \"\u0420\u0410\",\r\n          \"\u041A\u0420\u0418\",\r\n          \"\u0412\u0410\u042F\"\r\n       
     ]\r\n      }\r\n    }\r\n  },\r\n  {\r\n    \"metadata\": {\r\n      \"entityId\":
-    \"69c233cf-befb-4804-92a6-7a1b157646e9\"\r\n    },\r\n    \"rs\": {\r\n     
+    \"5c2590ba-807d-48ed-a95b-8aa8fb91ce35\"\r\n    },\r\n    \"rs\": {\r\n     
     \"key\": \"level_4\",\r\n      \"type\": \"json\",\r\n      \"schemaId\": null,\r\n     
     \"value\": {\r\n        \"levelId\": 4,\r\n        \"words\": [\r\n         
     \"\u0420\u0410\u0411\u041E\u0422\u0410\",\r\n          \"\u041C\u0423\u0417\u042B\u041A\u0410\",\r\n         
@@ -101,11 +101,11 @@ MonoBehaviour:
     ],\r\n        \"clusters\": [\r\n          \"\u0420\u0410\",\r\n          \"\u0411\u041E\",\r\n         
     \"\u0422\u0410\",\r\n          \"\u041C\u0423\",\r\n          \"\u0417\u042B\",\r\n         
     \"\u041A\u0410\",\r\n          \"\u041F\u041E\",\r\n          \"\u0411\u0415\",\r\n         
-    \"\u0414\u0410\",\r\n          \"\u0420\u0410\",\r\n          \"\u0414\u0423\",\r\n         
-    \"\u0413\u0410\",\r\n          \"\u0421\u0415\u0420\",\r\n          \"\u0414\u0426\u0415\",\r\n         
-    \"\u041F\u0420\u0410\",\r\n          \"\u0412\u0414\u0410\",\r\n          \"\u0411\u0418\u0417\",\r\n         
-    \"\u041D\u0415\u0421\",\r\n          \"\u0414\u0420\u0423\",\r\n          \"\u0416\u0411\u0410\"\r\n       
-    ]\r\n      }\r\n    }\r\n  }\r\n]"
+    \"\u0414\u0410\",\r\n          \"\u0420\u0410\",\r\n          \"\u0414\u0410\",\r\n         
+    \"\u0414\u0423\",\r\n          \"\u0413\u0410\",\r\n          \"\u0421\u0415\u0420\",\r\n         
+    \"\u0414\u0426\u0415\",\r\n          \"\u041F\u0420\u0410\",\r\n          \"\u0412\u0414\u0410\",\r\n         
+    \"\u0411\u0418\u0417\",\r\n          \"\u041D\u0415\u0421\",\r\n          \"\u0414\u0420\u0423\",\r\n         
+    \"\u0416\u0411\u0410\"\r\n        ]\r\n      }\r\n    }\r\n  }\r\n]"
   _environments: "[\r\n  {\r\n    \"projectId\": \"0670d359-b01e-45bc-8b4b-657a9aa8ebf7\",\r\n   
     \"name\": \"production\",\r\n    \"id\": \"3fc2523e-1870-4260-9715-cbcf9c02fad0\",\r\n   
     \"isDefault\": true,\r\n    \"createdAt\": \"2025-04-01T16:06:34Z\",\r\n    \"updatedAt\":

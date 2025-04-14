@@ -45,9 +45,13 @@ namespace CodeBase.UI.Cluster
                 ClusterAttachItem attachItem = _clusterUIFactory.CreateClusterAttachItem(_clusterItemLayout);
                 
                 ClusterItem clusterItem = _clusterUIFactory.CreateClusterItem(attachItem.transform);
-            
-                clusterItem.Initialize(clusters.ElementAt(i).Text, attachItem.transform, parentCanvas);
+
+                ClusterModel clusterModel = clusters.ElementAt(i);
+
+                clusterItem.Initialize(clusterModel, attachItem.transform, parentCanvas);
+                
                 _clusterService.RegisterCreatedCluster(clusterItem);
+                
                 _clusterItems[attachItem] = clusterItem;
                 clusterItem.DisabledEvent.Subscribe(_ => attachItem.Cleanup()).AddTo(attachItem);
             }

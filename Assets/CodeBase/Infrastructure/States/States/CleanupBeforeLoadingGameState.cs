@@ -16,9 +16,9 @@ namespace CodeBase.Infrastructure.States.States
             IClusterService clusterService,
             IStateMachine stateMachine)
         {
-            _clusterService = clusterService ?? throw new ArgumentNullException(nameof(clusterService));
-            _wordSlotService = wordSlotService ?? throw new ArgumentNullException(nameof(wordSlotService));
-            _stateMachine = stateMachine ?? throw new ArgumentNullException(nameof(stateMachine));
+            _clusterService = clusterService;
+            _wordSlotService = wordSlotService;
+            _stateMachine = stateMachine;
         }
 
         public void Enter()

@@ -20,10 +20,10 @@ namespace CodeBase.Infrastructure.States.States
             ISceneLoader sceneLoader,
             IStateMachine stateMachine)
         {
-            _internetConnectionService = internetConnectionService ?? throw new ArgumentNullException(nameof(internetConnectionService));
-            _stateMachine = stateMachine ?? throw new ArgumentNullException(nameof(stateMachine));
-            _sceneLoader = sceneLoader ?? throw new ArgumentNullException(nameof(sceneLoader));
-            _windowService = windowService ?? throw new ArgumentNullException(nameof(windowService));
+            _internetConnectionService = internetConnectionService;
+            _stateMachine = stateMachine;
+            _sceneLoader = sceneLoader;
+            _windowService = windowService;
         }
 
         public void Enter()

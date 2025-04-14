@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using CodeBase.Common.Services.Persistent;
 using CodeBase.Data;
 using CodeBase.Extensions;
+using CodeBase.Gameplay.Constants;
 using CodeBase.UI.Cluster.Services.Placement;
-using CodeBase.UI.Cluster.Services.Repository;
 using CodeBase.UI.Sound;
 using CodeBase.UI.Sound.Services;
 using CodeBase.UI.WordSlots;
@@ -14,13 +15,18 @@ using Zenject;
 
 namespace CodeBase.UI.Cluster.Services
 {
-    public class ClusterService : IClusterService, IDisposable, IInitializable
+    public class ClusterService : IClusterService, IDisposable, IInitializable, IProgressWatcher
     {
-        private readonly IClusterRepository _clusterRepository;
         private readonly IClusterPlacement _clusterPlacement;
         private readonly ISoundService _soundService;
         private readonly IPersistentService _persistentService;
         private readonly IWordSlotService _wordSlotService;
+
+        private readonly Dictionary<string, ClusterItem> _createdClusters = new();
+        private readonly Dictionary<string, ClusterModel> _clusterModels = new();
+        private readonly HashSet<string> _placedClusterIds = new();
+
+        public IEnumerable<ClusterModel> AllClusters => _clusterModels.Values;
 
         public ClusterService(
             IWordSlotService wordSlotService,
@@ -30,117 +36,168 @@ namespace CodeBase.UI.Cluster.Services
             _wordSlotService = wordSlotService;
             _persistentService = persistentService;
             _soundService = soundService;
-
-            _clusterRepository = new ClusterRepository();
             _clusterPlacement = new ClusterPlacement(wordSlotService);
         }
 
-        public void Initialize() => _persistentService.RegisterProgressWatcher(_clusterRepository);
+        public void Initialize() => _persistentService.RegisterProgressWatcher(this);
+        public void Dispose() => _persistentService.UnregisterProgressWatcher(this);
 
-        public void Dispose() => _persistentService.UnregisterProgressWatcher(_clusterRepository);
 
-        public void Init() => _clusterPlacement.Initialize(_wordSlotService.WordsToFind.Count);
-
-        public void RegisterCreatedCluster(ClusterItem clusterItem) => _clusterRepository.RegisterCluster(clusterItem);
+        public void RegisterCreatedCluster(ClusterItem clusterItem) => 
+            _createdClusters[clusterItem.Id] = clusterItem;
 
         public void SetClusters(IEnumerable<string> clusters)
         {
-            using var pooledList = UnityEngine.Pool.ListPool<ClusterModel>.Get(out var clusterModels);
-
             foreach (var text in clusters)
-                clusterModels.Add(new ClusterModel(text, false, -1, -1));
-
-            _clusterRepository.AddAvailableClusters(clusterModels);
+            {
+                var id = Guid.NewGuid().ToString();
+                var model = new ClusterModel(text, false, -1, -1, id);
+                _clusterModels[id] = model;
+            }
         }
 
-        public IEnumerable<ClusterModel> GetAvailableClusters() =>
-            _clusterRepository.GetAvailableClusters();
+        public IEnumerable<ClusterModel> GetAvailableClusters() => 
+            _clusterModels.Values.Where(m => !_placedClusterIds.Contains(m.Id));
 
         public bool TryPlaceCluster(ClusterItem cluster, WordSlot wordSlot)
         {
             if (!_clusterPlacement.TryPlaceCluster(cluster, wordSlot))
                 return false;
 
-            ClusterModel clusterModel = cluster.ToModel(_wordSlotService.GetRowBySlot(wordSlot), _wordSlotService.GetColumnBySlot(wordSlot));
-            _clusterRepository.MarkClusterAsPlaced(clusterModel);
-            _soundService.Play(SoundTypeId.ClusterPlaced);
+            var row = _wordSlotService.GetRowBySlot(wordSlot);
+            var column = _wordSlotService.GetColumnBySlot(wordSlot);
+            
+            var model = cluster.ToModel(row, column, cluster.Id);
+            _clusterModels[cluster.Id] = model;
+            _placedClusterIds.Add(cluster.Id);
 
+            _soundService.Play(SoundTypeId.ClusterPlaced);
             return true;
         }
 
-        public void OnClusterSelected(ClusterItem clusterItem) =>
+        public void OnClusterSelected(ClusterItem clusterItem) => 
             _soundService.Play(SoundTypeId.TakeCluster);
 
         public void ResetCluster(ClusterItem cluster)
         {
             _clusterPlacement.ResetCluster(cluster);
-
-            var clusterModel = new ClusterModel(cluster.Text, false, -1, -1);
-
-            _clusterRepository.MarkClusterAsAvailable(clusterModel);
+            _placedClusterIds.Remove(cluster.Id);
+            _clusterModels[cluster.Id] = cluster.ToModel(0, 0, cluster.Id);
         }
 
         public void CheckAndHideFilledClusters()
         {
-            foreach (var (rowId, formedWord) in _wordSlotService.GetFormedWords())
+            var formedWords = _wordSlotService.GetFormedWords();
+            
+            if (formedWords == null) 
+                return;
+
+            foreach (var (rowId, formedWord) in formedWords)
             {
                 if (!_wordSlotService.ContainsInTargetWords(formedWord))
                     continue;
 
-                MarkClustersDisabledInRow(rowId);
+                foreach (var cluster in GetClustersInRow(rowId))
+                    cluster.MarkDisabled();
             }
         }
 
-        public IEnumerable<ClusterModel> PlacedClusters => _clusterRepository.GetPlacedClusters();
-
-        public IEnumerable<ClusterModel> AllClusters => _clusterRepository.GetAllClusters();
-
         public void Cleanup()
         {
-            _clusterRepository.Clear();
+            _createdClusters.Clear();
+            _clusterModels.Clear();
+            _placedClusterIds.Clear();
             _clusterPlacement.Clear();
         }
 
         public void RestorePlacedClusters()
         {
-            using var pool = UnityEngine.Pool.ListPool<ClusterModel>.Get(out List<ClusterModel> list);
+            var placedClusters = _clusterModels.Values
+                .Where(m => _placedClusterIds.Contains(m.Id))
+                .ToList();
 
-            list.AddRange(_clusterRepository.GetPlacedClusters());
-
-            foreach (ClusterModel placedCluster in list)
+            foreach (var placedCluster in placedClusters)
             {
-                if (!_clusterRepository.TryGetCluster(placedCluster, out ClusterItem clusterItem))
+                if (!_createdClusters.TryGetValue(placedCluster.Id, out var clusterItem))
                 {
                     Debug.LogWarning($"Could not find created cluster item for text: {placedCluster}");
                     continue;
                 }
 
+                Debug.Log($"Restoring cluster: {placedCluster.Text} at {placedCluster.Row}, {placedCluster.Column}");
                 RestoreClusterToSavedSlot(placedCluster, clusterItem);
             }
 
+            _wordSlotService.RefreshFormedWords();
             CheckAndHideFilledClusters();
         }
 
         private void RestoreClusterToSavedSlot(ClusterModel placedCluster, ClusterItem clusterItem)
         {
-            WordSlot wordSlot = _wordSlotService.GetWordSlotByRowAndColumn(placedCluster.Row, placedCluster.Column);
+            var wordSlot = _wordSlotService.GetWordSlotByRowAndColumn(placedCluster.Row, placedCluster.Column);
+            
+            if (wordSlot == null) 
+                return;
 
-            if (wordSlot != null && !wordSlot.IsOccupied)
+            clusterItem.PlaceToSlot(wordSlot);
+            _clusterModels[placedCluster.Id] = placedCluster;
+            _placedClusterIds.Add(placedCluster.Id);
+        }
+
+        private IEnumerable<ClusterItem> GetClustersInRow(int row) => 
+            _createdClusters.Values.Where(c => c.Row == row);
+
+        public void Save(ProgressData progressData)
+        {
+            var playerData = progressData.PlayerData;
+            playerData.AvailableClusters.Clear();
+            playerData.AvailableClusters.AddRange(GetAvailableClusters());
+
+            SavePlacedClusters(playerData);
+        }
+
+        public void Load(ProgressData progressData)
+        {
+            var playerData = progressData.PlayerData;
+            _clusterModels.Clear();
+            _placedClusterIds.Clear();
+
+            foreach (var model in playerData.AvailableClusters)
             {
-                clusterItem.PlaceToSlot(wordSlot);
-                clusterItem.MarkPlacedTo(wordSlot);
+                var newModel = new ClusterModel(model.Text, false, -1, -1, model.Id);
+                _clusterModels[model.Id] = newModel;
+            }
+
+            LoadPlacedClusters(playerData);
+        }
+
+        private void LoadPlacedClusters(PlayerData playerData)
+        {
+            if (playerData.PlacedClustersGrid == null) return;
+
+            for (int row = 0; row < playerData.PlacedClustersGrid.GetLength(0); row++)
+            {
+                for (int col = 0; col < playerData.PlacedClustersGrid.GetLength(1); col++)
+                {
+                    var clusterModel = playerData.PlacedClustersGrid[row, col];
+                    if (clusterModel.Text == null) continue;
+
+                    _clusterModels[clusterModel.Id] = clusterModel;
+                    _placedClusterIds.Add(clusterModel.Id);
+                    Debug.Log($"Loaded placed cluster: {clusterModel.Text} - {clusterModel.Id}");
+                }
             }
         }
 
-        private void MarkClustersDisabledInRow(int row)
+        private void SavePlacedClusters(PlayerData playerData)
         {
-            IEnumerable<ClusterItem> clustersInRow = _clusterPlacement.GetClustersInRow(row);
+            playerData.PlacedClustersGrid = new ClusterModel[GameplayConstants.MaxWordCount, GameplayConstants.MaxClustersInColumn];
 
-            if (clustersInRow == null)
-                return;
-
-            foreach (ClusterItem cluster in clustersInRow) 
-                cluster.MarkDisabled();
+            foreach (var placed in _clusterModels.Values.Where(m => _placedClusterIds.Contains(m.Id)))
+            {
+                Debug.Log($"Saving placed cluster: {placed.Id}: {placed.Text}");
+                playerData.PlacedClustersGrid[placed.Row, placed.Column] = placed;
+            }
         }
     }
 }

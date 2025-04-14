@@ -1,7 +1,10 @@
 using System.Collections.Generic;
+using System.Linq;
 using CodeBase.Gameplay.Constants;
 using CodeBase.UI.WordSlots.Services;
+using CodeBase.UI.WordSlots.Services.Cell;
 using CodeBase.UI.WordSlots.Services.Factory;
+using CodeBase.UI.WordSlots.Services.Grid;
 using UnityEngine;
 using Zenject;
 
@@ -12,17 +15,10 @@ namespace CodeBase.UI.WordSlots
         [SerializeField] private Transform _slotsContainer;
 
         private readonly List<WordSlot> _wordSlots = new(GameplayConstants.WordSlotCount);
-        private WordSlot[,] _slotsGrid;
-        private int _gridRows;
-        private int _gridColumns;
-
         private IWordSlotUIFactory _wordSlotUIFactory;
         private IWordSlotService _wordSlotService;
 
         public IReadOnlyList<WordSlot> WordSlots => _wordSlots;
-        
-        public int GridRows => _gridRows;
-        public int GridColumns => _gridColumns;
 
         [Inject]
         private void Construct(IWordSlotUIFactory wordSlotUIFactory, IWordSlotService wordSlotService)
@@ -38,16 +34,16 @@ namespace CodeBase.UI.WordSlots
         {
             ClearSlots();
 
-            int lettersInWord = _wordSlotService.MaxLettersInWord;
-            int wordCount = _wordSlotService.WordsToFind.Count;
-
-            _gridRows = wordCount;
-            _gridColumns = lettersInWord;
-            _slotsGrid = new WordSlot[_gridRows, _gridColumns];
-
-            for (int row = 0; row < wordCount; row++)
+            WordSlotGrid wordSlotGrid = _wordSlotService.Grid;
+            
+            for (int row = 0; row < wordSlotGrid.Rows; row++)
             {
-                CreateSlotsForRow(lettersInWord, row);
+                for (int column = 0; column < wordSlotGrid.Columns; column++)
+                {
+                    WordSlot slot = _wordSlotUIFactory.CreateWordSlotPrefab(_slotsContainer);
+                    slot.Initialize(row, column);
+                    _wordSlots.Add(slot);
+                }
             }
         }
 
@@ -59,39 +55,11 @@ namespace CodeBase.UI.WordSlots
             }
 
             _wordSlots.Clear();
-            _slotsGrid = null;
         }
 
         public WordSlot GetSlotByRowAndColumn(int row, int column)
         {
-            if (row < 0 || row >= _gridRows || column < 0 || column >= _gridColumns)
-                return null;
-
-            return _slotsGrid[row, column];
-        }
-
-        public int GetColumnIndex(WordSlot slot)
-        {
-            for (int row = 0; row < _gridRows; row++)
-            {
-                for (int col = 0; col < _gridColumns; col++)
-                {
-                    if (_slotsGrid[row, col] == slot)
-                        return col;
-                }
-            }
-            
-            return -1;
-        }
-
-        private void CreateSlotsForRow(int lettersInWord, int row)
-        {
-            for (int column = 0; column < lettersInWord; column++)
-            {
-                WordSlot slot = _wordSlotUIFactory.CreateWordSlotPrefab(_slotsContainer);
-                _wordSlots.Add(slot);
-                _slotsGrid[row, column] = slot;
-            }
+            return _wordSlots.FirstOrDefault(slot => slot.Row == row && slot.Column == column);
         }
     }
 }

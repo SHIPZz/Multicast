@@ -9,20 +9,29 @@ namespace CodeBase.Data
         public bool IsPlaced;
         public int Row;
         public int Column;
-        public Guid Id;
+        public string Id;
 
-        public ClusterModel(string text, bool isPlaced, int row, int column)
+        public ClusterModel(string text, bool isPlaced, int row, int column, string id)
         {
             Text = text;
             IsPlaced = isPlaced;
             Row = row;
             Column = column;
-            Id = Guid.NewGuid();
+            Id = id;
+        }
+
+        public void Clear()
+        {
+            Text = null;
+            IsPlaced = false;
+            Row = -1;
+            Column = -1;
+            Id = null;
         }
 
         public bool Equals(ClusterModel other)
         {
-            return Text == other.Text && IsPlaced == other.IsPlaced && Row == other.Row && Column == other.Column && Id.Equals(other.Id);
+            return Text == other.Text && IsPlaced == other.IsPlaced && Row == other.Row && Column == other.Column && Id == other.Id;
         }
 
         public override bool Equals(object obj)
@@ -35,4 +44,4 @@ namespace CodeBase.Data
             return HashCode.Combine(Text, IsPlaced, Row, Column, Id);
         }
     }
-} 
+}

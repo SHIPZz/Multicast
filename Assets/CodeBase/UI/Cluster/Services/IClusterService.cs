@@ -14,9 +14,7 @@ namespace CodeBase.UI.Cluster.Services
         IEnumerable<ClusterModel> GetAvailableClusters();
         void Cleanup();
         void RegisterCreatedCluster(ClusterItem clusterItem);
-        void Init();
         void RestorePlacedClusters();
-        IEnumerable<ClusterModel> PlacedClusters { get; }
         IEnumerable<ClusterModel> AllClusters { get; }
     }
 }

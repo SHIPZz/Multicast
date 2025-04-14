@@ -17,10 +17,7 @@ namespace CodeBase.Common.Services.Unity
         
         private readonly RemoteConfigService _remoteConfigService;
         
-        public IObservable<ConfigResponse> OnConfigsFetched => _configsFetched;
         public IObservable<Unit> OnNewDataLoaded => _newDataLoaded;
-
-        public RemoteConfigService RemoteConfigService => _remoteConfigService;
 
         public UnityRemoteConfigService(RemoteConfigService remoteConfigService)
         {
@@ -37,25 +34,10 @@ namespace CodeBase.Common.Services.Unity
             _remoteConfigService.FetchCompleted -= MarkFetchCompleted;
             _configsFetched?.Dispose();
         }
-
-        public void FetchConfigs<T, T2>(T userAttributes, T2 appAttributes) where T : struct where T2 : struct
-        {
-            _remoteConfigService.FetchConfigs(userAttributes, appAttributes);
-        }
         
         public async UniTask FetchConfigsAsync<T,T2>(T userAttributes, T2 appAttributes, CancellationToken token = default) where T : struct where T2 : struct
         {
             await _remoteConfigService.FetchConfigsAsync(userAttributes, appAttributes).AsUniTask().AttachExternalCancellation(token);
-        }
-
-        public void FetchConfigs<T, T2>(string configType, T userAttributes, T2 appAttributes) where T : struct where T2 : struct
-        {
-            _remoteConfigService.FetchConfigs(configType, userAttributes, appAttributes);
-        }
-
-        public void FetchConfigs<T, T2, T3>(T userAttributes, T2 appAttributes, T3 filterAttributes) where T : struct where T2 : struct where T3 : struct
-        {
-            _remoteConfigService.FetchConfigs(userAttributes, appAttributes, filterAttributes);
         }
 
         public string[] GetKeys() => _remoteConfigService.appConfig.GetKeys();

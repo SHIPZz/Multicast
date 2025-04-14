@@ -1,4 +1,5 @@
 using System;
+using CodeBase.Data;
 using CodeBase.UI.Cluster.Services;
 using CodeBase.UI.Draggable;
 using CodeBase.UI.WordSlots;
@@ -28,19 +29,28 @@ namespace CodeBase.UI.Cluster
 
         public string Text => _clusterText;
 
+        public string Id { get; private set; }
+
+        public int Row { get; private set; }
+
+        public int Column { get; private set; }
+
         [Inject]
         private void Construct(IClusterService service)
         {
             _clusterService = service;
         }
 
-        public void Initialize(string text, Transform parent, Canvas parentCanvas)
+        public void Initialize(ClusterModel model, Transform parent, Canvas parentCanvas)
         {
             base.Initialize(parent, parentCanvas);
 
-            _clusterText = text;
-            _text.text = text;
+            _clusterText = model.Text;
+            _text.text = model.Text;
             _originalParent = parent;
+            Id = model.Id;
+            Row = model.Row;
+            Column = model.Column;
         }
 
         public override void OnBeginDrag(PointerEventData eventData)
@@ -85,7 +95,7 @@ namespace CodeBase.UI.Cluster
             base.OnReset();
             _text.enabled = true;
             _clusterService.ResetCluster(this);
-
+            UpdatePosition(-1, -1);
             SetOutlineIconActive(false);
 
             ReturnToOriginalPosition();
@@ -97,8 +107,15 @@ namespace CodeBase.UI.Cluster
             _text.enabled = false;
 
             MoveToCenter(wordSlot.transform);
+            UpdatePosition(wordSlot.Row, wordSlot.Column);
             SetOutlineIconActive(true);
             SetBlocksRaycasts(true);
+        }
+
+        private void UpdatePosition(int row, int column)
+        {
+            Row = row;
+            Column = column;
         }
 
         public void SetOutlineIconActive(bool isActive)
@@ -109,9 +126,9 @@ namespace CodeBase.UI.Cluster
         public void MarkDisabled()
         {
             SetBlocksRaycasts(false);
-            
+
             _image.enabled = false;
-            
+
             _disabledEvent.OnNext(Unit.Default);
         }
 

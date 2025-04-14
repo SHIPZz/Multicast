@@ -7,7 +7,6 @@ using CodeBase.UI.AbstractWindow;
 using CodeBase.UI.Cluster;
 using CodeBase.UI.Game;
 using CodeBase.UI.Hint;
-using CodeBase.UI.Levels;
 using CodeBase.UI.LoadingCurtains;
 using CodeBase.UI.Menu;
 using CodeBase.UI.NoInternet;
@@ -18,7 +17,6 @@ using CodeBase.UI.Victory;
 using CodeBase.UI.WordSlots;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 
 namespace CodeBase.StaticData
 {
@@ -150,7 +148,6 @@ namespace CodeBase.StaticData
                 typeof(VictoryWindow),
                 typeof(LoadingCurtainWindow),
                 typeof(HintWindow),
-                typeof(LevelWindow),
                 typeof(NoInternetWindow)
             };
 

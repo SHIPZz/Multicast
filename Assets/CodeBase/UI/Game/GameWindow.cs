@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using CodeBase.Data;
-using CodeBase.StaticData;
 using CodeBase.UI.AbstractWindow;
 using CodeBase.UI.Cluster;
 using CodeBase.UI.Cluster.Services.Factory;
 using CodeBase.UI.WordSlots;
 using CodeBase.UI.WordSlots.Services.Factory;
+using TMPro;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,6 +17,8 @@ namespace CodeBase.UI.Game
     public class GameWindow : AbstractWindowBase
     {
         [SerializeField] private Transform _wordSlotHolderParent;
+        [SerializeField] private TextMeshProUGUI _levelText;
+        [SerializeField] private Transform _levelTextLayout;
         [SerializeField] private Canvas _canvas;
         [SerializeField] private Button _hintButton;
         [SerializeField] private Button _restartButton;
@@ -43,6 +45,17 @@ namespace CodeBase.UI.Game
             _clusterUIFactory = clusterUIFactory;
         }
 
+        public void SetLevelNumber(int levelNumber)
+        {
+            _levelTextLayout.gameObject.SetActive(true);
+            _levelText.text = $"LEVEL {levelNumber}";
+        }
+        
+        public void HideLevelText()
+        {
+            _levelTextLayout.gameObject.SetActive(false);
+        }
+
         public void CreateWordSlotHolder()
         {
             if (_wordSlotHolder == null)
@@ -58,7 +71,8 @@ namespace CodeBase.UI.Game
 
         }
 
-        public void CreateClusterItems(IEnumerable<ClusterModel> clusters) => _clusterItemHolder.CreateClusterItems(clusters, _canvas);
+        public void CreateClusterItems(IEnumerable<ClusterModel> clusters) =>
+            _clusterItemHolder.CreateClusterItems(clusters, _canvas);
 
         public void Cleanup()
         {

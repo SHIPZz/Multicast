@@ -11,7 +11,7 @@ namespace CodeBase.UI.Draggable
         protected Vector3 StartPosition;
         protected Transform ParentTransform;
         
-       [field: SerializeField] public bool IsPlaced { get; protected set; }
+        public bool IsPlaced { get; protected set; }
 
         public virtual void Initialize(Transform parent, Canvas parentCanvas)
         {

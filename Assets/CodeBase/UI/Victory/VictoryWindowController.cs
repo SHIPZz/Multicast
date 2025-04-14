@@ -15,9 +15,9 @@ namespace CodeBase.UI.Victory
         private readonly IStateMachine _stateMachine;
         private readonly CompositeDisposable _disposables = new();
         private readonly ISoundService _soundService;
+        private readonly ILevelService _levelService;
 
         private VictoryWindow _window;
-        private ILevelService _levelService;
 
         public VictoryWindowController(IWindowService windowService,
             ISoundService soundService,

@@ -49,7 +49,7 @@ namespace CodeBase.Infrastructure.Installers
 
         private void SetupDevice()
         {
-            Application.targetFrameRate = 90;
+            Application.targetFrameRate = 120;
             Screen.orientation = ScreenOrientation.LandscapeLeft;
         }
 
