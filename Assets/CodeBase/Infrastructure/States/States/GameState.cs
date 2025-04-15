@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using CodeBase.Data;
 using CodeBase.Extensions;
@@ -11,6 +10,7 @@ using CodeBase.UI.Game;
 using CodeBase.UI.Hint;
 using CodeBase.UI.Services.Window;
 using CodeBase.UI.WordSlots.Services;
+using UnityEngine;
 
 namespace CodeBase.Infrastructure.States.States
 {
@@ -48,13 +48,15 @@ namespace CodeBase.Infrastructure.States.States
             _windowService.OpenWindow<GameWindow>();
             
             _levelService.MarkLevelLoaded(currentLevelData.LevelId);
+
+            LogWordsToFind();
         }
 
         private void SetTargetWordsToFind(LevelData currentLevelData)
         {
             if (_wordSlotService.WordsToFind.IsNullOrEmpty()) 
             {
-                var capitalizedWords = currentLevelData.Words.Shuffle().Take(GameplayConstants.MaxWordCount);
+                IEnumerable<string> capitalizedWords = currentLevelData.Words.Shuffle().Take(GameplayConstants.MaxWordCount);
 
                 _wordSlotService.SetTargetWordsToFind(capitalizedWords);
             }
@@ -67,6 +69,14 @@ namespace CodeBase.Infrastructure.States.States
                 IEnumerable<string> capitalizedClusters = currentLevelData.Clusters.Shuffle();
 
                 _clusterService.SetClusters(capitalizedClusters);
+            }
+        }
+
+        private void LogWordsToFind()
+        {
+            foreach (var word in _wordSlotService.WordsToFind)
+            {
+                Debug.Log($"Word to find: {word}");
             }
         }
 

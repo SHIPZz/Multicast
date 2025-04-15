@@ -10,17 +10,19 @@ namespace CodeBase.UI.Cluster.Services.Placement
     public class ClusterPlacement : IClusterPlacement
     {
         private readonly Dictionary<ClusterItem, List<WordSlot>> _clustersOccupiedSlots = new(GameplayConstants.MaxClusterCount);
-        private readonly ClusterGrid _clusterGrid = new(GameplayConstants.MaxWordCount, GameplayConstants.MaxClustersInColumn);
+        private readonly ClusterGrid _clusterGrid  = new(GameplayConstants.MaxWordCount, GameplayConstants.MaxClustersInColumn);
         private readonly IWordSlotService _wordSlotService;
 
-        public ClusterPlacement(IWordSlotService wordSlotService) => 
+        public ClusterPlacement(IWordSlotService wordSlotService)
+        {
             _wordSlotService = wordSlotService;
+        }
 
         public bool TryPlaceCluster(ClusterItem cluster, WordSlot wordSlot)
         {
             var startIndex = _wordSlotService.IndexOf(wordSlot);
-            
-            if (!CanPlaceCluster(cluster, startIndex)) 
+
+            if (!CanPlaceCluster(cluster, startIndex))
                 return false;
 
             PlaceCluster(cluster, startIndex);
@@ -29,13 +31,12 @@ namespace CodeBase.UI.Cluster.Services.Placement
 
         public void ResetCluster(ClusterItem cluster)
         {
-            if (!_clustersOccupiedSlots.TryGetValue(cluster, out var slots)) return;
+            if (!_clustersOccupiedSlots.TryGetValue(cluster, out var slots))
+                return;
 
             foreach (var slot in slots)
             {
-                var row = _wordSlotService.GetRowBySlot(slot);
-                var column = _wordSlotService.GetColumnBySlot(slot);
-                
+                var (row, column) = GetSlotCoordinates(slot);
                 slot.Clear();
                 ClearGridCells(row, column);
             }
@@ -49,24 +50,28 @@ namespace CodeBase.UI.Cluster.Services.Placement
         {
             foreach (var slots in _clustersOccupiedSlots.Values)
                 ListPool<WordSlot>.Release(slots);
-            
+
             _clustersOccupiedSlots.Clear();
             _clusterGrid.Clear();
         }
 
-        private bool CanPlaceCluster(ClusterItem cluster, int startIndex)
+        private bool CanPlaceCluster(ClusterItem cluster, int placeIndex)
         {
-            if (IsInvalidStartIndex(cluster, startIndex))
+            if (IsInvalidStartIndex(cluster, placeIndex))
                 return false;
 
-            var startRow = _wordSlotService.GetRowBySlot(_wordSlotService.GetTargetSlot(startIndex));
-            var endIndex = startIndex + cluster.Text.Length;
+            var startRow = _wordSlotService.GetRowBySlot(_wordSlotService.GetTargetSlot(placeIndex));
+            return AreSlotsAvailableForCluster(cluster, placeIndex, startRow);
+        }
 
-            for (var i = startIndex; i < endIndex; i++)
+        private bool AreSlotsAvailableForCluster(ClusterItem cluster, int placeIndex, int startRow)
+        {
+            var endIndex = placeIndex + cluster.Text.Length;
+
+            for (int i = placeIndex; i < endIndex; i++)
             {
                 var slot = _wordSlotService.GetTargetSlot(i);
-                var row = _wordSlotService.GetRowBySlot(slot);
-                var column = _wordSlotService.GetColumnBySlot(slot);
+                var (row, column) = GetSlotCoordinates(slot);
 
                 if (row != startRow || slot.IsOccupied || _clusterGrid.IsCellOccupied(row, column))
                     return false;
@@ -75,21 +80,20 @@ namespace CodeBase.UI.Cluster.Services.Placement
             return true;
         }
 
-        private void PlaceCluster(ClusterItem cluster, int startIndex)
+        private void PlaceCluster(ClusterItem cluster, int placeIndex)
         {
             var occupiedSlots = ListPool<WordSlot>.Get();
-            var endIndex = startIndex + cluster.Text.Length;
 
-            for (var i = startIndex; i < endIndex; i++)
+            for (int i = 0; i < cluster.Text.Length; i++)
             {
-                var slot = _wordSlotService.GetTargetSlot(i);
-                var row = _wordSlotService.GetRowBySlot(slot);
-                var column = _wordSlotService.GetColumnBySlot(slot);
-                var charIndex = i - startIndex;
+                int slotIndex = placeIndex + i;
+                var slot = _wordSlotService.GetTargetSlot(slotIndex);
+                var (row, column) = GetSlotCoordinates(slot);
+                var character = cluster.Text[i];
 
                 _clusterGrid.PlaceCluster(cluster.ToModel(row, column, cluster.Id), row, column);
-                slot.SetText(cluster.Text[charIndex]);
-                _wordSlotService.UpdateCell(row, column, cluster.Text[charIndex]);
+                slot.SetText(character);
+                _wordSlotService.UpdateCell(row, column, character);
                 occupiedSlots.Add(slot);
             }
 
@@ -103,7 +107,10 @@ namespace CodeBase.UI.Cluster.Services.Placement
             _wordSlotService.ClearCell(row, column);
         }
 
-        private bool IsInvalidStartIndex(ClusterItem cluster, int startIndex) => 
+        private (int row, int column) GetSlotCoordinates(WordSlot slot) =>
+            (_wordSlotService.GetRowBySlot(slot), _wordSlotService.GetColumnBySlot(slot));
+
+        private bool IsInvalidStartIndex(ClusterItem cluster, int startIndex) =>
             startIndex == -1 || startIndex + cluster.Text.Length > _wordSlotService.SlotCount;
     }
 }

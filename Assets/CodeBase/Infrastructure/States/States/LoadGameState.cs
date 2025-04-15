@@ -1,5 +1,4 @@
-﻿using System;
-using CodeBase.Common.Services.InternetConnection;
+﻿using CodeBase.Common.Services.InternetConnection;
 using CodeBase.Infrastructure.Loading;
 using CodeBase.Infrastructure.States.StateInfrastructure;
 using CodeBase.Infrastructure.States.StateMachine;

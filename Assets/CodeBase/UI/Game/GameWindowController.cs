@@ -121,7 +121,7 @@ namespace CodeBase.UI.Game
             
             _clusterService.RestorePlacedClusters();
 
-            if (_wordSlotService.ValidateFormedWords())
+            if (_wordSlotService.AreWordsFormedCorrectly())
             {
                 _soundService.Play(SoundTypeId.WordFormedFound);
                 
@@ -136,7 +136,7 @@ namespace CodeBase.UI.Game
                 
             _clusterService.CheckAndHideFilledClusters();
             
-            if(!_wordSlotService.ValidateFormedWords())
+            if(!_wordSlotService.AreWordsFormedCorrectly())
                 return;
             
             _wordSlotService.Cleanup();

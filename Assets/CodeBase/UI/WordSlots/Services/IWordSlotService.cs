@@ -15,7 +15,7 @@ namespace CodeBase.UI.WordSlots.Services
         int GetRowBySlot(WordSlot slot);
         int GetColumnBySlot(WordSlot slot);
         WordSlot GetWordSlotByRowAndColumn(int row, int column);
-        bool ValidateFormedWords();
+        bool AreWordsFormedCorrectly();
         void Cleanup();
         IReadOnlyDictionary<int, string> GetFormedWords();
         bool ContainsInTargetWords(string word);

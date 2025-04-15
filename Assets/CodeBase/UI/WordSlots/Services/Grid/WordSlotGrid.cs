@@ -22,17 +22,6 @@ namespace CodeBase.UI.WordSlots.Services.Grid
             InitializeCells();
         }
 
-        private void InitializeCells()
-        {
-            for (int row = 0; row < _rows; row++)
-            {
-                for (int column = 0; column < _columns; column++)
-                {
-                    _cells[row, column] = new WordSlotCell(row, column);
-                }
-            }
-        }
-
         public WordSlotCell GetCell(int row, int column)
         {
             if (row < 0 || row >= _rows || column < 0 || column >= _columns)
@@ -51,7 +40,7 @@ namespace CodeBase.UI.WordSlots.Services.Grid
 
         public string GetWordInRow(int row)
         {
-            var word = new StringBuilder();
+            StringBuilder word = new StringBuilder();
 
             for (int column = 0; column < _columns; column++)
             {
@@ -95,5 +84,16 @@ namespace CodeBase.UI.WordSlots.Services.Grid
         }
 
         public void ClearCell(int row, int column) => _cells[row, column].Clear();
+
+        private void InitializeCells()
+        {
+            for (int row = 0; row < _rows; row++)
+            {
+                for (int column = 0; column < _columns; column++)
+                {
+                    _cells[row, column] = new WordSlotCell(row, column);
+                }
+            }
+        }
     }
 }

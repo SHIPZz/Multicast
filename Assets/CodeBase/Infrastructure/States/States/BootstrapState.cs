@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using CodeBase.Common.Services.InternetConnection;
+﻿using CodeBase.Common.Services.InternetConnection;
 using CodeBase.Common.Services.Persistent;
 using CodeBase.Common.Services.SaveLoad;
 using CodeBase.Common.Services.Unity;
@@ -66,9 +64,9 @@ namespace CodeBase.Infrastructure.States.States
 
             await InitializeConfigAsync();
 
-            _persistentService.LoadAll();
+            LoadData();
             
-            _saveOnApplicationPauseSystem.Initialize();
+            InitSaveOnPauseSystem();
             
             _stateMachine.Enter<LoadingMenuState>();
         }
@@ -87,6 +85,16 @@ namespace CodeBase.Infrastructure.States.States
             _internetConnectionService.LaunchCheckingEveryFixedIntervalAsync();
 
             OpenNoInternetWindowOnNoInternet();
+        }
+
+        private void InitSaveOnPauseSystem()
+        {
+            _saveOnApplicationPauseSystem.Initialize();
+        }
+
+        private void LoadData()
+        {
+            _persistentService.LoadAll();
         }
 
         private async UniTask BindAndOpenLoadingWindowAsync()

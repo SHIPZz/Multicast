@@ -4,7 +4,6 @@ using System.Linq;
 using CodeBase.Common.Services.Persistent;
 using CodeBase.Data;
 using CodeBase.Gameplay.Constants;
-using CodeBase.UI.WordSlots.Services.Cell;
 using CodeBase.UI.WordSlots.Services.Grid;
 using Zenject;
 
@@ -30,17 +29,20 @@ namespace CodeBase.UI.WordSlots.Services
         public void Initialize() => _persistentService.RegisterProgressWatcher(this);
         public void Dispose() => _persistentService.UnregisterProgressWatcher(this);
 
-        public bool ValidateFormedWords() => 
+        public bool AreWordsFormedCorrectly() => 
             _formedWords.Count == _targetWordsToFind.Count && 
             _formedWords.Values.All(word => _targetWordsToFind.Contains(word));
 
         public bool UpdateFormedWordsAndCheckNew()
         {
             var currentFormedWords = GetFormedWords();
-            if (currentFormedWords == null) return false;
+            
+            if (currentFormedWords == null) 
+                return false;
 
             var newWordFormed = false;
-            foreach (var word in currentFormedWords.Values)
+            
+            foreach (string word in currentFormedWords.Values)
             {
                 if (!_correctlyFormedWords.Contains(word) && _targetWordsToFind.Contains(word))
                 {
@@ -68,6 +70,7 @@ namespace CodeBase.UI.WordSlots.Services
             _wordSlotHolder?.GetSlotByRowAndColumn(row, column);
 
         public WordSlot GetTargetSlot(int index) => _wordSlotHolder?.WordSlots[index];
+        
         public int IndexOf(WordSlot wordSlot) => _wordSlotHolder?.IndexOf(wordSlot) ?? -1;
 
         public void SetTargetWordsToFind(IEnumerable<string> words)
@@ -98,9 +101,6 @@ namespace CodeBase.UI.WordSlots.Services
 
         public bool ContainsInTargetWords(string word) => 
             _targetWordsToFind.Contains(word);
-
-        public WordSlotCell GetCell(int row, int column) => 
-            _grid.GetCell(row, column);
 
         public void UpdateCell(int row, int column, char letter) => 
             _grid.UpdateCell(row, column, letter);
