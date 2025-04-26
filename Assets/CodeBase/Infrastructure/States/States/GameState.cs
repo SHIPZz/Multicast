@@ -20,18 +20,18 @@ namespace CodeBase.Infrastructure.States.States
         private readonly ILevelService _levelService;
         private readonly IHintService _hintService;
         private readonly IClusterService _clusterService;
-        private readonly IWordSlotService _wordSlotService;
+        private readonly IWordSlotChecker _wordSlotChecker;
 
         public GameState(IWindowService windowService,
             IHintService hintService,
             ILevelService levelService,
-            IWordSlotService wordSlotService,
+            IWordSlotChecker wordSlotChecker,
             IClusterService clusterService)
         {
             _hintService = hintService;
             _levelService = levelService;
-            _wordSlotService = wordSlotService;
             _clusterService = clusterService;
+            _wordSlotChecker = wordSlotChecker;
             _windowService = windowService;
         }
 
@@ -54,11 +54,11 @@ namespace CodeBase.Infrastructure.States.States
 
         private void SetTargetWordsToFind(LevelData currentLevelData)
         {
-            if (_wordSlotService.WordsToFind.IsNullOrEmpty()) 
+            if (_wordSlotChecker.TargetWordsToFind.IsNullOrEmpty()) 
             {
                 IEnumerable<string> capitalizedWords = currentLevelData.Words.Shuffle().Take(GameplayConstants.MaxWordCount);
 
-                _wordSlotService.SetTargetWordsToFind(capitalizedWords);
+                _wordSlotChecker.Init(capitalizedWords);
             }
         }
 
@@ -74,7 +74,7 @@ namespace CodeBase.Infrastructure.States.States
 
         private void LogWordsToFind()
         {
-            foreach (var word in _wordSlotService.WordsToFind)
+            foreach (var word in _wordSlotChecker.TargetWordsToFind)
             {
                 Debug.Log($"Word to find: {word}");
             }

@@ -8,22 +8,22 @@ namespace CodeBase.Infrastructure.States.States
     public class CleanupBeforeLoadingGameState : IState
     {
         private readonly IStateMachine _stateMachine;
-        private readonly IWordSlotService _wordSlotService;
+        private readonly IWordSlotFacade _wordSlotFacade;
         private readonly IClusterService _clusterService;
 
-        public CleanupBeforeLoadingGameState(IWordSlotService wordSlotService,
+        public CleanupBeforeLoadingGameState(IWordSlotFacade wordSlotFacade,
             IClusterService clusterService,
             IStateMachine stateMachine)
         {
             _clusterService = clusterService;
-            _wordSlotService = wordSlotService;
+            _wordSlotFacade = wordSlotFacade;
             _stateMachine = stateMachine;
         }
 
         public void Enter()
         {
             _clusterService.Cleanup();
-            _wordSlotService.Cleanup();
+            _wordSlotFacade.Cleanup();
 
             _stateMachine.Enter<LoadGameState>();
         }

@@ -20,23 +20,26 @@ namespace CodeBase.UI.Cluster.Services
         private readonly IClusterPlacement _clusterPlacement;
         private readonly ISoundService _soundService;
         private readonly IPersistentService _persistentService;
-        private readonly IWordSlotService _wordSlotService;
+        private readonly IWordSlotRepository _wordSlotRepository;
 
         private readonly Dictionary<string, ClusterItem> _createdClusters = new();
         private readonly Dictionary<string, ClusterModel> _clusterModels = new();
         private readonly HashSet<string> _placedClusterIds = new();
+        private IWordSlotChecker _wordSlotChecker;
 
         public IEnumerable<ClusterModel> AllClusters => _clusterModels.Values;
 
         public ClusterService(
-            IWordSlotService wordSlotService,
+            IWordSlotRepository wordSlotRepository,
+            IWordSlotChecker wordSlotChecker,
             IPersistentService persistentService,
             ISoundService soundService)
         {
-            _wordSlotService = wordSlotService;
+            _wordSlotChecker = wordSlotChecker;
+            _wordSlotRepository = wordSlotRepository;
             _persistentService = persistentService;
             _soundService = soundService;
-            _clusterPlacement = new ClusterPlacement(wordSlotService);
+            _clusterPlacement = new ClusterPlacement(wordSlotRepository, wordSlotChecker);
         }
 
         public void Initialize() => _persistentService.RegisterProgressWatcher(this);
@@ -64,10 +67,9 @@ namespace CodeBase.UI.Cluster.Services
             if (!_clusterPlacement.TryPlaceCluster(cluster, wordSlot))
                 return false;
 
-            var row = _wordSlotService.GetRowBySlot(wordSlot);
-            var column = _wordSlotService.GetColumnBySlot(wordSlot);
+            (int row, int column) = (wordSlot.Row, wordSlot.Column);
             
-            var model = cluster.ToModel(row, column, cluster.Id);
+            ClusterModel model = cluster.ToModel(row, column, cluster.Id);
             _clusterModels[cluster.Id] = model;
             _placedClusterIds.Add(cluster.Id);
 
@@ -82,19 +84,19 @@ namespace CodeBase.UI.Cluster.Services
         {
             _clusterPlacement.ResetCluster(cluster);
             _placedClusterIds.Remove(cluster.Id);
-            _clusterModels[cluster.Id] = cluster.ToModel(0, 0, cluster.Id);
+            _clusterModels[cluster.Id] = cluster.ToModel(-1, -1, cluster.Id);
         }
 
         public void CheckAndHideFilledClusters()
         {
-            var formedWords = _wordSlotService.GetFormedWords();
+            var formedWords = _wordSlotChecker.GetFormedWords();
             
             if (formedWords == null) 
                 return;
 
             foreach (var (rowId, formedWord) in formedWords)
             {
-                if (!_wordSlotService.ContainsInTargetWords(formedWord))
+                if (!_wordSlotChecker.ContainsInTargetWords(formedWord))
                     continue;
 
                 foreach (var cluster in GetClustersInRow(rowId))
@@ -128,13 +130,13 @@ namespace CodeBase.UI.Cluster.Services
                 RestoreClusterToSavedSlot(placedCluster, clusterItem);
             }
 
-            _wordSlotService.RefreshFormedWords();
+            _wordSlotChecker.RefreshFormedWords();
             CheckAndHideFilledClusters();
         }
 
         private void RestoreClusterToSavedSlot(ClusterModel placedCluster, ClusterItem clusterItem)
         {
-            var wordSlot = _wordSlotService.GetWordSlotByRowAndColumn(placedCluster.Row, placedCluster.Column);
+            WordSlot wordSlot = _wordSlotRepository.GetWordSlotByRowAndColumn(placedCluster.Row, placedCluster.Column);
             
             if (wordSlot == null) 
                 return;

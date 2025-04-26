@@ -80,8 +80,10 @@ namespace CodeBase.Infrastructure.Installers
             Container.Bind<IUIProvider>().To<UIProvider>().AsSingle();
             Container.BindInterfacesTo<StaticDataService>().AsSingle();
             Container.Bind<IWordSlotUIFactory>().To<WordSlotUIFactory>().AsSingle();
-            Container.BindInterfacesTo<WordSlotService>().AsSingle();
+            Container.BindInterfacesTo<WordSlotFacade>().AsSingle();
             Container.Bind<IClusterUIFactory>().To<ClusterUIFactory>().AsSingle();
+            Container.Bind<IWordSlotRepository>().To<WordSlotRepository>().AsSingle();
+            Container.Bind<IWordSlotChecker>().To<WordSlotChecker>().AsSingle();
         }
         
         private void BindStates()

@@ -21,7 +21,7 @@ namespace CodeBase.UI.Game
         private readonly IClusterService _clusterService;
         private readonly CompositeDisposable _disposables = new();
         private readonly IHintService _hintService;
-        private readonly IWordSlotService _wordSlotService;
+        private readonly IWordSlotChecker _wordSlotChecker;
         private readonly ISoundService _soundService;
         private readonly IStateMachine _stateMachine;
 
@@ -30,14 +30,14 @@ namespace CodeBase.UI.Game
         public GameWindowController(
             ILevelService levelService,
             IClusterService clusterService,
-            IWordSlotService wordSlotService,
+            IWordSlotChecker wordSlotChecker,
             ISoundService soundService,
             IHintService hintService,
             IWindowService windowService,
             IStateMachine stateMachine)
         {
             _soundService = soundService;
-            _wordSlotService = wordSlotService;
+            _wordSlotChecker = wordSlotChecker;
             _hintService = hintService;
             _clusterService = clusterService;
             _levelService = levelService;
@@ -100,7 +100,7 @@ namespace CodeBase.UI.Game
         private void SwitchToMenuState()
         {
             _clusterService.Cleanup();
-            _wordSlotService.Cleanup();
+            _wordSlotChecker.Cleanup();
             
             _stateMachine.Enter<LoadingMenuState>();
         }
@@ -121,7 +121,7 @@ namespace CodeBase.UI.Game
             
             _clusterService.RestorePlacedClusters();
 
-            if (_wordSlotService.AreWordsFormedCorrectly())
+            if (_wordSlotChecker.AreWordsFormedCorrectly())
             {
                 _soundService.Play(SoundTypeId.WordFormedFound);
                 
@@ -131,15 +131,15 @@ namespace CodeBase.UI.Game
 
         private void MarkLevelCompleted()
         {
-            if (_wordSlotService.UpdateFormedWordsAndCheckNew())
+            if (_wordSlotChecker.UpdateFormedWordsAndCheckNew())
                 _soundService.Play(SoundTypeId.WordFormedFound);
                 
             _clusterService.CheckAndHideFilledClusters();
             
-            if(!_wordSlotService.AreWordsFormedCorrectly())
+            if(!_wordSlotChecker.AreWordsFormedCorrectly())
                 return;
             
-            _wordSlotService.Cleanup();
+            _wordSlotChecker.Cleanup();
             _clusterService.Cleanup();
             
             _levelService.MarkLevelCompleted();

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Text;
 using CodeBase.UI.WordSlots.Services.Cell;
 
@@ -38,13 +39,26 @@ namespace CodeBase.UI.WordSlots.Services.Grid
             _cells[row, column].SetLetter(letter);
         }
 
+        public IReadOnlyDictionary<int, string> GetWordsWithRow()
+        {
+            var words = new Dictionary<int, string>();
+
+            for (int i = 0; i < _cells.GetLength(0); i++)
+            {
+                string targetWord = GetWordInRow(i);
+                words.Add(i, targetWord);
+            }
+            
+            return words;
+        }
+
         public string GetWordInRow(int row)
         {
             StringBuilder word = new StringBuilder();
 
             for (int column = 0; column < _columns; column++)
             {
-                var cell = _cells[row, column];
+                WordSlotCell cell = _cells[row, column];
 
                 if (cell.IsOccupied)
                     word.Append(cell.Letter);
@@ -53,16 +67,16 @@ namespace CodeBase.UI.WordSlots.Services.Grid
             return word.ToString();
         }
 
-        public void RestoreState(string[,] state)
+        public void RestoreState(string[,] savedGrid)
         {
-            if (state == null || state.GetLength(0) != Rows || state.GetLength(1) != Columns)
+            if (savedGrid == null || savedGrid.GetLength(0) != Rows || savedGrid.GetLength(1) != Columns)
                 return;
 
             for (int row = 0; row < Rows; row++)
             {
                 for (int column = 0; column < Columns; column++)
                 {
-                    string cellState = state[row, column];
+                    string cellState = savedGrid[row, column];
 
                     if (!string.IsNullOrEmpty(cellState))
                         _cells[row, column].SetLetter(cellState[0]);

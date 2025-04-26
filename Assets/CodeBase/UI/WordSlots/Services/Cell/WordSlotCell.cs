@@ -4,21 +4,16 @@ namespace CodeBase.UI.WordSlots.Services.Cell
 {
     public struct WordSlotCell : IEquatable<WordSlotCell>
     {
-        private readonly Guid _id;
         private readonly int _row;
         private readonly int _column;
         private char _letter;
         private bool _isOccupied;
 
-        public int Row => _row;
-        public int Column => _column;
         public char Letter => _letter;
         public bool IsOccupied => _isOccupied;
-        public Guid Id => _id;
 
         public WordSlotCell(int row, int column)
         {
-            _id = Guid.NewGuid();
             _row = row;
             _column = column;
             _letter = '\0';
@@ -42,7 +37,7 @@ namespace CodeBase.UI.WordSlots.Services.Cell
 
         public bool Equals(WordSlotCell other)
         {
-            return _id.Equals(other._id);
+            return _row == other._row && _column == other._column && _letter == other._letter && _isOccupied == other._isOccupied;
         }
 
         public override bool Equals(object obj)
@@ -52,17 +47,7 @@ namespace CodeBase.UI.WordSlots.Services.Cell
 
         public override int GetHashCode()
         {
-            return _id.GetHashCode();
-        }
-
-        public static bool operator ==(WordSlotCell left, WordSlotCell right)
-        {
-            return left.Equals(right);
-        }
-
-        public static bool operator !=(WordSlotCell left, WordSlotCell right)
-        {
-            return !left.Equals(right);
+            return HashCode.Combine(_row, _column, _letter, _isOccupied);
         }
     }
 } 

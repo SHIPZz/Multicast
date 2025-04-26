@@ -14,34 +14,30 @@ namespace CodeBase.UI.WordSlots
     {
         [SerializeField] private Transform _slotsContainer;
 
-        private readonly List<WordSlot> _wordSlots = new(GameplayConstants.WordSlotCount);
+        private readonly List<WordSlot> _wordSlots = new(GameplayConstants.MaxWordSlotCount);
         private IWordSlotUIFactory _wordSlotUIFactory;
-        private IWordSlotService _wordSlotService;
-
-        public IReadOnlyList<WordSlot> WordSlots => _wordSlots;
+        private IWordSlotRepository _wordSlotRepository;
 
         [Inject]
-        private void Construct(IWordSlotUIFactory wordSlotUIFactory, IWordSlotService wordSlotService)
+        private void Construct(IWordSlotUIFactory wordSlotUIFactory, IWordSlotRepository wordSlotRepository)
         {
-            _wordSlotService = wordSlotService;
+            _wordSlotRepository = wordSlotRepository;
             _wordSlotUIFactory = wordSlotUIFactory;
-            _wordSlotService.SetCurrentWordSlotHolder(this);
         }
-
-        public int IndexOf(WordSlot wordSlot) => _wordSlots.IndexOf(wordSlot);
 
         public void CreateWordSlots()
         {
             ClearSlots();
 
-            WordSlotGrid wordSlotGrid = _wordSlotService.Grid;
-            
+            WordSlotGrid wordSlotGrid = _wordSlotRepository.Grid;
+
             for (int row = 0; row < wordSlotGrid.Rows; row++)
             {
                 for (int column = 0; column < wordSlotGrid.Columns; column++)
                 {
                     WordSlot slot = _wordSlotUIFactory.CreateWordSlotPrefab(_slotsContainer);
                     slot.Initialize(row, column);
+                    _wordSlotRepository.RegisterCreatedSlot(slot);
                     _wordSlots.Add(slot);
                 }
             }
@@ -55,11 +51,8 @@ namespace CodeBase.UI.WordSlots
             }
 
             _wordSlots.Clear();
-        }
 
-        public WordSlot GetSlotByRowAndColumn(int row, int column)
-        {
-            return _wordSlots.FirstOrDefault(slot => slot.Row == row && slot.Column == column);
+            _wordSlotRepository.ClearRegisterSlots();
         }
     }
 }

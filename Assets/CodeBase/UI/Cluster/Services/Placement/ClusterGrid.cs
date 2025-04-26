@@ -10,11 +10,6 @@ namespace CodeBase.UI.Cluster.Services.Placement
         {
             _grid = new ClusterModel[rowCount, columnCount];
         }
-        
-        public bool IsCellOccupied(int row, int column)
-        {
-            return _grid[row, column].Text != null;
-        }
 
         public void PlaceCluster(ClusterModel cluster, int row, int column)
         {

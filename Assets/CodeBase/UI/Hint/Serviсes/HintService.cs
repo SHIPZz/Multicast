@@ -14,7 +14,7 @@ namespace CodeBase.UI.Hint.Serviсes
         private readonly Subject<string> _onHintShown = new();
         private readonly Subject<int> _onHintsCountChanged = new();
         private readonly ILevelService _levelService;
-        private readonly IWordSlotService _wordSlotService;
+        private readonly IWordSlotChecker _wordSlotChecker;
         private readonly CompositeDisposable _disposables = new();
         private readonly HintConfig _hintConfig;
 
@@ -26,10 +26,10 @@ namespace CodeBase.UI.Hint.Serviсes
 
         public int RemainingHints => _remainingHints;
 
-        public HintService(IWordSlotService wordSlotService, ILevelService levelService, HintConfig hintConfig)
+        public HintService(IWordSlotChecker wordSlotChecker, ILevelService levelService, HintConfig hintConfig)
         {
             _hintConfig = hintConfig;
-            _wordSlotService = wordSlotService;
+            _wordSlotChecker = wordSlotChecker;
             _levelService = levelService;
         }
 
@@ -37,8 +37,8 @@ namespace CodeBase.UI.Hint.Serviсes
         {
             SetRemainingHints(_hintConfig.MaxHintsPerLevel);
 
-            IEnumerable<string> firstTwoLettersOfWords = _wordSlotService
-                .WordsToFind
+            IEnumerable<string> firstTwoLettersOfWords = _wordSlotChecker
+                .TargetWordsToFind
                 .Select(w => w.Length >= _hintConfig.LettersToShow ? w.Substring(0, _hintConfig.LettersToShow).ToUpper() : w.ToUpper());
             
             _hint = $"{_hintConfig.Text} {string.Join(", ", firstTwoLettersOfWords)}";
