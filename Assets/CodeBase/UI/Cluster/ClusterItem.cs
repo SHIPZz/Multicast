@@ -101,28 +101,6 @@ namespace CodeBase.UI.Cluster
             ReturnToOriginalPosition();
         }
 
-        public void MarkPlacedTo(WordSlot wordSlot)
-        {
-            IsPlaced = true;
-            _text.enabled = false;
-
-            MoveToCenter(wordSlot.transform);
-            UpdatePosition(wordSlot.Row, wordSlot.Column);
-            SetOutlineIconActive(true);
-            SetBlocksRaycasts(true);
-        }
-
-        private void UpdatePosition(int row, int column)
-        {
-            Row = row;
-            Column = column;
-        }
-
-        public void SetOutlineIconActive(bool isActive)
-        {
-            _image.sprite = isActive ? _outlineIcon : _baseIcon;
-        }
-
         public void MarkDisabled()
         {
             SetBlocksRaycasts(false);
@@ -132,15 +110,37 @@ namespace CodeBase.UI.Cluster
             _disabledEvent.OnNext(Unit.Default);
         }
 
-        public void SetBlocksRaycasts(bool value)
+        private void UpdatePosition(int row, int column)
         {
-            CanvasGroup.blocksRaycasts = value;
+            Row = row;
+            Column = column;
         }
 
         private void ReturnToOriginalPosition()
         {
             transform.SetParent(_originalParent);
             transform.localPosition = Vector3.zero;
+        }
+
+        private void SetBlocksRaycasts(bool value)
+        {
+            CanvasGroup.blocksRaycasts = value;
+        }
+
+        private void SetOutlineIconActive(bool isActive)
+        {
+            _image.sprite = isActive ? _outlineIcon : _baseIcon;
+        }
+
+        private void MarkPlacedTo(WordSlot wordSlot)
+        {
+            IsPlaced = true;
+            _text.enabled = false;
+
+            MoveToCenter(wordSlot.transform);
+            UpdatePosition(wordSlot.Row, wordSlot.Column);
+            SetOutlineIconActive(true);
+            SetBlocksRaycasts(true);
         }
     }
 }
