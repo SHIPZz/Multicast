@@ -68,11 +68,6 @@ namespace CodeBase.UI.Hint.Serviсes
             UseHint();
         }
 
-        public bool CanShowHint()
-        {
-            return _remainingHints > 0;
-        }
-
         private void UseHint()
         {
             _remainingHints--;
@@ -85,5 +80,7 @@ namespace CodeBase.UI.Hint.Serviсes
             _onHintsCountChanged?.Dispose();
             _disposables?.Dispose();
         }
+
+        private bool CanShowHint() => _remainingHints > 0;
     }
 }

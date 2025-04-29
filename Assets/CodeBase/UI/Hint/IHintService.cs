@@ -10,6 +10,5 @@ namespace CodeBase.UI.Hint
         int RemainingHints { get; }
         void Init();
         void ShowHint();
-        bool CanShowHint();
     }
 } 
