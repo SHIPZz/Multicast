@@ -60,13 +60,13 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: aa854e4eed9c2084594fb05270a79cae
-    m_Address: WordSlotHolder
+    m_Address: WordCellsHolder
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 855279ecaeca0284fb1b852d20b381d8
-    m_Address: WordSlot
+    m_Address: WordCellView
     m_ReadOnly: 0
     m_SerializedLabels:
     - default

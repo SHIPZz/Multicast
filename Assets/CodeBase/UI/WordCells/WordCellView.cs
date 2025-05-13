@@ -1,9 +1,9 @@
 using TMPro;
 using UnityEngine;
 
-namespace CodeBase.UI.WordSlots
+namespace CodeBase.UI.WordCells
 {
-    public class WordSlot : MonoBehaviour
+    public class WordCellView : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI _letterText;
 

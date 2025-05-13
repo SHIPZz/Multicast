@@ -1,7 +1,7 @@
 ﻿using CodeBase.Infrastructure.States.StateInfrastructure;
 using CodeBase.Infrastructure.States.StateMachine;
 using CodeBase.UI.Cluster.Services;
-using CodeBase.UI.WordSlots.Services;
+using CodeBase.UI.WordCells.Services;
 
 namespace CodeBase.Infrastructure.States.States
 {

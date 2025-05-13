@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CodeBase.Gameplay.Common.Services.Level;
 using CodeBase.UI.Hint.Configs;
-using CodeBase.UI.WordSlots.Services;
+using CodeBase.UI.WordCells.Services;
 using UniRx;
 using Zenject;
 
@@ -14,7 +14,7 @@ namespace CodeBase.UI.Hint.Serviсes
         private readonly Subject<string> _onHintShown = new();
         private readonly Subject<int> _onHintsCountChanged = new();
         private readonly ILevelService _levelService;
-        private readonly IWordSlotChecker _wordSlotChecker;
+        private readonly IWordCellChecker _wordCellChecker;
         private readonly CompositeDisposable _disposables = new();
         private readonly HintConfig _hintConfig;
 
@@ -26,10 +26,10 @@ namespace CodeBase.UI.Hint.Serviсes
 
         public int RemainingHints => _remainingHints;
 
-        public HintService(IWordSlotChecker wordSlotChecker, ILevelService levelService, HintConfig hintConfig)
+        public HintService(IWordCellChecker wordCellChecker, ILevelService levelService, HintConfig hintConfig)
         {
             _hintConfig = hintConfig;
-            _wordSlotChecker = wordSlotChecker;
+            _wordCellChecker = wordCellChecker;
             _levelService = levelService;
         }
 
@@ -37,7 +37,7 @@ namespace CodeBase.UI.Hint.Serviсes
         {
             SetRemainingHints(_hintConfig.MaxHintsPerLevel);
 
-            IEnumerable<string> firstTwoLettersOfWords = _wordSlotChecker
+            IEnumerable<string> firstTwoLettersOfWords = _wordCellChecker
                 .TargetWordsToFind
                 .Select(w => w.Length >= _hintConfig.LettersToShow ? w.Substring(0, _hintConfig.LettersToShow).ToUpper() : w.ToUpper());
             

@@ -1,8 +1,8 @@
 using System;
 
-namespace CodeBase.UI.WordSlots.Services.Cell
+namespace CodeBase.UI.WordCells.Services.Cell
 {
-    public struct WordSlotCell : IEquatable<WordSlotCell>
+    public struct WordCell : IEquatable<WordCell>
     {
         private readonly int _row;
         private readonly int _column;
@@ -12,7 +12,7 @@ namespace CodeBase.UI.WordSlots.Services.Cell
         public char Letter => _letter;
         public bool IsOccupied => _isOccupied;
 
-        public WordSlotCell(int row, int column)
+        public WordCell(int row, int column)
         {
             _row = row;
             _column = column;
@@ -35,19 +35,13 @@ namespace CodeBase.UI.WordSlots.Services.Cell
             _isOccupied = false;
         }
 
-        public bool Equals(WordSlotCell other)
-        {
-            return _row == other._row && _column == other._column && _letter == other._letter && _isOccupied == other._isOccupied;
-        }
+        public bool Equals(WordCell other) => 
+            _row == other._row && _column == other._column && _letter == other._letter && _isOccupied == other._isOccupied;
 
-        public override bool Equals(object obj)
-        {
-            return obj is WordSlotCell other && Equals(other);
-        }
+        public override bool Equals(object obj) => 
+            obj is WordCell other && Equals(other);
 
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(_row, _column, _letter, _isOccupied);
-        }
+        public override int GetHashCode() => 
+            HashCode.Combine(_row, _column, _letter, _isOccupied);
     }
 } 

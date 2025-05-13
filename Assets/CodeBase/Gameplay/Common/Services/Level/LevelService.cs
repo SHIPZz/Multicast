@@ -11,10 +11,7 @@ using Zenject;
 
 namespace CodeBase.Gameplay.Common.Services.Level
 {
-    public class LevelService : ILevelService,
-        IProgressWatcher,
-        IInitializable
-        , IDisposable
+    public class LevelService : ILevelService, IProgressWatcher, IInitializable, IDisposable
     {
         private readonly Subject<LevelData> _onLevelLoaded = new();
         private readonly Subject<Unit> _onLevelCompleted = new();
@@ -34,8 +31,7 @@ namespace CodeBase.Gameplay.Common.Services.Level
         public LevelService(
             LevelDataSO levelDataSO,
             IPersistentService persistentService,
-            IRemoteConfigService unityRemoteConfigService
-        )
+            IRemoteConfigService unityRemoteConfigService)
         {
             _persistentService = persistentService;
             _levelDataSo = levelDataSO;

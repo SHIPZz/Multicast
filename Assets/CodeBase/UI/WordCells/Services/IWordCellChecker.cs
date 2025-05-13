@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace CodeBase.UI.WordSlots.Services
+namespace CodeBase.UI.WordCells.Services
 {
-    public interface IWordSlotChecker
+    public interface IWordCellChecker
     {
         bool AreWordsFormedCorrectly();
         void Cleanup();

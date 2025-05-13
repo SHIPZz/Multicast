@@ -2,7 +2,7 @@ using System;
 using CodeBase.Data;
 using CodeBase.UI.Cluster.Services;
 using CodeBase.UI.Draggable;
-using CodeBase.UI.WordSlots;
+using CodeBase.UI.WordCells;
 using TMPro;
 using UniRx;
 using UnityEngine;
@@ -62,22 +62,22 @@ namespace CodeBase.UI.Cluster
         public override void OnEndDrag(PointerEventData eventData)
         {
             GameObject raycastObject = eventData.pointerCurrentRaycast.gameObject;
-            var wordSlot = raycastObject?.GetComponent<WordSlot>();
+            var wordSlot = raycastObject?.GetComponent<WordCellView>();
 
             PlaceToSlot(wordSlot);
         }
 
-        public void PlaceToSlot(WordSlot wordSlot)
+        public void PlaceToSlot(WordCellView wordCellView)
         {
-            if (wordSlot == null || wordSlot.IsOccupied)
+            if (wordCellView == null || wordCellView.IsOccupied)
             {
                 OnReset();
                 return;
             }
 
-            if (_clusterService.TryPlaceCluster(this, wordSlot))
+            if (_clusterService.TryPlaceCluster(this, wordCellView))
             {
-                MarkPlacedTo(wordSlot);
+                MarkPlacedTo(wordCellView);
                 return;
             }
 
@@ -132,13 +132,13 @@ namespace CodeBase.UI.Cluster
             _image.sprite = isActive ? _outlineIcon : _baseIcon;
         }
 
-        private void MarkPlacedTo(WordSlot wordSlot)
+        private void MarkPlacedTo(WordCellView wordCellView)
         {
             IsPlaced = true;
             _text.enabled = false;
 
-            MoveToCenter(wordSlot.transform);
-            UpdatePosition(wordSlot.Row, wordSlot.Column);
+            MoveToCenter(wordCellView.transform);
+            UpdatePosition(wordCellView.Row, wordCellView.Column);
             SetOutlineIconActive(true);
             SetBlocksRaycasts(true);
         }

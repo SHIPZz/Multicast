@@ -9,7 +9,7 @@ using CodeBase.UI.Services.Window;
 using CodeBase.UI.Sound;
 using CodeBase.UI.Sound.Services;
 using CodeBase.UI.Victory;
-using CodeBase.UI.WordSlots.Services;
+using CodeBase.UI.WordCells.Services;
 using UniRx;
 
 namespace CodeBase.UI.Game
@@ -21,7 +21,7 @@ namespace CodeBase.UI.Game
         private readonly IClusterService _clusterService;
         private readonly CompositeDisposable _disposables = new();
         private readonly IHintService _hintService;
-        private readonly IWordSlotChecker _wordSlotChecker;
+        private readonly IWordCellChecker _wordCellChecker;
         private readonly ISoundService _soundService;
         private readonly IStateMachine _stateMachine;
 
@@ -30,14 +30,14 @@ namespace CodeBase.UI.Game
         public GameWindowController(
             ILevelService levelService,
             IClusterService clusterService,
-            IWordSlotChecker wordSlotChecker,
+            IWordCellChecker wordCellChecker,
             ISoundService soundService,
             IHintService hintService,
             IWindowService windowService,
             IStateMachine stateMachine)
         {
             _soundService = soundService;
-            _wordSlotChecker = wordSlotChecker;
+            _wordCellChecker = wordCellChecker;
             _hintService = hintService;
             _clusterService = clusterService;
             _levelService = levelService;
@@ -100,7 +100,7 @@ namespace CodeBase.UI.Game
         private void SwitchToMenuState()
         {
             _clusterService.Cleanup();
-            _wordSlotChecker.Cleanup();
+            _wordCellChecker.Cleanup();
             
             _stateMachine.Enter<LoadingMenuState>();
         }
@@ -121,7 +121,7 @@ namespace CodeBase.UI.Game
             
             _clusterService.RestorePlacedClusters();
 
-            if (_wordSlotChecker.AreWordsFormedCorrectly())
+            if (_wordCellChecker.AreWordsFormedCorrectly())
             {
                 _soundService.Play(SoundTypeId.WordFormedFound);
                 
@@ -131,15 +131,15 @@ namespace CodeBase.UI.Game
 
         private void MarkLevelCompleted()
         {
-            if (_wordSlotChecker.UpdateFormedWordsAndCheckNew())
+            if (_wordCellChecker.UpdateFormedWordsAndCheckNew())
                 _soundService.Play(SoundTypeId.WordFormedFound);
                 
             _clusterService.CheckAndHideFilledClusters();
             
-            if(!_wordSlotChecker.AreWordsFormedCorrectly())
+            if(!_wordCellChecker.AreWordsFormedCorrectly())
                 return;
             
-            _wordSlotChecker.Cleanup();
+            _wordCellChecker.Cleanup();
             _clusterService.Cleanup();
             
             _levelService.MarkLevelCompleted();

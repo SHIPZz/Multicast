@@ -15,8 +15,8 @@ using CodeBase.UI.Hint.Serviсes;
 using CodeBase.UI.Services;
 using CodeBase.UI.Services.Window;
 using CodeBase.UI.Sound.Services;
-using CodeBase.UI.WordSlots.Services;
-using CodeBase.UI.WordSlots.Services.Factory;
+using CodeBase.UI.WordCells.Services;
+using CodeBase.UI.WordCells.Services.Factory;
 using Unity.Services.RemoteConfig;
 using UnityEngine;
 using Zenject;
@@ -79,11 +79,11 @@ namespace CodeBase.Infrastructure.Installers
             Container.Bind<IWindowService>().To<WindowService>().AsSingle();
             Container.Bind<IUIProvider>().To<UIProvider>().AsSingle();
             Container.BindInterfacesTo<StaticDataService>().AsSingle();
-            Container.Bind<IWordSlotUIFactory>().To<WordSlotUIFactory>().AsSingle();
-            Container.BindInterfacesTo<WordSlotFacade>().AsSingle();
+            Container.Bind<IWordCellUIFactory>().To<WordCellUIFactory>().AsSingle();
+            Container.BindInterfacesTo<WordCellFacade>().AsSingle();
             Container.Bind<IClusterUIFactory>().To<ClusterUIFactory>().AsSingle();
-            Container.Bind<IWordSlotRepository>().To<WordSlotRepository>().AsSingle();
-            Container.Bind<IWordSlotChecker>().To<WordSlotChecker>().AsSingle();
+            Container.Bind<IWordCellRepository>().To<WordCellRepository>().AsSingle();
+            Container.Bind<IWordCellChecker>().To<WordCellChecker>().AsSingle();
         }
         
         private void BindStates()

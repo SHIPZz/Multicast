@@ -4,8 +4,8 @@ using CodeBase.Data;
 using CodeBase.UI.AbstractWindow;
 using CodeBase.UI.Cluster;
 using CodeBase.UI.Cluster.Services.Factory;
-using CodeBase.UI.WordSlots;
-using CodeBase.UI.WordSlots.Services.Factory;
+using CodeBase.UI.WordCells;
+using CodeBase.UI.WordCells.Services.Factory;
 using TMPro;
 using UniRx;
 using UnityEngine;
@@ -27,10 +27,10 @@ namespace CodeBase.UI.Game
         [SerializeField] private Button _validateButton;
         [SerializeField] private Button _menuButton;
 
-        private WordSlotHolder _wordSlotHolder;
+        private WordCellsHolder _wordCellsHolder;
         private IClusterUIFactory _clusterUIFactory;
         private ClusterItemHolder _clusterItemHolder;
-        private IWordSlotUIFactory _wordSlotUIFactory;
+        private IWordCellUIFactory _wordCellUIFactory;
 
         public IObservable<Unit> OnValidateClicked => _validateButton?.OnClickAsObservable();
         public IObservable<Unit> OnHintClicked => _hintButton?.OnClickAsObservable();
@@ -39,9 +39,9 @@ namespace CodeBase.UI.Game
         public IObservable<Unit> OnMenuClicked => _menuButton?.OnClickAsObservable();
 
         [Inject]
-        private void Construct(IWordSlotUIFactory wordSlotUIFactory, IClusterUIFactory clusterUIFactory)
+        private void Construct(IWordCellUIFactory wordCellUIFactory, IClusterUIFactory clusterUIFactory)
         {
-            _wordSlotUIFactory = wordSlotUIFactory;
+            _wordCellUIFactory = wordCellUIFactory;
             _clusterUIFactory = clusterUIFactory;
         }
 
@@ -58,10 +58,10 @@ namespace CodeBase.UI.Game
 
         public void CreateWordSlotHolder()
         {
-            if (_wordSlotHolder == null)
-                _wordSlotHolder = _wordSlotUIFactory.CreateWordSlotHolder(_wordSlotHolderParent);
+            if (_wordCellsHolder == null)
+                _wordCellsHolder = _wordCellUIFactory.CreateWordSlotHolder(_wordSlotHolderParent);
             
-            _wordSlotHolder.CreateWordSlots();
+            _wordCellsHolder.CreateWordSlots();
         }
 
         public void CreateClusterItemHolder()
@@ -89,7 +89,7 @@ namespace CodeBase.UI.Game
             SetMenuButtonActive(isActive);
         }
 
-        private void ClearWordSlots() => _wordSlotHolder?.ClearSlots();
+        private void ClearWordSlots() => _wordCellsHolder?.ClearSlots();
 
         private void ClearClusters() => _clusterItemHolder?.Clear();
         

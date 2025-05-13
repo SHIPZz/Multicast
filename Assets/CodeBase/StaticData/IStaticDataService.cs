@@ -3,7 +3,7 @@ using CodeBase.UI.AbstractWindow;
 using CodeBase.UI.Cluster;
 using CodeBase.UI.Sound;
 using CodeBase.UI.Sound.Configs;
-using CodeBase.UI.WordSlots;
+using CodeBase.UI.WordCells;
 using Cysharp.Threading.Tasks;
 
 namespace CodeBase.StaticData
@@ -13,8 +13,8 @@ namespace CodeBase.StaticData
         UniTask LoadAllAsync(CancellationToken cancellationToken = default);
         SoundConfig GetSoundConfig(SoundTypeId id);
         T GetWindow<T>() where T : AbstractWindowBase;
-        WordSlot GetWordSlotPrefab();
-        WordSlotHolder GetWordSlotHolderPrefab();
+        WordCellView GetWordSlotPrefab();
+        WordCellsHolder GetWordSlotHolderPrefab();
         ClusterItemHolder GetClusterItemHolder();
         ClusterItem GetClusterItem();
         SoundPlayerView GetSoundPlayerViewPrefab();

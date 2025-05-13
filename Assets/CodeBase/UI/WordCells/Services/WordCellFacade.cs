@@ -5,19 +5,19 @@ using CodeBase.Extensions;
 using CodeBase.Gameplay.Constants;
 using Zenject;
 
-namespace CodeBase.UI.WordSlots.Services
+namespace CodeBase.UI.WordCells.Services
 {
-    public class WordSlotFacade : IWordSlotFacade, IInitializable, IDisposable
+    public class WordCellFacade : IWordSlotFacade, IInitializable, IDisposable
     {
         private readonly IPersistentService _persistentService;
-        private readonly IWordSlotRepository _wordSlotRepository;
-        private readonly IWordSlotChecker _wordSlotChecker;
+        private readonly IWordCellRepository _wordCellRepository;
+        private readonly IWordCellChecker _wordCellChecker;
 
-        public WordSlotFacade(IPersistentService persistentService, IWordSlotRepository wordSlotRepository, IWordSlotChecker wordSlotChecker)
+        public WordCellFacade(IPersistentService persistentService, IWordCellRepository wordCellRepository, IWordCellChecker wordCellChecker)
         {
             _persistentService = persistentService;
-            _wordSlotRepository = wordSlotRepository;
-            _wordSlotChecker = wordSlotChecker;
+            _wordCellRepository = wordCellRepository;
+            _wordCellChecker = wordCellChecker;
         }
 
         public void Initialize()
@@ -32,18 +32,18 @@ namespace CodeBase.UI.WordSlots.Services
 
         public void Cleanup()
         {
-            _wordSlotRepository.ClearAllCells();
-            _wordSlotChecker.Cleanup();
+            _wordCellRepository.ClearAllCells();
+            _wordCellChecker.Cleanup();
         }
 
         public void Save(ProgressData progressData)
         {
-            if(_wordSlotRepository.CreatedSlots.IsNullOrEmpty())
+            if(_wordCellRepository.CreatedSlots.IsNullOrEmpty())
                 return;
             
             var playerData = progressData.PlayerData;
             playerData.WordsToFind.Clear();
-            playerData.WordsToFind.AddRange(_wordSlotChecker.TargetWordsToFind);
+            playerData.WordsToFind.AddRange(_wordCellChecker.TargetWordsToFind);
 
             playerData.WordSlotsGrid = new string[GameplayConstants.MaxWordCount, GameplayConstants.MaxClustersInColumn];
 
@@ -51,7 +51,7 @@ namespace CodeBase.UI.WordSlots.Services
             {
                 for (int col = 0; col < playerData.WordSlotsGrid.GetLength(1); col++)
                 {
-                    WordSlot cell = _wordSlotRepository.GetWordSlotByRowAndColumn(row, col);
+                    WordCellView cell = _wordCellRepository.GetWordSlotByRowAndColumn(row, col);
                     playerData.WordSlotsGrid[row, col] = cell.IsOccupied ? cell.Letter.ToString() : string.Empty;
                 }
             }
@@ -61,10 +61,10 @@ namespace CodeBase.UI.WordSlots.Services
         {
             Cleanup();
             
-            _wordSlotChecker.Init(progressData.PlayerData.WordsToFind);
+            _wordCellChecker.Init(progressData.PlayerData.WordsToFind);
 
             if (progressData.PlayerData.WordSlotsGrid != null)
-                _wordSlotRepository.RestoreState(progressData.PlayerData.WordSlotsGrid);
+                _wordCellRepository.RestoreState(progressData.PlayerData.WordSlotsGrid);
         }
     }
 }

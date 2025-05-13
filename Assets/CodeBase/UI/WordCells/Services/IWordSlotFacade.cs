@@ -1,6 +1,6 @@
 ﻿using CodeBase.Common.Services.Persistent;
 
-namespace CodeBase.UI.WordSlots.Services
+namespace CodeBase.UI.WordCells.Services
 {
     public interface IWordSlotFacade : IProgressWatcher
     {

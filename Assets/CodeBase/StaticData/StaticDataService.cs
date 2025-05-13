@@ -14,7 +14,7 @@ using CodeBase.UI.Settings;
 using CodeBase.UI.Sound;
 using CodeBase.UI.Sound.Configs;
 using CodeBase.UI.Victory;
-using CodeBase.UI.WordSlots;
+using CodeBase.UI.WordCells;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -26,8 +26,8 @@ namespace CodeBase.StaticData
         private readonly IAssetProvider _assetProvider;
         private readonly Dictionary<SoundTypeId, SoundConfig> _soundConfigs = new();
 
-        private WordSlot _wordSlotPrefab;
-        private WordSlotHolder _wordSlotHolderPrefab;
+        private WordCellView _wordCellViewPrefab;
+        private WordCellsHolder _wordCellsHolderPrefab;
         private ClusterItemHolder _clusterItemHolderPrefab;
         private ClusterItem _clusterItemPrefab;
         private SoundPlayerView _soundPlayerPrefab;
@@ -45,8 +45,8 @@ namespace CodeBase.StaticData
             
             try
             {
-                _wordSlotPrefab = await _assetProvider.LoadGameObjectAssetAsyncByTypePath<WordSlot>(cancellationToken);
-                _wordSlotHolderPrefab = await _assetProvider.LoadGameObjectAssetAsyncByTypePath<WordSlotHolder>(cancellationToken);
+                _wordCellViewPrefab = await _assetProvider.LoadGameObjectAssetAsyncByTypePath<WordCellView>(cancellationToken);
+                _wordCellsHolderPrefab = await _assetProvider.LoadGameObjectAssetAsyncByTypePath<WordCellsHolder>(cancellationToken);
                 _clusterItemHolderPrefab = await _assetProvider.LoadGameObjectAssetAsyncByTypePath<ClusterItemHolder>(cancellationToken);
                 _clusterItemPrefab = await _assetProvider.LoadGameObjectAssetAsyncByTypePath<ClusterItem>(cancellationToken);
                 _soundPlayerPrefab = await _assetProvider.LoadGameObjectAssetAsyncByTypePath<SoundPlayerView>(cancellationToken);
@@ -100,14 +100,14 @@ namespace CodeBase.StaticData
             return (T)window;
         }
 
-        public WordSlot GetWordSlotPrefab()
+        public WordCellView GetWordSlotPrefab()
         {
-            return _wordSlotPrefab;
+            return _wordCellViewPrefab;
         }
 
-        public WordSlotHolder GetWordSlotHolderPrefab()
+        public WordCellsHolder GetWordSlotHolderPrefab()
         {
-            return _wordSlotHolderPrefab;
+            return _wordCellsHolderPrefab;
         }
 
         public ClusterItemHolder GetClusterItemHolder()

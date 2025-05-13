@@ -3,22 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using CodeBase.Extensions;
 using CodeBase.Gameplay.Constants;
-using CodeBase.UI.WordSlots.Services.Grid;
+using CodeBase.UI.WordCells.Services.Grid;
 
-namespace CodeBase.UI.WordSlots.Services
+namespace CodeBase.UI.WordCells.Services
 {
-    public class WordSlotChecker : IWordSlotChecker
+    public class WordCellChecker : IWordCellChecker
     {
         private readonly HashSet<string> _correctlyFormedWords = new(StringComparer.OrdinalIgnoreCase);
 
         private readonly HashSet<string> _targetWordsToFind = new(GameplayConstants.MaxWordCount, StringComparer.OrdinalIgnoreCase);
         private readonly Dictionary<int, string> _totalFormedWords = new(GameplayConstants.MaxWordCount);
         
-        private readonly IWordSlotRepository _repository;
+        private readonly IWordCellRepository _repository;
 
         public IReadOnlyCollection<string> TargetWordsToFind => _targetWordsToFind;
 
-        public WordSlotChecker(IWordSlotRepository repository)
+        public WordCellChecker(IWordCellRepository repository)
         {
             _repository = repository;
         }
@@ -45,7 +45,7 @@ namespace CodeBase.UI.WordSlots.Services
 
         public bool UpdateFormedWordsAndCheckNew()
         {
-            var currentFormedWords = GetFormedWords();
+            IReadOnlyDictionary<int, string> currentFormedWords = GetFormedWords();
 
             if (currentFormedWords == null)
                 return false;
@@ -66,7 +66,7 @@ namespace CodeBase.UI.WordSlots.Services
 
         public IReadOnlyDictionary<int, string> GetFormedWords()
         {
-            WordSlotGrid grid = _repository.Grid;
+            WordCellGrid grid = _repository.Grid;
 
             _totalFormedWords.Clear();
 

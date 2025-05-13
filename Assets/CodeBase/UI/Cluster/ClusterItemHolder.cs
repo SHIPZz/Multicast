@@ -4,7 +4,7 @@ using CodeBase.Data;
 using CodeBase.Gameplay.Constants;
 using CodeBase.UI.Cluster.Services;
 using CodeBase.UI.Cluster.Services.Factory;
-using CodeBase.UI.WordSlots;
+using CodeBase.UI.WordCells;
 using UniRx;
 using UnityEngine;
 using Zenject;
@@ -18,7 +18,7 @@ namespace CodeBase.UI.Cluster
         private readonly Dictionary<ClusterAttachItem, ClusterItem> _clusterItems = new(GameplayConstants.MaxClusterCount);
         
         private IClusterUIFactory _clusterUIFactory;
-        private WordSlotHolder _wordSlotHolder;
+        private WordCellsHolder _wordCellsHolder;
         private IClusterService _clusterService;
 
         [Inject] 

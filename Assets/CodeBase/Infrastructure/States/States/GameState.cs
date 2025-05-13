@@ -9,7 +9,7 @@ using CodeBase.UI.Cluster.Services;
 using CodeBase.UI.Game;
 using CodeBase.UI.Hint;
 using CodeBase.UI.Services.Window;
-using CodeBase.UI.WordSlots.Services;
+using CodeBase.UI.WordCells.Services;
 using UnityEngine;
 
 namespace CodeBase.Infrastructure.States.States
@@ -20,18 +20,18 @@ namespace CodeBase.Infrastructure.States.States
         private readonly ILevelService _levelService;
         private readonly IHintService _hintService;
         private readonly IClusterService _clusterService;
-        private readonly IWordSlotChecker _wordSlotChecker;
+        private readonly IWordCellChecker _wordCellChecker;
 
         public GameState(IWindowService windowService,
             IHintService hintService,
             ILevelService levelService,
-            IWordSlotChecker wordSlotChecker,
+            IWordCellChecker wordCellChecker,
             IClusterService clusterService)
         {
             _hintService = hintService;
             _levelService = levelService;
             _clusterService = clusterService;
-            _wordSlotChecker = wordSlotChecker;
+            _wordCellChecker = wordCellChecker;
             _windowService = windowService;
         }
 
@@ -54,11 +54,11 @@ namespace CodeBase.Infrastructure.States.States
 
         private void SetTargetWordsToFind(LevelData currentLevelData)
         {
-            if (_wordSlotChecker.TargetWordsToFind.IsNullOrEmpty()) 
+            if (_wordCellChecker.TargetWordsToFind.IsNullOrEmpty()) 
             {
                 IEnumerable<string> capitalizedWords = currentLevelData.Words.Shuffle().Take(GameplayConstants.MaxWordCount);
 
-                _wordSlotChecker.Init(capitalizedWords);
+                _wordCellChecker.Init(capitalizedWords);
             }
         }
 
@@ -74,7 +74,7 @@ namespace CodeBase.Infrastructure.States.States
 
         private void LogWordsToFind()
         {
-            foreach (var word in _wordSlotChecker.TargetWordsToFind)
+            foreach (var word in _wordCellChecker.TargetWordsToFind)
             {
                 Debug.Log($"Word to find: {word}");
             }
