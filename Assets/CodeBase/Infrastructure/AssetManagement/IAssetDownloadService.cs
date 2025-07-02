@@ -1,11 +1,12 @@
+using System.Threading;
 using Cysharp.Threading.Tasks;
 
 namespace CodeBase.Infrastructure.AssetManagement
 {
   public interface IAssetDownloadService
   {
-    UniTask InitializeDownloadDataAsync();
+    UniTask InitializeDownloadDataAsync(CancellationToken cancellationToken = default);
     float GetDownloadSizeMb();
-    UniTask UpdateContentAsync();
+    UniTask UpdateContentAsync(CancellationToken cancellationToken = default);
   }
 }

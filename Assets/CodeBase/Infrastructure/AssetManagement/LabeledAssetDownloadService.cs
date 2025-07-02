@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using CodeBase.Extensions;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -20,9 +21,9 @@ namespace CodeBase.Infrastructure.AssetManagement
       _downloadReporter = downloadReporter;
     }
     
-    public async UniTask InitializeDownloadDataAsync()
+    public async UniTask InitializeDownloadDataAsync(CancellationToken token = default)
     {
-      await Addressables.InitializeAsync().ToUniTask();
+      await Addressables.InitializeAsync().ToUniTask(cancellationToken: token);
       await UpdateCatalogsAsync();
       await UpdateDownloadSizeAsync();
     }
@@ -30,7 +31,7 @@ namespace CodeBase.Infrastructure.AssetManagement
     public float GetDownloadSizeMb() => 
       SizeToMb(_downloadSize);
 
-    public async UniTask UpdateContentAsync()
+    public async UniTask UpdateContentAsync(CancellationToken cancellationToken = default)
     {
       try
       {
@@ -38,7 +39,7 @@ namespace CodeBase.Infrastructure.AssetManagement
       
         while (!downloadHandle.IsDone && downloadHandle.IsValid())
         {
-          await UniTask.Delay(100);
+          await UniTask.Delay(100, cancellationToken: cancellationToken);
           _downloadReporter.Report(downloadHandle.GetDownloadStatus().Percent);
         }
       
@@ -58,14 +59,14 @@ namespace CodeBase.Infrastructure.AssetManagement
       }
     }
 
-    private async UniTask UpdateCatalogsAsync()
+    private async UniTask UpdateCatalogsAsync(CancellationToken cancellationToken = default)
     {
-      List<string> catalogsToUpdate = await Addressables.CheckForCatalogUpdates().ToUniTask();
+      List<string> catalogsToUpdate = await Addressables.CheckForCatalogUpdates().ToUniTask(cancellationToken: cancellationToken);
 
       if (catalogsToUpdate.IsNullOrEmpty())
         return;
 
-      await Addressables.UpdateCatalogs(catalogsToUpdate).ToUniTask();
+      await Addressables.UpdateCatalogs(catalogsToUpdate).ToUniTask(cancellationToken: cancellationToken);
     }
 
     private async UniTask UpdateDownloadSizeAsync()

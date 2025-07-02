@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using CodeBase.Common.Services.InternetConnection;
 using CodeBase.Common.Services.Persistent;
 using CodeBase.Common.Services.SaveLoad;
@@ -30,7 +31,8 @@ namespace CodeBase.Infrastructure.States.States
         private readonly IPersistentService _persistentService;
         private readonly ISaveOnApplicationPauseSystem _saveOnApplicationPauseSystem;
         private readonly IStaticDataService _staticDataService;
-
+        private readonly CancellationTokenSource _cancellationToken = new();
+        
         public WarmUpState(IStateMachine stateMachine,
             IAssetDownloadService assetDownloadService,
             IInternetConnectionService internetConnectionService,
@@ -54,19 +56,19 @@ namespace CodeBase.Infrastructure.States.States
         {
             try
             {
-                BindAndOpenLoadingWindowAsync().Forget();
+                BindAndOpenLoadingWindowAsync(_cancellationToken.Token).Forget();
                 
-                await _staticDataService.LoadAllAsync();
+                await _staticDataService.LoadAllAsync(_cancellationToken.Token);
 
                 BindWindows();
             
-                await InitializeAdressablesAsync();
+                await InitializeAdressablesAsync(_cancellationToken.Token);
 
                 LaunchInternetChecking();
 
-                await ProcessNoInternetConnectionAsync();
+                await ProcessNoInternetConnectionAsync(_cancellationToken.Token);
 
-                await InitializeConfigAsync();
+                await InitializeConfigAsync(_cancellationToken.Token);
 
                 LoadData();
             
@@ -80,10 +82,10 @@ namespace CodeBase.Infrastructure.States.States
             }
         }
 
-        private async UniTask ProcessNoInternetConnectionAsync()
+        private async UniTask ProcessNoInternetConnectionAsync(CancellationToken cancellationTokenToken)
         {
             while (!_internetConnectionService.IsInternetAvailable) 
-                await UniTask.Yield();
+                await UniTask.Yield(PlayerLoopTiming.Update, cancellationTokenToken);
             
             _windowService.Close<NoInternetWindow>();
             _windowService.OpenWindow<LoadingCurtainWindow>();
@@ -91,7 +93,7 @@ namespace CodeBase.Infrastructure.States.States
 
         private void LaunchInternetChecking()
         {
-            _internetConnectionService.LaunchCheckingEveryFixedIntervalAsync();
+            _internetConnectionService.LaunchCheckingEveryFixedIntervalAsync(_cancellationToken.Token);
 
             OpenNoInternetWindowOnNoInternet();
         }
@@ -106,27 +108,27 @@ namespace CodeBase.Infrastructure.States.States
             _persistentService.LoadAll();
         }
 
-        private async UniTaskVoid BindAndOpenLoadingWindowAsync()
+        private async UniTaskVoid BindAndOpenLoadingWindowAsync(CancellationToken cancellationToken)
         {
-            await _staticDataService.LoadWindowAsync<LoadingCurtainWindow>();
+            await _staticDataService.LoadWindowAsync<LoadingCurtainWindow>(cancellationToken);
             
             _windowService.Bind<LoadingCurtainWindow,LoadingCurtainWindowController>();
             
             _windowService.OpenWindow<LoadingCurtainWindow>();
         }
 
-        private async UniTask InitializeConfigAsync()
+        private async UniTask InitializeConfigAsync(CancellationToken cancellationTokenToken)
         {
-            await _unityRemoteConfigService.InitializeAsync();
-            await _unityRemoteConfigService.FetchConfigsAsync(new UserAttributes(), new AppAttributes());
+            await _unityRemoteConfigService.InitializeAsync(cancellationTokenToken);
+            await _unityRemoteConfigService.FetchConfigsAsync(new UserAttributes(), new AppAttributes(), cancellationTokenToken);
         }
 
-        private async UniTask InitializeAdressablesAsync()
+        private async UniTask InitializeAdressablesAsync(CancellationToken cancellationTokenToken)
         {
-            await _assetDownloadService.InitializeDownloadDataAsync();
+            await _assetDownloadService.InitializeDownloadDataAsync(cancellationTokenToken);
             
             if (_assetDownloadService.GetDownloadSizeMb() > 0)
-                await _assetDownloadService.UpdateContentAsync();
+                await _assetDownloadService.UpdateContentAsync(cancellationTokenToken);
         }
 
         private void BindWindows()

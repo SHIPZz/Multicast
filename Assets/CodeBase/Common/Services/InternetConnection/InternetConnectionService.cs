@@ -13,15 +13,17 @@ namespace CodeBase.Common.Services.InternetConnection
         
         public bool IsInternetAvailable { get; private set; }
 
-        public async UniTaskVoid LaunchCheckingEveryFixedIntervalAsync()
+        public async UniTaskVoid LaunchCheckingEveryFixedIntervalAsync(CancellationToken cancellationToken = default)
         {
+          CancellationTokenSource linkedToken =  CancellationTokenSource.CreateLinkedTokenSource(cancellationToken,_cancellationTokenSource.Token);
+            
             while (true)
             {
                 CheckConnection();
 
                 try
                 {
-                    await UniTask.WaitForSeconds(CheckInternetConnectionInterval, true, PlayerLoopTiming.Update, _cancellationTokenSource.Token);
+                    await UniTask.WaitForSeconds(CheckInternetConnectionInterval, true, PlayerLoopTiming.Update, linkedToken.Token);
                 }
                 catch (OperationCanceledException)
                 {
