@@ -62,8 +62,6 @@ namespace CodeBase.Infrastructure.AssetManagement
     {
       List<string> catalogsToUpdate = await Addressables.CheckForCatalogUpdates().ToUniTask();
 
-      Debug.Log($"{catalogsToUpdate}");
-      
       if (catalogsToUpdate.IsNullOrEmpty())
         return;
 

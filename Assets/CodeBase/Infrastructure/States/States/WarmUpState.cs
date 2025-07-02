@@ -16,10 +16,11 @@ using CodeBase.UI.Services.Window;
 using CodeBase.UI.Settings;
 using CodeBase.UI.Victory;
 using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 namespace CodeBase.Infrastructure.States.States
 {
-    public class BootstrapState : IState
+    public class WarmUpState : IState
     {
         private readonly IStateMachine _stateMachine;
         private readonly IAssetDownloadService _assetDownloadService;
@@ -30,7 +31,7 @@ namespace CodeBase.Infrastructure.States.States
         private readonly ISaveOnApplicationPauseSystem _saveOnApplicationPauseSystem;
         private readonly IStaticDataService _staticDataService;
 
-        public BootstrapState(IStateMachine stateMachine,
+        public WarmUpState(IStateMachine stateMachine,
             IAssetDownloadService assetDownloadService,
             IInternetConnectionService internetConnectionService,
             IWindowService windowService,
@@ -51,25 +52,32 @@ namespace CodeBase.Infrastructure.States.States
 
         public async void Enter()
         {
-            BindAndOpenLoadingWindowAsync().Forget();
+            try
+            {
+                BindAndOpenLoadingWindowAsync().Forget();
+                
+                await _staticDataService.LoadAllAsync();
 
-            await _staticDataService.LoadAllAsync();
-
-            BindWindows();
+                BindWindows();
             
-            await InitializeAdressablesAsync();
+                await InitializeAdressablesAsync();
 
-            LaunchInternetChecking();
+                LaunchInternetChecking();
 
-            await ProcessNoInternetConnectionAsync();
+                await ProcessNoInternetConnectionAsync();
 
-            await InitializeConfigAsync();
+                await InitializeConfigAsync();
 
-            LoadData();
+                LoadData();
             
-            InitSaveOnPauseSystem();
+                InitSaveOnPauseSystem();
             
-            _stateMachine.Enter<LoadingMenuState>();
+                _stateMachine.Enter<LoadingMenuState>();
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("Error during warm-up state: " + e.Message);
+            }
         }
 
         private async UniTask ProcessNoInternetConnectionAsync()
@@ -98,7 +106,7 @@ namespace CodeBase.Infrastructure.States.States
             _persistentService.LoadAll();
         }
 
-        private async UniTask BindAndOpenLoadingWindowAsync()
+        private async UniTaskVoid BindAndOpenLoadingWindowAsync()
         {
             await _staticDataService.LoadWindowAsync<LoadingCurtainWindow>();
             

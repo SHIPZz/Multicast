@@ -87,7 +87,7 @@ namespace CodeBase.Infrastructure.Installers
         
         private void BindStates()
         {
-            Container.BindInterfacesAndSelfTo<BootstrapState>().AsSingle();
+            Container.BindInterfacesAndSelfTo<WarmUpState>().AsSingle();
             Container.BindInterfacesAndSelfTo<LoadingMenuState>().AsSingle();
             Container.BindInterfacesAndSelfTo<MenuState>().AsSingle();
             Container.BindInterfacesAndSelfTo<CleanupBeforeLoadingGameState>().AsSingle();
@@ -120,7 +120,7 @@ namespace CodeBase.Infrastructure.Installers
 
         public void Initialize()
         {
-            Container.Resolve<IStateMachine>().Enter<BootstrapState>();
+            Container.Resolve<IStateMachine>().Enter<WarmUpState>();
         }
     }
 }
