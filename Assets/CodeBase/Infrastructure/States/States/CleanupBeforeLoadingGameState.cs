@@ -1,4 +1,5 @@
-﻿using CodeBase.Infrastructure.States.StateInfrastructure;
+﻿using System;
+using CodeBase.Infrastructure.States.StateInfrastructure;
 using CodeBase.Infrastructure.States.StateMachine;
 using CodeBase.UI.Cluster.Services;
 using CodeBase.UI.WordCells.Services;
@@ -15,9 +16,9 @@ namespace CodeBase.Infrastructure.States.States
             IClusterService clusterService,
             IStateMachine stateMachine)
         {
-            _clusterService = clusterService;
-            _wordSlotFacade = wordSlotFacade;
-            _stateMachine = stateMachine;
+            _clusterService = clusterService ?? throw new ArgumentNullException(nameof(clusterService));
+            _wordSlotFacade = wordSlotFacade ?? throw new ArgumentNullException(nameof(wordSlotFacade));
+            _stateMachine = stateMachine ?? throw new ArgumentNullException(nameof(stateMachine));
         }
 
         public void Enter()

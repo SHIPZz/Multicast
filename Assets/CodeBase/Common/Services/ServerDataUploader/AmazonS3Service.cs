@@ -120,37 +120,6 @@ namespace CodeBase.Common.Services.ServerDataUploader
             }
         }
 
-        public async UniTask<Dictionary<string, long>> GetRemoteFileSizes(string folderPrefix, CancellationToken cancellationToken = default)
-        {
-            var sizes = new Dictionary<string, long>();
-            string continuationToken = null;
 
-            try
-            {
-                do
-                {
-                    var request = new ListObjectsV2Request
-                    {
-                        BucketName = _bucketName,
-                        Prefix = folderPrefix,
-                        ContinuationToken = continuationToken
-                    };
-
-                    ListObjectsV2Response response = await _s3Client.ListObjectsV2Async(request, cancellationToken);
-                    foreach (var obj in response.S3Objects)
-                    {
-                        sizes[obj.Key] = obj.Size;
-                    }
-
-                    continuationToken = response.IsTruncated ? response.NextContinuationToken : null;
-                } while (continuationToken != null);
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"❌ Error fetching remote file sizes: {ex.Message}\nStack Trace: {ex.StackTrace}");
-            }
-
-            return sizes;
-        }
     }
 } 

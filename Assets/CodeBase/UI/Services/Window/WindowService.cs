@@ -15,17 +15,14 @@ namespace CodeBase.UI.Services.Window
         
         private readonly IInstantiator _instantiator;
         private readonly IStaticDataService _staticDataService;
-        private readonly IUIProvider _uiProvider;
 
         private readonly Dictionary<Type, WindowBindingInfo> _windowBindings = new();
         private readonly Dictionary<Type, (AbstractWindowBase Window, IController Controller)> _activeWindows = new();
         private int _currentSortingOrder = BaseSortingOrder;
 
         public WindowService(IInstantiator instantiator,
-            IStaticDataService staticDataService,
-            IUIProvider uiProvider)
+            IStaticDataService staticDataService)
         {
-            _uiProvider = uiProvider;
             _instantiator = instantiator;
             _staticDataService = staticDataService;
         }
@@ -84,7 +81,7 @@ namespace CodeBase.UI.Services.Window
                 return window;
             }
 
-            TWindow createdWindow = _instantiator.InstantiatePrefabForComponent<TWindow>(bindingInfo.Prefab, _uiProvider.MainUI);
+            TWindow createdWindow = _instantiator.InstantiatePrefabForComponent<TWindow>(bindingInfo.Prefab);
 
             IController<TWindow> controller = (IController<TWindow>)_instantiator.Instantiate(bindingInfo.ControllerType);
 

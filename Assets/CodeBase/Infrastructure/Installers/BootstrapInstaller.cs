@@ -77,7 +77,6 @@ namespace CodeBase.Infrastructure.Installers
         private void BindUIServices()
         {
             Container.Bind<IWindowService>().To<WindowService>().AsSingle();
-            Container.Bind<IUIProvider>().To<UIProvider>().AsSingle();
             Container.BindInterfacesTo<StaticDataService>().AsSingle();
             Container.Bind<IWordCellUIFactory>().To<WordCellUIFactory>().AsSingle();
             Container.BindInterfacesTo<WordCellFacade>().AsSingle();

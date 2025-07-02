@@ -16,7 +16,7 @@ namespace CodeBase.UI.Game
 {
     public class GameWindow : AbstractWindowBase
     {
-        [SerializeField] private Transform _wordSlotHolderParent;
+        [SerializeField] private Transform wordCellsHolderParent;
         [SerializeField] private TextMeshProUGUI _levelText;
         [SerializeField] private Transform _levelTextLayout;
         [SerializeField] private Canvas _canvas;
@@ -28,9 +28,11 @@ namespace CodeBase.UI.Game
         [SerializeField] private Button _menuButton;
 
         private WordCellsHolder _wordCellsHolder;
-        private IClusterUIFactory _clusterUIFactory;
         private ClusterItemHolder _clusterItemHolder;
-        private IWordCellUIFactory _wordCellUIFactory;
+
+        public Transform WordCellsHolderParent => wordCellsHolderParent;
+
+        public Transform ClusterItemHolderParent => _clusterItemHolderParent;
 
         public IObservable<Unit> OnValidateClicked => _validateButton?.OnClickAsObservable();
         public IObservable<Unit> OnHintClicked => _hintButton?.OnClickAsObservable();
@@ -38,38 +40,22 @@ namespace CodeBase.UI.Game
         
         public IObservable<Unit> OnMenuClicked => _menuButton?.OnClickAsObservable();
 
-        [Inject]
-        private void Construct(IWordCellUIFactory wordCellUIFactory, IClusterUIFactory clusterUIFactory)
-        {
-            _wordCellUIFactory = wordCellUIFactory;
-            _clusterUIFactory = clusterUIFactory;
-        }
-
         public void SetLevelNumber(int levelNumber)
         {
             _levelTextLayout.gameObject.SetActive(true);
             _levelText.text = $"LEVEL {levelNumber}";
         }
         
-        public void HideLevelText()
-        {
-            _levelTextLayout.gameObject.SetActive(false);
-        }
+        public void HideLevelText() => _levelTextLayout.gameObject.SetActive(false);
 
-        public void CreateWordSlotHolder()
+        public void SetWordCellsHolder(WordCellsHolder wordCellsHolder)
         {
-            if (_wordCellsHolder == null)
-                _wordCellsHolder = _wordCellUIFactory.CreateWordSlotHolder(_wordSlotHolderParent);
+            _wordCellsHolder = wordCellsHolder;
             
             _wordCellsHolder.CreateWordSlots();
         }
 
-        public void CreateClusterItemHolder()
-        {
-            if (_clusterItemHolder == null)
-                _clusterItemHolder = _clusterUIFactory.CreateClusterItemHolder(_clusterItemHolderParent);
-
-        }
+        public void SetClusterItemHolder(ClusterItemHolder holder) => _clusterItemHolder = holder;
 
         public void CreateClusterItems(IEnumerable<ClusterModel> clusters) =>
             _clusterItemHolder.CreateClusterItems(clusters, _canvas);

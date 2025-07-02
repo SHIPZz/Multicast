@@ -2,14 +2,18 @@ using CodeBase.Data;
 using CodeBase.Gameplay.Common.Services.Level;
 using CodeBase.Infrastructure.States.StateMachine;
 using CodeBase.Infrastructure.States.States;
+using CodeBase.UI.Cluster;
 using CodeBase.UI.Cluster.Services;
+using CodeBase.UI.Cluster.Services.Factory;
 using CodeBase.UI.Controllers;
 using CodeBase.UI.Hint;
 using CodeBase.UI.Services.Window;
 using CodeBase.UI.Sound;
 using CodeBase.UI.Sound.Services;
 using CodeBase.UI.Victory;
+using CodeBase.UI.WordCells;
 using CodeBase.UI.WordCells.Services;
+using CodeBase.UI.WordCells.Services.Factory;
 using UniRx;
 
 namespace CodeBase.UI.Game
@@ -24,6 +28,8 @@ namespace CodeBase.UI.Game
         private readonly IWordCellChecker _wordCellChecker;
         private readonly ISoundService _soundService;
         private readonly IStateMachine _stateMachine;
+        private readonly IClusterUIFactory _clusterUIFactory;
+        private readonly IWordCellUIFactory _wordCellUIFactory;
 
         private GameWindow _window;
 
@@ -34,7 +40,9 @@ namespace CodeBase.UI.Game
             ISoundService soundService,
             IHintService hintService,
             IWindowService windowService,
-            IStateMachine stateMachine)
+            IStateMachine stateMachine,
+            IClusterUIFactory clusterUIFactory,
+            IWordCellUIFactory wordCellUIFactory)
         {
             _soundService = soundService;
             _wordCellChecker = wordCellChecker;
@@ -43,6 +51,8 @@ namespace CodeBase.UI.Game
             _levelService = levelService;
             _windowService = windowService;
             _stateMachine = stateMachine;
+            _clusterUIFactory = clusterUIFactory;
+            _wordCellUIFactory = wordCellUIFactory;
         }
 
         public void Initialize()
@@ -90,7 +100,7 @@ namespace CodeBase.UI.Game
             _window.OnMenuClicked
                 .Subscribe(_ => SwitchToMenuState())
                 .AddTo(_disposables);
-            
+
             _window
                 .OnRestartClicked
                 .Subscribe(_ => _stateMachine.Enter<CleanupBeforeLoadingGameState>())
@@ -101,7 +111,7 @@ namespace CodeBase.UI.Game
         {
             _clusterService.Cleanup();
             _wordCellChecker.Cleanup();
-            
+
             _stateMachine.Enter<LoadingMenuState>();
         }
 
@@ -111,37 +121,46 @@ namespace CodeBase.UI.Game
 
             _window.SetInteractableItemsActive(true);
 
-            _window.CreateWordSlotHolder();
+            InitHolders();
 
-            _window.CreateClusterItemHolder();
-            
             _window.SetLevelNumber(levelData.LevelId);
-            
+
             _window.CreateClusterItems(_clusterService.AllClusters);
-            
+
             _clusterService.RestorePlacedClusters();
 
             if (_wordCellChecker.AreWordsFormedCorrectly())
             {
                 _soundService.Play(SoundTypeId.WordFormedFound);
-                
+
                 _levelService.MarkLevelCompleted();
             }
+        }
+
+        private void InitHolders()
+        {
+            WordCellsHolder wordCellsHolder = _wordCellUIFactory.CreateWordSlotHolder(_window.WordCellsHolderParent);
+
+            _window.SetWordCellsHolder(wordCellsHolder);
+
+            ClusterItemHolder clusterItemHolder = _clusterUIFactory.CreateClusterItemHolder(_window.ClusterItemHolderParent);
+
+            _window.SetClusterItemHolder(clusterItemHolder);
         }
 
         private void MarkLevelCompleted()
         {
             if (_wordCellChecker.UpdateFormedWordsAndCheckNew())
                 _soundService.Play(SoundTypeId.WordFormedFound);
-                
+
             _clusterService.CheckAndHideFilledClusters();
-            
-            if(!_wordCellChecker.AreWordsFormedCorrectly())
+
+            if (!_wordCellChecker.AreWordsFormedCorrectly())
                 return;
-            
+
             _wordCellChecker.Cleanup();
             _clusterService.Cleanup();
-            
+
             _levelService.MarkLevelCompleted();
         }
 
@@ -150,7 +169,7 @@ namespace CodeBase.UI.Game
         private void OpenVictoryWindow()
         {
             _window.HideLevelText();
-            
+
             _window.SetInteractableItemsActive(false);
 
             _windowService.OpenWindow<VictoryWindow>(onTop: true);

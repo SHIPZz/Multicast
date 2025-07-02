@@ -1,4 +1,5 @@
-﻿using CodeBase.Common.Services.InternetConnection;
+﻿using System;
+using CodeBase.Common.Services.InternetConnection;
 using CodeBase.Infrastructure.Loading;
 using CodeBase.Infrastructure.States.StateInfrastructure;
 using CodeBase.Infrastructure.States.StateMachine;
@@ -19,10 +20,10 @@ namespace CodeBase.Infrastructure.States.States
             ISceneLoader sceneLoader,
             IStateMachine stateMachine)
         {
-            _internetConnectionService = internetConnectionService;
-            _stateMachine = stateMachine;
-            _sceneLoader = sceneLoader;
-            _windowService = windowService;
+            _internetConnectionService = internetConnectionService ?? throw new ArgumentNullException(nameof(internetConnectionService));
+            _stateMachine = stateMachine ?? throw new ArgumentNullException(nameof(stateMachine));
+            _sceneLoader = sceneLoader ?? throw new ArgumentNullException(nameof(sceneLoader));
+            _windowService = windowService ?? throw new ArgumentNullException(nameof(windowService));
         }
 
         public void Enter()

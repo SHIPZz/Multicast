@@ -12,8 +12,6 @@ namespace CodeBase.Common.Services.Persistent
         private readonly ISaveLoadSystem _saveLoadSystem;
         
         private ProgressData _currentProgress;
-        
-        public ProgressData CurrentProgress => _currentProgress;
 
         public PersistentService(ISaveLoadSystem saveLoadSystem)
         {
@@ -28,21 +26,16 @@ namespace CodeBase.Common.Services.Persistent
             }
         }
 
-        public async UniTaskVoid Load()
-        {
-            _currentProgress = await _saveLoadSystem.Load();
-        }
-
         public void LoadAll()
         {
-            Load().Forget();
+            LoadAsync().Forget();
 
             foreach (IProgressWatcher progressWatcher in _progressWatchers)
             {
                 progressWatcher.Load(_currentProgress);
             }
         }
-        
+
         public void Save()
         {
             foreach (IProgressWatcher progressWatcher in _progressWatchers)
@@ -59,6 +52,11 @@ namespace CodeBase.Common.Services.Persistent
             {
                 _progressWatchers.Remove(progressWatcher);
             }
+        }
+
+        private async UniTaskVoid LoadAsync()
+        {
+            _currentProgress = await _saveLoadSystem.LoadAsync();
         }
     }
 }

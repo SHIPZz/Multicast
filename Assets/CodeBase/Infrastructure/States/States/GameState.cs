@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using CodeBase.Data;
 using CodeBase.Extensions;
@@ -28,11 +29,11 @@ namespace CodeBase.Infrastructure.States.States
             IWordCellChecker wordCellChecker,
             IClusterService clusterService)
         {
-            _hintService = hintService;
-            _levelService = levelService;
-            _clusterService = clusterService;
-            _wordCellChecker = wordCellChecker;
-            _windowService = windowService;
+            _hintService = hintService ?? throw new ArgumentNullException(nameof(hintService));
+            _levelService = levelService ?? throw new ArgumentNullException(nameof(levelService));
+            _clusterService = clusterService ?? throw new ArgumentNullException(nameof(clusterService));
+            _wordCellChecker = wordCellChecker ?? throw new ArgumentNullException(nameof(wordCellChecker));
+            _windowService = windowService ?? throw new ArgumentNullException(nameof(windowService));
         }
 
         public void Enter()

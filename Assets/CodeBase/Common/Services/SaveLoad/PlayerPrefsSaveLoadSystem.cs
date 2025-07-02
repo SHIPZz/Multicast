@@ -1,4 +1,5 @@
-﻿using CodeBase.Data;
+﻿using System.Threading;
+using CodeBase.Data;
 using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -18,7 +19,7 @@ namespace CodeBase.Common.Services.SaveLoad
             PlayerPrefs.Save();
         }
         
-        public UniTask<ProgressData> Load()
+        public UniTask<ProgressData> LoadAsync(CancellationToken token = default)
         {
             if (PlayerPrefs.HasKey(DataKey))
             {
@@ -27,7 +28,7 @@ namespace CodeBase.Common.Services.SaveLoad
                 return UniTask.FromResult(data);
             }
 
-            return UniTask.FromResult(new ProgressData());
+            return UniTask.FromResult(new ProgressData()).AttachExternalCancellation(token);
         }
 
     }

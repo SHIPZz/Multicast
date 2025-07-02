@@ -1,4 +1,5 @@
-﻿using CodeBase.Common.Services.InternetConnection;
+﻿using System;
+using CodeBase.Common.Services.InternetConnection;
 using CodeBase.Common.Services.Persistent;
 using CodeBase.Common.Services.SaveLoad;
 using CodeBase.Common.Services.Unity;
@@ -38,14 +39,14 @@ namespace CodeBase.Infrastructure.States.States
             ISaveOnApplicationPauseSystem saveOnApplicationPauseSystem,
             IStaticDataService staticDataService)
         {
-            _internetConnectionService = internetConnectionService;
-            _windowService = windowService;
-            _unityRemoteConfigService = unityRemoteConfigService;
-            _persistentService = persistentService;
-            _saveOnApplicationPauseSystem = saveOnApplicationPauseSystem;
-            _assetDownloadService = assetDownloadService;
-            _stateMachine = stateMachine;
-            _staticDataService = staticDataService;
+            _internetConnectionService = internetConnectionService ?? throw new ArgumentNullException(nameof(internetConnectionService));
+            _windowService = windowService ?? throw new ArgumentNullException(nameof(windowService));
+            _unityRemoteConfigService = unityRemoteConfigService ?? throw new ArgumentNullException(nameof(unityRemoteConfigService));
+            _persistentService = persistentService ?? throw new ArgumentNullException(nameof(persistentService));
+            _saveOnApplicationPauseSystem = saveOnApplicationPauseSystem ?? throw new ArgumentNullException(nameof(saveOnApplicationPauseSystem));
+            _assetDownloadService = assetDownloadService ?? throw new ArgumentNullException(nameof(assetDownloadService));
+            _stateMachine = stateMachine ?? throw new ArgumentNullException(nameof(stateMachine));
+            _staticDataService = staticDataService ?? throw new ArgumentNullException(nameof(staticDataService));
         }
 
         public async void Enter()
